@@ -1,0 +1,31 @@
+/* body.modal-open > :not(#updateModal) {
+  -webkit-filter: blur(5px);
+  -moz-filter: blur(5px);
+  -o-filter: blur(5px);
+  -ms-filter: blur(5px);
+  filter: blur(5px);
+} */
+
+/* body.modal-open > :not(#signin-modal) {
+  -webkit-filter: blur(5px);
+  -moz-filter: blur(5px);
+  -o-filter: blur(5px);
+  -ms-filter: blur(5px);
+  filter: blur(5px);
+} */
+
+td.details-control {
+  background: url('../img/details_open.png') no-repeat center center;
+  cursor: pointer;
+}
+
+tr.shown td.details-control {
+  background: url('../img/details_close.png') no-repeat center center;
+}
+
+img.card-img-top {
+  width: 50%;
+}
+p.card-title, img.card-img-top, .pointer-here {
+  cursor: pointer;
+}
