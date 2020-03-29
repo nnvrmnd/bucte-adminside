@@ -1,21 +1,25 @@
 'use strict';
 
-$(function () {
+$(function() {
   /* Set cookie for fileDownload */
   document.cookie = 'fileDownload=true; path=/';
 
   /* Signout */
-  $('#sudo_exit').click(function (e) {
+  $('#sudo_exit').click(function(e) {
     e.preventDefault();
-    $.post('./assets/hndlr/AuthSignin.php', {
-      sudo_exit: 'y'
-    }, function (res) {
-      location.reload();
-    });
+    $.post(
+      './assets/hndlr/AuthSignin.php',
+      {
+        sudo_exit: 'y'
+      },
+      function(res) {
+        location.reload();
+      }
+    );
   });
 
   /* Reset modal forms on close */
-  $('div.modal').on('hidden.bs.modal', function () {
+  $('div.modal').on('hidden.bs.modal', function() {
     $(this)
       .find('form')
       .trigger('reset');
@@ -42,7 +46,7 @@ var timer = null; // for timeouts
 
 function SuccessModal(msg, redirect, timeout) {
   if (redirect !== 0) {
-    $('#SuccessModal').on('hidden.bs.modal', function () {
+    $('#SuccessModal').on('hidden.bs.modal', function() {
       window.location.href = redirect;
     });
   }
@@ -63,7 +67,7 @@ function ErrorModal(msg, redirect, timeout) {
   let message = msg === 0 ? 'Something went wrong.' : msg;
 
   if (redirect !== 0) {
-    $('#SuccessModal').on('hidden.bs.modal', function () {
+    $('#SuccessModal').on('hidden.bs.modal', function() {
       window.location.href = redirect;
     });
   }
@@ -86,7 +90,7 @@ function PromptModal(msg, redirect, timeout, action, id) {
     .attr('data-target', id);
 
   if (redirect !== 0) {
-    $('#PromptModal').on('hidden.bs.modal', function () {
+    $('#PromptModal').on('hidden.bs.modal', function() {
       window.location.href = redirect;
     });
   }
@@ -104,27 +108,31 @@ function PromptModal(msg, redirect, timeout, action, id) {
 }
 
 function PromptConfirm(msg, url) {
-  $('#prompt_form #yes_prompt').click(function (e) {
+  $('#prompt_form #yes_prompt').click(function(e) {
     e.preventDefault();
 
     let action = $(this).attr('data-action'),
       id = $(this).attr('data-target');
 
-    $.post(url, {
-      action,
-      id
-    }, function (res) {
-      switch (res) {
-        case 'true':
-          SuccessModal(msg, 0, 5000);
-          RenderList();
-          break;
+    $.post(
+      url,
+      {
+        action,
+        id
+      },
+      function(res) {
+        switch (res) {
+          case 'true':
+            SuccessModal(msg, 0, 5000);
+            RenderList();
+            break;
 
-        default:
-          ErrorModal(0, 0, 5000);
-          break;
+          default:
+            ErrorModal(0, 0, 5000);
+            break;
+        }
       }
-    });
+    );
   });
 }
 
@@ -133,21 +141,24 @@ function WhoAmI(location) {
   let regex = /^\s*$/,
     whoiam = $('#whoiam').val();
   if (!whoiam.match(regex) === true) {
-    $.post('./assets/hndlr/Global.php', {
-      who: whoiam
-    }, function (res) {
-      let el = res != "INTRUDER!" ? JSON.parse(res) : '';
-      switch (location) {
-        case 'topnav':
-          $('#topnav-who').html(`${el.given}`);
-          break;
+    $.post(
+      './assets/hndlr/Global.php',
+      {
+        who: whoiam
+      },
+      function(res) {
+        let el = res != 'INTRUDER!' ? JSON.parse(res) : '';
+        switch (location) {
+          case 'topnav':
+            $('#topnav-who').html(`${el.given}`);
+            break;
 
-        default:
-          break;
+          default:
+            break;
+        }
       }
-    });
+    );
   }
-
 }
 WhoAmI('topnav');
 
@@ -219,7 +230,7 @@ function AuthorId(username) {
       username: username
     },
     async: false,
-    success: function (res) {
+    success: function(res) {
       id = res;
     }
   });
@@ -238,7 +249,7 @@ function AuthorName(id) {
       userid: id
     },
     async: false,
-    success: function (res) {
+    success: function(res) {
       name = res;
     }
   });
@@ -288,7 +299,9 @@ function ValidateCKE(form_id, name) {
 
   switch (false) {
     case required:
-      $(formid).find('#cke_' + name).css('border-color', '#fb6340');
+      $(formid)
+        .find('#cke_' + name)
+        .css('border-color', '#fb6340');
       $(formid + 'small.' + name)
         .removeClass('text-success')
         .addClass('text-danger')
@@ -297,7 +310,9 @@ function ValidateCKE(form_id, name) {
       break;
 
     default:
-      $(formid).find('#cke_' + name).removeAttr('style');
+      $(formid)
+        .find('#cke_' + name)
+        .removeAttr('style');
       $(formid + 'small.' + name)
         .removeClass('text-success')
         .html('');
@@ -373,5 +388,4 @@ function unicode(name) {
     .replace(/|/g, '&#124;')
     .replace(/\}/g, '&#125;')
     .replace(/~/g, '&#126;');
-
 }

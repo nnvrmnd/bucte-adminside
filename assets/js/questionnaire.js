@@ -30,7 +30,7 @@ function RenderList() {
 
             $('.items-container').append(`
               <div class="col-lg-10 item-thumb">
-                <div class="card">
+                <div class="card card-shadow">
                     <div class="card-body pb-1">
                       <button type="button" class="btn btn-sm btn-secondary text-danger float-right delete_item" data-target="${el.question_id}" title="Delete item...">
                           <i class="fa fa-trash" aria-hidden="true"></i>

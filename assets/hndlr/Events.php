@@ -1,9 +1,9 @@
 <?php
 
-if (isset($_POST['fetchreviewers'])) {
+if (isset($_POST['fetchevents'])) {
     require 'db.hndlr.php';
 
-    $stmnt = "SELECT * FROM reviewer ORDER BY rvwr_id DESC;";
+    $stmnt = "SELECT * FROM events ORDER BY evnt_id DESC;";
     $query = $db->prepare($stmnt);
     //  $param = [$who];
     $query->execute();
@@ -14,17 +14,16 @@ if (isset($_POST['fetchreviewers'])) {
     } elseif ($count > 0) {
         $dbData = [];
         foreach ($query as $data) {
-            $reviewer_id = $data['rvwr_id'];
+            $event_id = $data['evnt_id'];
             $author = $data['u_id'];
+            $image = $data['image'];
             $title = $data['title'];
-            $source = $data['source'];
-            $level = $data['level'];
-            $duration = $data['duration'];
-            $items = NumberOfItems($reviewer_id);
+            $sched = date('jS M Y', strtotime($data['sched']));
+            $venue = $data['venue'];
             $description = $data['description'];
             $created_at = date('jS M Y \a\t h:i A', strtotime($data['created_at']));
 
-            $dbData[] = ['rvwr_id' => $reviewer_id, 'author' => $author, 'title' => $title, 'source' => $source, 'level' => $level, 'duration' => $duration, 'items' => $items, 'description' => $description, 'created_at' => $created_at];
+            $dbData[] = ['event_id' => $event_id, 'author' => $author, 'image' => $image, 'title' => $title, 'sched' => $sched, 'venue' => $venue, 'description' => $description, 'created_at' => $created_at];
         }
         $arrObject = json_encode($dbData);
         echo $arrObject;
@@ -42,13 +41,13 @@ if (isset($_POST['title']) && isset($_POST['author'])) {
     $description = $_POST['description'];
 
     $extension = strtolower(pathinfo($_FILES['select_file']['name'], PATHINFO_EXTENSION));
-    $attachment = "file_" . date('Ymdhis') . "." . $extension;
+    $attachment = preg_replace('/\s+/', '_', $title) . "_" . date('Ymdhis') . "." . $extension;
     $destination = "../../files/events/" . basename($attachment);
 
     $db->beginTransaction();
-    $stmnt = "INSERT INTO events (u_id, image, title, sched, venue, description) VALUES (?, ?, ?, ?, ?, ?) ;";
+    $stmnt = "INSERT INTO events (u_id, title, image, sched, venue, description) VALUES (?, ?, ?, ?, ?, ?) ;";
     $query = $db->prepare($stmnt);
-    $param = [$author, $attachment, $title, $date, $venue, $description];
+    $param = [$author, $title, $attachment, $date, $venue, $description];
     $query->execute($param);
     $count = $query->rowCount();
     if ($count > 0) {
@@ -65,15 +64,15 @@ if (isset($_POST['title']) && isset($_POST['author'])) {
     }
 }
 
-/* Fetch 1 reviewer to update */
-if (isset($_POST['reviewer'])) {
+/* Fetch 1 event to update */
+if (isset($_POST['event'])) {
     require 'db.hndlr.php';
 
-    $reviewer = $_POST['reviewer'];
+    $event = $_POST['event'];
 
-    $stmnt = "SELECT * FROM reviewer WHERE rvwr_id = ? ;";
+    $stmnt = "SELECT * FROM events WHERE evnt_id = ? ;";
     $query = $db->prepare($stmnt);
-    $param = [$reviewer];
+    $param = [$event];
     $query->execute($param);
     $count = $query->rowCount();
     if ($count <= 0) {
@@ -82,56 +81,75 @@ if (isset($_POST['reviewer'])) {
     } elseif ($count > 0) {
         $dbData = [];
         foreach ($query as $data) {
-            $reviewer_id = $data['rvwr_id'];
+            $event_id = $data['evnt_id'];
             $title = $data['title'];
-            $source = $data['source'];
-            $level = $data['level'];
-            $duration = $data['duration'];
+            $image = $data['image'];
+            $date = $data['sched'];
+            $venue = $data['venue'];
             $description = $data['description'];
 
-            $dbData[] = ['reviewer_id' => $reviewer_id, 'title' => $title, 'source' => $source, 'level' => $level, 'duration' => $duration, 'description' => $description];
+            $dbData[] = ['event_id' => $event_id, 'title' => $title, 'image' => $image, 'date' => $date, 'venue' => $venue, 'description' => $description];
         }
         $arrObject = json_encode($dbData);
         echo $arrObject;
     }
 }
 
-/* Update reviewer */
-if (isset($_POST['title']) && isset($_POST['reviewer_id'])) {
+/* Update event */
+if (isset($_POST['event_id']) && isset($_POST['edit_title'])) {
     require 'db.hndlr.php';
 
-    $reviewer = $_POST['reviewer_id'];
-    $title = $_POST['title'];
-    $source = $_POST['source'];
-    $level = $_POST['level'];
-    $duration = $_POST['duration'];
-    $description = $_POST['description'];
+    $id = $_POST['event_id'];
+    $title = $_POST['edit_title'];
+    $date = $_POST['edit_date'];
+    $venue = $_POST['edit_venue'];
+    $description = $_POST['edit_description'];
+
+    if (isset($_FILES['edit_select_file']['name'])) {
+        $extension = strtolower(pathinfo($_FILES['edit_select_file']['name'], PATHINFO_EXTENSION));
+        $attachment = preg_replace('/\s+/', '_', $title) . "_" . date('Ymdhis') . "." . $extension;
+        $destination = "../../files/events/" . basename($attachment);
+
+        $stmnt = "UPDATE events SET title = ?, image = ?, sched = ?, venue = ?, description = ? WHERE evnt_id = ? ;";
+        $param = [$title, $attachment, $date, $venue, $description, $id];
+    } else {
+        $stmnt = "UPDATE events SET title = ?, sched = ?, venue = ?, description = ? WHERE evnt_id = ? ;";
+        $param = [$title, $date, $venue, $description, $id];
+    }
 
     $db->beginTransaction();
-    $stmnt = "UPDATE reviewer SET title = ?, source = ?, level = ?, duration = ?, description = ? WHERE rvwr_id = ? ;";
     $query = $db->prepare($stmnt);
-    $param = [$title, $source, $level, $duration, $description, $reviewer];
     $query->execute($param);
     $count = $query->rowCount();
     if ($count > 0) {
-        $db->commit();
-        echo "true";
+        if (!isset($attachment)) {
+            $db->commit();
+            echo "true";
+        } else {
+            if (move_uploaded_file($_FILES['edit_select_file']['tmp_name'], $destination)) {
+                $db->commit();
+                echo "true";
+            } else {
+                $db->rollBack();
+                echo "err:upload";
+            }
+        }
     } else {
         $db->rollBack();
         echo "err:save";
     }
 }
 
-/* Delete reviewer */
+/* Delete event */
 if (isset($_POST['action']) && isset($_POST['id'])) {
     require 'db.hndlr.php';
 
-    $reviewer = $_POST['id'];
+    $event = $_POST['id'];
 
     $db->beginTransaction();
-    $stmnt = "DELETE FROM reviewer WHERE rvwr_id = ? ;";
+    $stmnt = "DELETE FROM events WHERE evnt_id = ? ;";
     $query = $db->prepare($stmnt);
-    $param = [$reviewer];
+    $param = [$event];
     $query->execute($param);
     $count = $query->rowCount();
     if ($count > 0) {

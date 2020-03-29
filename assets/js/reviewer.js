@@ -81,7 +81,7 @@ function RenderList() {
 
             $('.reviewers-container').append(`
             <div class="col-lg-10 reviewer-thumb">
-               <div class="card pointer-here" title="Click for questionnaire..." data-id="${
+               <div class="card card-shadow pointer-here" title="Click for questionnaire..." data-id="${
                  el.rvwr_id
                }">
                   <div class="card-body pb-1">

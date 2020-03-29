@@ -43,7 +43,7 @@ SeshStart('page');
     <div class="container-fluid mt--6">
       <div class="row card-wrapper reviewer_title d-none">
         <div class="col-lg-10">
-          <div class="card">
+          <div class="card card-shadow">
             <div class="card-body pb-1">
               <p class="font-weight-bold reviewer_title"></p>
             </div>
