@@ -18,13 +18,12 @@ if (isset($_POST['who'])) {
             $id = $row['u_id'];
             $given = $row['given_name'];
             $surname = $row['surname'];
-            $suffix = $row['name_suffix'];
             $username = $row['username'];
             $email = $row['email'];
             $position = $row['position'];
             $password = $row['passkey'];
             $created_at = $row['created_at'];
-            $dbData[] = ['id' => $id, 'given' => $given, 'surname' => $surname, 'suffix' => $suffix, 'username' => $username, 'email' => $email, 'position' => $position];
+            $dbData[] = ['id' => $id, 'given' => $given, 'surname' => $surname, 'username' => $username, 'email' => $email, 'position' => $position];
         }
         $arrObject = json_encode($dbData);
         echo $arrObject;

@@ -4,32 +4,32 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
 
-require_once "../lib/PHPMailer/src/Exception.php";
-require_once "../lib/PHPMailer/src/PHPMailer.php";
-require_once "../lib/PHPMailer/src/SMTP.php";
+require_once '../lib/PHPMailer/src/Exception.php';
+require_once '../lib/PHPMailer/src/PHPMailer.php';
+require_once '../lib/PHPMailer/src/SMTP.php';
 
 // Instantiation and passing `true` enables exceptions
 $mail = new PHPMailer(true);
 
 try {
-   //Server settings
-   $mail->isSMTP();
-   $mail->SMTPSecure = "ssl";
-   $mail->Host       = "smtp.gmail.com";
-   $mail->Port       = "465";
-   $mail->SMTPAuth   = true;
-   $mail->Username   = "suterusu.naito@gmail.com";
-   $mail->Password   = "iliketisay";
+	//Server settings
+	$mail->isSMTP();
+	$mail->SMTPSecure = 'ssl';
+	$mail->Host = 'smtp.gmail.com';
+	$mail->Port = '465';
+	$mail->SMTPAuth = true;
+	$mail->Username = 'suterusu.naito@gmail.com';
+	//  $mail->Password   = "PASSWORD__HERE";
 
-   //Recipients
-   $mail->setFrom("donotreply@bicol-u.edu.ph", "BU Center for Teaching Excellence");
-   $mail->addAddress("francisneil.gfx@gmail.com");
-   $mail->addReplyTo("donotreply@bicol-u.edu.ph", "No reply");
+	//Recipients
+	$mail->setFrom('donotreply@bicol-u.edu.ph', 'BU Center for Teaching Excellence');
+	$mail->addAddress('francisneil.gfx@gmail.com');
+	$mail->addReplyTo('donotreply@bicol-u.edu.ph', 'No reply');
 
-   // Content
-   $mail->isHTML(true);
-   $mail->Subject = "Verify Email Address";
-   $mail->Body    = '
+	// Content
+	$mail->isHTML(true);
+	$mail->Subject = 'Verify Email Address';
+	$mail->Body = '
    <!DOCTYPE html>
 <html>
 
@@ -151,7 +151,7 @@ try {
                                        </td>
                                        <td bgcolor="#ffffff" align="right" valign="middle"
                                           style="padding: 0px; color: #111111; font-family: \'Helvetica Neue\', Helvetica, Arial, sans-serif; font-size: 48px; font-weight: 400; line-height: 48px;padding:0 0 15px 0;">
-                                          <a href="http://localhost/app/bucte/login.php" target="_blank"
+                                          <a href="http://localhost/bucte/login.php" target="_blank"
                                              style="font-family: \'Helvetica Neue\', Helvetica, Arial, sans-serif;color: #797979;font-size: 12px;font-weight:400;-webkit-font-smoothing:antialiased;text-decoration: none;">Login
                                              to BUCTE</a></td>
                                     </tr>
@@ -287,11 +287,11 @@ try {
 </html>
    ';
 
-   /* $mail->Body = "Please confirm that hello@SmilesDavis.yeah is your e-mail address by clicking on the link below within 24 hours.<br>";
-   $mail->Body .= "<a href=\"javascript:void(0)\" target=\"_blank\" style=\"color: #1cc3b2; cursor: pointer; text-decoration: underline;\">Verify Email Address</a>"; */
+	/* $mail->Body = "Please confirm that hello@SmilesDavis.yeah is your e-mail address by clicking on the link below within 24 hours.<br>";
+	$mail->Body .= "<a href=\"javascript:void(0)\" target=\"_blank\" style=\"color: #1cc3b2; cursor: pointer; text-decoration: underline;\">Verify Email Address</a>"; */
 
-   $mail->send();
-   echo "true";
+	$mail->send();
+	echo 'true';
 } catch (Exception $e) {
-   echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+	echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
 }

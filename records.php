@@ -6,121 +6,226 @@ SeshStart('page');
 <html>
 
 <head>
-  <title>Records Management | BUCTE Administration</title>
-  <?php include './components/layout/Head.php'; ?>
+	<title>Records Management | BUCTE Administration</title>
+	<?php include './components/layout/Head.php'; ?>
+
+	<style>
+		img.card-img-top {
+			width: 40% !important;
+		}
+	</style>
 </head>
 
 <body>
-  <!-- Sidenav -->
-  <?php include './components/layout/Sidenav.php'; ?>
-  <!-- Main content -->
-  <div class="main-content" id="panel">
-    <!-- Topnav -->
-    <?php include './components/layout/Topnav.php'; ?>
-    <!-- Header -->
-    <div class="header bg-primary pb-6">
-      <div class="container-fluid">
-        <div class="header-body">
-          <div class="row align-items-center py-4">
-            <div class="col-lg-6 col-7">
-              <h6 class="h2 text-white d-inline-block mb-0">Records</h6>
-              <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
-                <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
-                  <li class="breadcrumb-item"><a href="javascript:void(0)"><i class="fas fa-home"></i></a></li>
-                  <li class="breadcrumb-item active" aria-current="page">Records Management</li>
-                </ol>
-              </nav>
-            </div>
-            <div class="col-lg-6 col-5 text-right">
-              <button class="btn btn-sm btn-neutral" data-toggle="modal" data-target="#UploadModal">Upload
-                file</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- Page content -->
-    <div class="container-fluid mt--6">
-      <div class="row card-wrapper records-container">
-        <!-- MAIN CONTENT HERE -->
+	<!-- Sidenav -->
+	<?php include './components/layout/Sidenav.php'; ?>
+	<!-- Main content -->
+	<div class="main-content" id="panel">
+		<!-- Topnav -->
+		<?php include './components/layout/Topnav.php'; ?>
+		<!-- Header -->
+		<div class="header pb-6">
+			<div class="container-fluid">
+				<div class="header-body">
+					<div class="row align-items-center py-4">
+						<div class="col-lg-6 col-7">
+							<h6 class="h2 d-inline-block mb-0">Records</h6>
+							<nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
+								<ol class="breadcrumb breadcrumb-links">
+									<li class="breadcrumb-item"><a href="javascript:void(0)"><i
+												class="fas fa-home"></i></a></li>
+									<li class="breadcrumb-item active" aria-current="page">Records Management</li>
+								</ol>
+							</nav>
+						</div>
+						<div class="col-lg-6 col-5 text-right">
+							<button class="btn btn-sm btn-secondary text-warning d-none" id="archive_btn">Archive
+								file/s</button>
+							<button class="btn btn-sm btn-secondary text-primary" data-toggle="modal"
+								data-target="#UploadFile">Upload
+								file</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Page content -->
+		<div class="container-fluid mt--6">
+			<div class="row card-wrapper records-container">
+				<!-- MAIN CONTENT HERE -->
 
 
 
 
-      </div>
-      <!-- Footer -->
-      <?php include './components/layout/Footer.php'; ?>
-    </div>
-  </div>
 
-  <!-- Modals -->
-  <div class="modal fade" id="UploadModal" tabindex="-1" role="dialog" aria-labelledby="UploadModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="UploadModalLabel">Upload</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <form role="form" id="record_form">
-          <div class="modal-body">
-            <input type="password" class="d-none" name="author" id="author">
-            <input type="text" class="d-none" name="format" id="format">
-            <div class="row">
-              <div class="col-md-12">
-                <div class="form-group mb-2">
-                  <label for="title"><small>File title</small></label>
-                  <input type="text" class="form-control text-dark record-input" name="title" id="title"
-                    title="For easy search later">
-                  <small class="title"></small>
-                </div>
-                <div class="form-group mb-2 filetype-select">
-                  <label for="file_type"><small>File type</small></label>
-                  <select class="form-control record-input" name="file_type" id="file_type">
-                    <option value="" selected>Select type...</option>
-                    <option value="records">Records</option>
-                    <option value="library">E-library</option>
-                    <!-- <option value="other">Other</option> -->
-                  </select>
-                  <small class="text-danger file_type"></small>
-                </div>
-                <div class="form-group mb-2">
-                  <input type="text" class="form-control text-dark record-input d-none" name="other_type"
-                    id="other_type" placeholder="Specify other filetype...">
-                  <small class="text-danger other_type"></small>
-                </div>
-                <div class="form-group mb-2">
-                  <label for="description"><small>Description</small></label>
-                  <textarea class="form-control record-input" name="description" id="description" rows="5"
-                    placeholder="Write file description..."></textarea>
-                </div>
-                <div class="form-group mb-2">
-                  <label for="select_file"><small>Upload file</small></label>
-                  <div class="custom-file">
-                    <input type="file" class="custom-file-input" name="select_file" id="select_file" lang="en">
-                    <label class="custom-file-label select_file" for="select_file">Select a
-                      file...</label>
-                    </div>
-                    <small class="select_file"></small>
-                </div>
-              </div>
-              <!-- <div class="col-md-6"></div> -->
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="submit" class="btn bg-gradient-primary text-white">Upload</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
 
-  <!-- Scripts -->
-  <?php include './components/layout/Scripts.php'; ?>
-  <script src="./assets/js/records.js"></script>
+
+
+			</div>
+			<!-- Footer -->
+			<?php include './components/layout/Footer.php'; ?>
+		</div>
+	</div>
+
+	<!-- Modals -->
+	<div class="modal fade" id="UploadFile" tabindex="-1" role="dialog" aria-labelledby="UploadFileLabel"
+		aria-hidden="true">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="UploadFileLabel">Upload file</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<form role="form" id="upload_form">
+					<div class="modal-body">
+						<input type="password" class="d-none" name="author" id="author">
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group mb-2">
+									<label class="form-control-label" for="title">File title</label>
+									<input type="text" class="form-control text-dark record-input" name="title"
+										id="title" maxlength="190" title="For easy search later" placeholder="Title...">
+									<small class="title"></small>
+								</div>
+								<div class="form-group mb-2">
+									<label class="form-control-label" for="select_file">Select file</label>
+									<input type="text" class="form-control text-dark bg-white pointer-here" name="dummy"
+										id="dummy" placeholder="Select a file..." data-target="select_file" readonly>
+									<input type="file" class="d-none file_select" name="select_file" id="select_file"
+										data-target="dummy">
+									<input type="hidden" class="d-none" name="file_format" id="file_format">
+									<!-- accept="image/jpeg,image/png" -->
+									<small class="select_file"></small>
+								</div>
+								<div class="form-group mb-2">
+									<label class="form-control-label" for="description">Description</label>
+									<textarea class="form-control text-dark record-input" name="description"
+										id="description" rows="5" placeholder="Write file description..."></textarea>
+								</div>
+							</div>
+							<!-- <div class="col-md-6"></div> -->
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+						<button type="submit" class="btn bg-gradient-primary text-white">Upload</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="EditRecord" tabindex="-1" role="dialog" aria-labelledby="EditRecordLabel"
+		aria-hidden="true">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="EditRecordLabel">Edit record</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<form role="form" id="edit_form">
+					<div class="modal-body">
+						<input type="password" class="d-none" name="record_id" id="record_id">
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group mb-2">
+									<label class="form-control-label" for="edt_title">File title</label>
+									<input type="text" class="form-control text-dark record-input" name="edt_title"
+										id="edt_title" maxlength="190" title="For easy search later"
+										placeholder="Title...">
+									<small class="edt_title"></small>
+								</div>
+								<div class="form-group mb-2">
+									<label class="form-control-label" for="edt_description">Description</label>
+									<textarea class="form-control text-dark record-input" name="edt_description"
+										id="edt_description" rows="5"
+										placeholder="Write file description..."></textarea>
+								</div>
+							</div>
+							<!-- <div class="col-md-6"></div> -->
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+						<button type="submit" class="btn bg-gradient-primary text-white">Upload</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="ArchiveFile" tabindex="-1" role="dialog" aria-labelledby="ArchiveFileLabel"
+		aria-hidden="true">
+		<div class="modal-dialog " role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="ArchiveFileLabel">Archive selected file/s</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<form role="form" id="archival_form">
+					<input type="password" class="d-none author" name="archive_author" id="archival_author">
+					<div class="modal-body">
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group mb-2">
+									<label class="form-control-label" for="archive_name">Archive name</label>
+									<input type="text" class="form-control text-dark" name="archive_name"
+										id="archive_name" maxlength="190" placeholder="Write name..." value="test">
+									<small class="archive_name"></small>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+						<button type="submit" class="btn bg-gradient-primary text-white">Process</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="ReadMore" tabindex="-1" role="dialog" aria-labelledby="ReadMoreLabel"
+		aria-hidden="true">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="ReadMoreLabel"></h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+
+				</div>
+
+				<div class="modal-body"></div>
+
+				<div class="modal-footer">
+					<button type="button" class="btn btn-sm btn-secondary text-purple edit_delete edit_record"
+						title="Edit title/desciprtion..." data-dismiss="modal">
+						<i class="fa fa-edit" aria-hidden="true"></i>
+					</button>
+					<button type="button" class="btn btn-sm btn-secondary text-danger edit_delete delete_record"
+						title="Delete record..." data-dismiss="modal">
+						<i class="fa fa-trash" aria-hidden="true"></i>
+					</button>
+					<a class="btn btn-link text-blue ml-auto mt-2 download_btn" title="Download file...">
+						<i class="fas fa-cloud-download-alt fa-lg"></i>
+					</a>
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Scripts -->
+	<?php include './components/layout/Scripts.php'; ?>
+	<script src="./assets/js/records.js"></script>
 </body>
 
 </html>

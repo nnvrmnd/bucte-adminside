@@ -92,6 +92,9 @@
 <script src="./dist/vendor/jquery.scrollbar/jquery.scrollbar.min.js"></script>
 <script src="./dist/vendor/jquery-scroll-lock/dist/jquery-scrollLock.min.js"></script>
 <!-- Optional JS -->
+<script src="./dist/vendor/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+<script src="./dist/vendor/moment.min.js"></script>
+<script src="./dist/vendor/bootstrap-datetimepicker.js"></script>
 <script src="./dist/vendor/chart.js/dist/Chart.min.js"></script>
 <script src="./dist/vendor/chart.js/dist/Chart.extension.js"></script>
 <script src="./dist/vendor/jvectormap-next/jquery-jvectormap.min.js"></script>

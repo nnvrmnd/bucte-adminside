@@ -2,6 +2,7 @@
 
 function SeshStart($where)
 {
+    date_default_timezone_set('Asia/Manila');
     session_start();
 
     if (!isset($_SESSION['who']) && isset($_COOKIE['who']) && isset($_COOKIE['token'])) {

@@ -18,14 +18,14 @@ SeshStart('page');
     <!-- Topnav -->
     <?php include './components/layout/Topnav.php'; ?>
     <!-- Header -->
-    <div class="header bg-primary pb-6">
+    <div class="header pb-6">
       <div class="container-fluid">
         <div class="header-body">
           <div class="row align-items-center py-4">
             <div class="col-lg-6 col-7">
-              <h6 class="h2 text-white d-inline-block mb-0">E-LET Reviewer</h6>
+              <h6 class="h2 d-inline-block mb-0">E-LET Reviewer</h6>
               <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
-                <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
+                <ol class="breadcrumb breadcrumb-links">
                   <li class="breadcrumb-item"><a href="javascript:void(0)"><i class="fas fa-home"></i></a></li>
                   <li class="breadcrumb-item active" aria-current="page">E-LET Reviewer</li>
                 </ol>
@@ -42,7 +42,7 @@ SeshStart('page');
     <!-- Page content -->
     <div class="container-fluid mt--6">
       <div class="row card-wrapper reviewers-container">
-        <!-- MAIN CONTENT HERE -->
+					<!-- MAIN CONTENT HERE -->
 
 
 
@@ -205,6 +205,26 @@ SeshStart('page');
       </div>
     </div>
   </div>
+
+	<div class="modal fade" id="ReadMore" tabindex="-1" role="dialog" aria-labelledby="ReadMoreLabel"
+		aria-hidden="true">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="ReadMoreLabel"></h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+
+				<div class="modal-body"></div>
+
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
 
   <!-- Scripts -->
   <?php include './components/layout/Scripts.php'; ?>

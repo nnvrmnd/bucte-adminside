@@ -26,8 +26,8 @@ tr.shown td.details-control {
 img.card-img-top {
   width: 50%;
 }
-p.card-title, img.card-img-top, .pointer-here {
-  cursor: pointer;
+.pointer-here {
+  cursor: pointer !important;
 }
 
 .card-shadow {

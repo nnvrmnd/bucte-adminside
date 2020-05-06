@@ -27,6 +27,7 @@ if (isset($_POST['who'])) {
     }
 }
 
+/* Fetch id of username */
 if (isset($_POST['username'])) {
     require 'db.hndlr.php';
 
@@ -46,6 +47,7 @@ if (isset($_POST['username'])) {
     }
 }
 
+/* Fetch name of id */
 if (isset($_POST['userid'])) {
     require 'db.hndlr.php';
 

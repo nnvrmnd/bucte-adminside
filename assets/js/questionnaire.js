@@ -29,7 +29,7 @@ function RenderList() {
             }
 
             $('.items-container').append(`
-              <div class="col-lg-10 item-thumb">
+              <div class="col-lg-12">
                 <div class="card card-shadow">
                     <div class="card-body pb-1">
                       <button type="button" class="btn btn-sm btn-secondary text-danger float-right delete_item" data-target="${el.question_id}" title="Delete item...">
@@ -77,6 +77,8 @@ function RenderList() {
   );
 }
 
+// TODO: Add CKEditor to questions
+
 /* Triggers */
 $(function() {
   RenderList();
@@ -104,9 +106,11 @@ $(function() {
   /* On modal open/close */
   $('#AddItem, #UpdateItem')
     .on('shown.bs.modal', function() {
-      let author = AuthorId($('#whoiam').val());
-      $('input.author').val(author);
-      $('input.reviewer').val(sesh);
+      let formid = 'form#' + $(this).find('form').attr('id');
+
+      AuthorId(formid);
+
+      $(formid + ' [name="reviewer"]').val(sesh);
     })
     .on('hidden.bs.modal', function() {
       $('textarea.question, input.options').removeClass('is-invalid is-valid');

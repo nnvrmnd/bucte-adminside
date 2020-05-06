@@ -14,14 +14,9 @@ $(function() {
           $('[name="surname"]').val(el.surname);
           $('[name="email"]').val(el.email);
           $('[name="username"]').val(el.username);
-          $('#position').html(el.position);
-          if (el.suffix.length > 0) {
-            $('#name').html(
-              el.given + '&nbsp;' + el.surname + ',&nbsp;' + el.suffix
-            );
-          } else {
-            $('#name').html(el.given + '&nbsp;' + el.surname);
-          }
+					$('#position').html(el.position);
+
+					$('#name').html(el.given + '&nbsp;' + el.surname);
         } else {
           console.log('err: ');
         }
