@@ -47,10 +47,10 @@ function RenderList() {
 						<div class="card-body">
 							<div class="row">
 								<div class="col-md-4 col-lg-4 d-flex align-items-center justify-content-center">
-										<a href="./files/events/${
+										<a href="../files/events/${
 											el.image
 										}" class="fancybox" data-fancybox="events_gallery" data-caption="${el.title}">
-											<img alt="Image placeholder" src="./files/events/${
+											<img alt="Image placeholder" src="../files/events/${
 												el.image
 											}" class="img-fluid rounded" title="Click to view image">
 										</a>
@@ -451,8 +451,6 @@ $(function () {
 				$.each(form, function (key, input) {
 					form_data.append(input.name, input.value);
 				});
-
-				console.log(form)
 
 				$.ajax({
 					type: 'POST',
