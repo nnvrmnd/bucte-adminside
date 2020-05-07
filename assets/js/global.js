@@ -36,8 +36,11 @@ $(function () {
 		$('.E-learning').addClass('font-weight-bold active');
 	} else if (documenttitle.match(/\b(\w*Events\w*)\b/g)) {
 		$('.Events').addClass('font-weight-bold active');
-	} else if (documenttitle.match(/\b(\w*User-side\w*)\b/g)) {
-		$('.User-side').addClass('font-weight-bold active');
+	} else if (documenttitle.match(/\b(\w*Page\w*)\b/g)) {
+		$('.Pages')
+			.addClass('font-weight-bold active')
+			.attr('aria-expanded', 'true');
+		$('#Pages').addClass('show');
 	}
 });
 
