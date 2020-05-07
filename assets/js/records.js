@@ -126,7 +126,9 @@ $(function () {
 			let formid = 'form#' + $(this).find('form').attr('id');
 			$(formid + ' .form-control').removeClass('is-invalid is-valid');
 			$(formid).find('.cke_1').removeAttr('style');
-			$('small.select_file, small.title, small.description, small.archive_name').html('');
+			$(
+				'small.select_file, small.title, small.description, small.archive_name'
+			).html('');
 
 			// ClearCKE();
 		});
@@ -275,7 +277,7 @@ $(function () {
 
 		switch (false) {
 			case ValidateRequired('edit_form', 'edt_title'):
-				$('.modal').animate({ scrollTop: $('#edt_title').offset().top }, 500 );
+				$('.modal').animate({ scrollTop: $('#edt_title').offset().top }, 500);
 				break;
 
 			default:
@@ -418,7 +420,7 @@ $(function () {
 		e.preventDefault();
 
 		let form = $(this).serialize(),
-		checked = $('.records-container').find('.checkboxes:checked'),
+			checked = $('.records-container').find('.checkboxes:checked'),
 			checked_data = $.map(checked, function (el) {
 				return $(el).data('id');
 			}),
@@ -435,27 +437,34 @@ $(function () {
 					type: 'POST',
 					url: './assets/hndlr/Records.php',
 					data: form,
-					success: function (res) {
-						archive_json['archive_id'] = parseInt(res);
+					success: function (lid) {
+						try {
+							$.each(JSON.parse(lid), function (idx, el) {
+								archive_json['archive_id'] = parseInt(el.lid);
+							});
 
-						switch (res) {
-							case 'true':
-								SuccessModal('Updated record.', 0, 5000);
-							break;
+							$.ajax({
+								type: 'POST',
+								url: './assets/hndlr/Records.php',
+								data: { archive: JSON.stringify(archive_json) },
+								success: function (res) {
+									switch (res) {
+										case 'true':
+											SuccessModal('Archived files.', 0, 5000);
+											RenderList();
+											break;
 
-							default:
-								break;
+										default:
+											ErrorModal(0, 0, 5000);
+											console.log('ERR', res);
+											break;
+									}
+								}
+							});
+						} catch (e) {
+							ErrorModal(0, 0, 5000);
+							console.log('ERR', lid);
 						}
-
-						$.ajax({
-							type: 'POST',
-							url: './assets/hndlr/Records.php',
-							data: { archive: JSON.stringify(archive_json) },
-							success: function (res) {
-								console.log(res);
-							}
-						});
-
 					}
 				});
 				break;
