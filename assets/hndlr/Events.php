@@ -58,8 +58,9 @@ if (isset($_POST['title']) && isset($_POST['author'])) {
 
 	$extension = strtolower(pathinfo($_FILES['select_file']['name'], PATHINFO_EXTENSION));
 	// preg_replace('/[^A-Za-z0-9_.-]+/', '_', $title)
-	$attachment = 'event_' . date('Ymdhis') . '.' . $extension;
-	$destination = '../../files/events/' . basename($attachment);
+	$attachment = 'event_' . date('ymdhis') . '.' . $extension;
+	$rootDir = realpath('../../../files/events/') . '/';
+	$destination = $rootDir . basename($attachment);
 
 	$db->beginTransaction();
 	$stmnt = 'INSERT INTO events (u_id, title, image, start_date, end_date, reg_deadline, venue, description) VALUES (?, ?, ?, ?, ?, ?, ?, ?) ;';
@@ -137,8 +138,9 @@ if (isset($_POST['event_id']) && isset($_POST['edt_title'])) {
 
 	if (isset($_FILES['edt_select_file']['name'])) {
 		$extension = strtolower(pathinfo($_FILES['edt_select_file']['name'], PATHINFO_EXTENSION));
-		$attachment = 'event_' . date('Ymdhis') . '.' . $extension;
-		$destination = '../../files/events/' . basename($attachment);
+		$attachment = 'event_' . date('ymdhis') . '.' . $extension;
+		$rootDir = realpath('../../../files/events/') . '/';
+		$destination = $rootDir . basename($attachment);
 
 		$stmnt = 'UPDATE events SET title = ?, image = ?, start_date = ?, end_date = ?, reg_deadline = ?, venue = ?, description = ? WHERE evnt_id = ? ;';
 		$param = [$title, $attachment, $start, $end, $deadline, $venue, $description, $id];
@@ -180,7 +182,7 @@ if (isset($_POST['action']) && isset($_POST['id'])) {
 	require 'db.hndlr.php';
 
 	$event = $_POST['id'];
-	$dir = '../../files/events/';
+	$rootDir = realpath('../../../files/events/') . '/';
 
 	$stmnt = 'SELECT image FROM events WHERE evnt_id = ?';
 	$query = $db->prepare($stmnt);
@@ -191,7 +193,7 @@ if (isset($_POST['action']) && isset($_POST['id'])) {
 		foreach ($query as $data) {
 			$image = $data['image'];
 
-			if (unlink($dir . $image)) {
+			if (unlink($rootDir . $image)) {
 				$db->beginTransaction();
 				$stmnt = 'DELETE FROM events WHERE evnt_id = ? ;';
 				$query = $db->prepare($stmnt);
@@ -212,11 +214,10 @@ if (isset($_POST['action']) && isset($_POST['id'])) {
 	}
 }
 
-function DeleteCurrentImage($event)
-{
-	require 'db.hndlr.php';
+function DeleteCurrentImage($event) {
+	require './db.hndlr.php';
 
-	$dir = '../../files/events/';
+	$rootDir = realpath('../../../files/events/') . '/';
 
 	$stmnt = 'SELECT image FROM events WHERE evnt_id = ?';
 	$query = $db->prepare($stmnt);
@@ -226,10 +227,10 @@ function DeleteCurrentImage($event)
 	if ($count > 0) {
 		foreach ($query as $data) {
 			$image = $data['image'];
-			$image = $dir . $image;
+			$image = $rootDir . $image;
 
 			if (file_exists($image) === true) {
-				if (unlink($dir . $image)) {
+				if (unlink($image)) {
 					return true;
 				} else {
 					return false;

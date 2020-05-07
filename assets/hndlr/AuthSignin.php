@@ -44,7 +44,6 @@ if (isset($_POST['sudo_username']) && isset($_POST['sudo_password'])) {
 					session_start();
 					$_SESSION['who'] = [$usrnm, password_hash($token, PASSWORD_DEFAULT)];
 					if (isset($_POST['sudo_remember'])) {
-						/* CAUTION: Change cookie path on deployment (set/unset) */
 						setcookie("who", $usrnm, time() + 28800, "/bucte/");
 						setcookie("token", password_hash($token, PASSWORD_DEFAULT), time() + 28800, "/bucte/");
 					}

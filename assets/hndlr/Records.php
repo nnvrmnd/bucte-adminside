@@ -177,11 +177,15 @@ if (isset($_POST['archive_author']) && isset($_POST['archive_name'])) {
 	$query->execute($param);
 	$count = $query->rowCount();
 	if ($count > 0) {
-		echo $db->lastInsertId();
+		$id = $db->lastInsertId();
 		$db->commit();
+
+		$dbData = [];
+		$dbData[] = ['lid' => $id];
+		echo json_encode($dbData);
 	} else {
 		$db->rollBack();
-		echo 'false';
+		echo 'err:newzip';
 	}
 }
 
@@ -196,7 +200,7 @@ if (isset($_POST['archive'])) {
 	$archiveJson = json_decode($_POST['archive']);
 	$archive_id = $archiveJson->{'archive_id'};
 	$files_id = $archiveJson->{'files'};
-	$rootDir = realpath('../../files/records/');
+	$rootDir = realpath('../../files/records/') . '/';
 	$files = [];
 
 	foreach ($files_id as $file) {
@@ -209,11 +213,17 @@ if (isset($_POST['archive'])) {
 			foreach ($query as $data) {
 				$id = $data['doc_id'];
 				$attachment = $data['attachment'];
-				$path = DirSeparator($rootDir . '/' . $attachment);
+				$path = DirSeparator($rootDir . $attachment);
 				$files[] = ['archive_id' => $archive_id, 'doc_id' => $id, 'attachment' => $attachment, 'path' => $path];
 			}
 		}
 	}
+
+	// TODO: Archival
+	// - Get archive name for zip
+	// - Finish archival
+	// - Read zip file on modal
+	// - Add retrieval
 
 	// var_dump($files);
 	$db->beginTransaction();
@@ -227,7 +237,6 @@ if (isset($_POST['archive'])) {
 	}
 	$count = $query->rowCount();
 	if ($count > 0) {
-		$db->beginTransaction();
 		$stmnt = 'UPDATE document SET status = "archived" WHERE doc_id = ? ;';
 		$query = $db->prepare($stmnt);
 		foreach ($files as $file) {
@@ -238,19 +247,19 @@ if (isset($_POST['archive'])) {
 		}
 		$count = $query->rowCount();
 		if ($count > 0) {
-			$db->rollBack();
+			$db->commit();
 			echo 'true';
 		} else {
 			$db->rollBack();
-			echo 'false';
+			echo 'err:updatedoc';
 		}
 	} else {
 		$db->rollBack();
-		echo 'false';
+		echo 'err:archivedoc';
 	}
 
-	/*
-		$zip = new ZipArchive;
+
+		/* $zip = new ZipArchive;
 		$archiveName = $rootDir . '/' . $title . '.zip';
 		$ctrl = true;
 		if ($zip->open($archiveName, ZipArchive::CREATE) === true) {
@@ -278,13 +287,6 @@ if (isset($_POST['archive'])) {
 			}
 			$zip->close(); */
 
-		/* echo ($ctrl === true) ? 'true' : 'false';
-
-
-
-	} else {
-		echo 'err:archive';
-	} */
 }
 
 function ArchivedDoc($id) {
