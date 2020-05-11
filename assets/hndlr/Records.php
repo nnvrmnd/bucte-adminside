@@ -163,15 +163,34 @@ if (isset($_POST['action']) && isset($_POST['id'])) {
 	}
 }
 
-/* Create zip file */
+/* Validate zip name */
+if (isset($_POST['new_archivename'])) {
+	require './db.hndlr.php';
+
+	$archiveName = $_POST['new_archivename'];
+
+	$stmnt = 'SELECT zipname FROM archive WHERE BINARY zipname = ?;';
+	$query = $db->prepare($stmnt);
+	$param = [$archiveName];
+	$query->execute($param);
+	$count = $query->rowCount();
+	if ($count > 0) {
+		echo 'true';
+	} else {
+		echo 'false';
+	}
+}
+
+/* Create archive zipname record entry */
 if (isset($_POST['archive_author']) && isset($_POST['archive_name'])) {
 	require './db.hndlr.php';
 
 	$author = $_POST['archive_author'];
-	$filename = $_POST['archive_name'] . '.zip';
+	$filename = $_POST['archive_name'];
+	$filename = preg_replace('/[^A-Za-z0-9 _.-]+/', '_', $filename);
 
 	$db->beginTransaction();
-	$stmnt = 'INSERT INTO archive (u_id, filename) VALUES (?, ?) ;';
+	$stmnt = 'INSERT INTO archive (u_id, zipname) VALUES (?, ?) ;';
 	$query = $db->prepare($stmnt);
 	$param = [$author, $filename];
 	$query->execute($param);
@@ -185,7 +204,7 @@ if (isset($_POST['archive_author']) && isset($_POST['archive_name'])) {
 		echo json_encode($dbData);
 	} else {
 		$db->rollBack();
-		echo 'err:newzip';
+		echo 'err:newarchive';
 	}
 }
 
@@ -193,16 +212,85 @@ if (isset($_POST['archive_author']) && isset($_POST['archive_name'])) {
 if (isset($_POST['archive'])) {
 	require './db.hndlr.php';
 
-	function DirSeparator($path) {
-		return str_replace('/', DIRECTORY_SEPARATOR, $path);
+	/* Unsave archive zipname entry */
+	function RollbackZipname($id, $msg) {
+		require './db.hndlr.php';
+		$db->beginTransaction();
+		$stmnt = 'DELETE FROM archive WHERE archv_id = ? ;';
+		$query = $db->prepare($stmnt);
+		$param = [$id];
+		$query->execute($param);
+		$count = $query->rowCount();
+		if ($count > 0) {
+			$db->commit();
+			return $msg;
+		} else {
+			$db->rollBack();
+			return 'err:rollbackzipname';
+		}
+	}
+
+	/* Return new archive name */
+	function ArchiveName($id) {
+		require './db.hndlr.php';
+
+		$stmnt = 'SELECT zipname FROM archive WHERE archv_id = ? ;';
+		$query = $db->prepare($stmnt);
+		$param = [$id];
+		$query->execute($param);
+		$count = $query->rowCount();
+		if ($count > 0) {
+			foreach ($query as $data) {
+				return $data['zipname'];
+			}
+		}
+	}
+
+	/* Compress files passed */
+	function Zipper($files, $archiveName) {
+		$ctrl = false;
+		$rootDir = realpath('../../files/records/') . '/';
+		$archiveName = $rootDir . $archiveName . '.zip';
+
+		$zip = new ZipArchive;
+		if ($zip->open($archiveName, ZipArchive::CREATE) === true) {
+			foreach ($files as $file) {
+				$docid = $file['doc_id'];
+				$fileName = $file['attachment'];
+				$filePath = $file['path'];
+
+				if (file_exists($filePath)) {
+					$zip->addFile($filePath, $fileName);
+					$ctrl = true;
+				} else {
+					$zip->unchangeAll();
+					break;
+				}
+			}
+			$zip->close();
+
+			if ($ctrl === true) {
+				foreach ($files as $file) {
+					$filePath = $file['path'];
+					/* CAUTION: Enable 'unlink' on production */
+					unlink($filePath);
+				}
+			}
+
+
+		}
+
+		return $ctrl;
 	}
 
 	$archiveJson = json_decode($_POST['archive']);
 	$archive_id = $archiveJson->{'archive_id'};
+	$archive_name = ArchiveName($archive_id);
 	$files_id = $archiveJson->{'files'};
 	$rootDir = realpath('../../files/records/') . '/';
 	$files = [];
 
+	/* Put data in an array '$files" */
 	foreach ($files_id as $file) {
 		$stmnt = 'SELECT * FROM document WHERE doc_id = ?;';
 		$query = $db->prepare($stmnt);
@@ -213,19 +301,21 @@ if (isset($_POST['archive'])) {
 			foreach ($query as $data) {
 				$id = $data['doc_id'];
 				$attachment = $data['attachment'];
-				$path = DirSeparator($rootDir . $attachment);
-				$files[] = ['archive_id' => $archive_id, 'doc_id' => $id, 'attachment' => $attachment, 'path' => $path];
+				$path = str_replace('/', DIRECTORY_SEPARATOR, $rootDir . $attachment);
+				$files[] = [
+					'archive_id' => $archive_id,
+					'doc_id' => $id,
+					'attachment' => $attachment,
+					'path' => $path
+				];
 			}
 		}
 	}
 
 	// TODO: Archival
-	// - Get archive name for zip
-	// - Finish archival
 	// - Read zip file on modal
 	// - Add retrieval
 
-	// var_dump($files);
 	$db->beginTransaction();
 	$stmnt = 'INSERT INTO archived_documents (archv_id, doc_id) VALUES (?, ?) ;';
 	$query = $db->prepare($stmnt);
@@ -240,68 +330,25 @@ if (isset($_POST['archive'])) {
 		$stmnt = 'UPDATE document SET status = "archived" WHERE doc_id = ? ;';
 		$query = $db->prepare($stmnt);
 		foreach ($files as $file) {
-			$archiveid = $file['archive_id'];
 			$docid = $file['doc_id'];
 			$param = [$docid];
 			$query->execute($param);
 		}
 		$count = $query->rowCount();
 		if ($count > 0) {
-			$db->commit();
-			echo 'true';
+			if (Zipper($files, $archive_name) === true) {
+				$db->commit();
+				echo 'true';
+			} else {
+				$db->rollBack();
+				echo RollbackZipname($archive_id, 'err:zipper');
+			}
 		} else {
 			$db->rollBack();
-			echo 'err:updatedoc';
+			echo RollbackZipname($archive_id, 'err:docstate');
 		}
 	} else {
 		$db->rollBack();
-		echo 'err:archivedoc';
-	}
-
-
-		/* $zip = new ZipArchive;
-		$archiveName = $rootDir . '/' . $title . '.zip';
-		$ctrl = true;
-		if ($zip->open($archiveName, ZipArchive::CREATE) === true) {
-			// - zip with their names from path
-			foreach ($files as $file) {
-				$docid = $file['doc_id'];
-				$fileAttachment = $file['attachment'];
-				$filePath = $file['path'];
-
-				if (file_exists($filePath)) {
-					$zip->addFile($filePath, $fileAttachment);
-
-					if (ArchivedDoc($docid) === true) {
-						// unlink($filePath);
-					} else {
-						$zip->unchangeAll();
-						$ctrl = false;
-						break;
-					}
-				} else {
-					$zip->unchangeAll();
-					$ctrl = false;
-					break;
-				}
-			}
-			$zip->close(); */
-
-}
-
-function ArchivedDoc($id) {
-	require './db.hndlr.php';
-	$db->beginTransaction();
-	$stmnt = 'UPDATE document SET status = "archived" WHERE doc_id = ? ;';
-	$query = $db->prepare($stmnt);
-	$param = [$id];
-	$query->execute($param);
-	$count = $query->rowCount();
-	if ($count > 0) {
-		$db->rollBack();
-		return true;
-	} else {
-		$db->rollBack();
-		return false;
+		echo RollbackZipname($archive_id, 'err:archivedoc');
 	}
 }

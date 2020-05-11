@@ -220,7 +220,6 @@ $(function () {
 							case 'true':
 								SuccessModal('Uploaded new document.', 0, 5000);
 								RenderList();
-								console.log('true', res);
 								break;
 
 							default:
@@ -261,7 +260,6 @@ $(function () {
 								$(`#${formid} [name="edt_description"]`).val(el.description);
 							});
 						} else {
-							console.log('err:fetch', res);
 						}
 					}
 				);
@@ -290,7 +288,6 @@ $(function () {
 
 						default:
 							ErrorModal(0, 0, 5000);
-							console.log('ERR', res);
 							break;
 					}
 				});
@@ -394,6 +391,7 @@ $(function () {
 }); // ready function
 
 $(function () {
+	/* Show arhive button */
 	$('.records-container').on('click', '.record-card', function (e) {
 		let checkbox = $(this).find('.checkboxes'),
 			archive = () => {
@@ -412,10 +410,12 @@ $(function () {
 		}
 	});
 
+	/* Open archive name modal */
 	$('#archive_btn').click(function (e) {
 		$('#ArchiveFile').modal('show');
 	});
 
+	/* Create archive */
 	$('#archival_form').submit(function (e) {
 		e.preventDefault();
 
@@ -428,49 +428,113 @@ $(function () {
 
 		archive_json['files'] = checked_data;
 
-		switch (false) {
-			case ValidateRequired('archival_form', 'archive_name'):
-				break;
+		function Zipname(form, archiveJson) {
+			return new Promise((resolve, reject) => {
+				$.post('./assets/hndlr/Records.php', form, function (lid) {
+					try {
+						$.each(JSON.parse(lid), function (idx, el) {
+							archiveJson['archive_id'] = parseInt(el.lid);
+						});
 
-			default:
-				$.ajax({
-					type: 'POST',
-					url: './assets/hndlr/Records.php',
-					data: form,
-					success: function (lid) {
-						try {
-							$.each(JSON.parse(lid), function (idx, el) {
-								archive_json['archive_id'] = parseInt(el.lid);
-							});
-
-							$.ajax({
-								type: 'POST',
-								url: './assets/hndlr/Records.php',
-								data: { archive: JSON.stringify(archive_json) },
-								success: function (res) {
-									switch (res) {
-										case 'true':
-											SuccessModal('Archived files.', 0, 5000);
-											RenderList();
-											break;
-
-										default:
-											ErrorModal(0, 0, 5000);
-											console.log('ERR', res);
-											break;
-									}
-								}
-							});
-						} catch (e) {
-							ErrorModal(0, 0, 5000);
-							console.log('ERR', lid);
-						}
+						resolve(archiveJson);
+					} catch (e) {
+						ErrorModal(0, 0, 5000);
+						reject({
+							where: 'Zipname',
+							message: lid
+						});
 					}
 				});
-				break;
+			});
 		}
+
+		function CreateZip(archiveJson) {
+			return new Promise((resolve, reject) => {
+				$.post(
+					'./assets/hndlr/Records.php',
+					{ archive: JSON.stringify(archiveJson) },
+					function (res) {
+						if (res === 'true') {
+							SuccessModal('Archived files.', 0, 5000);
+							RenderList();
+							resolve(res);
+						} else {
+							ErrorModal(0, 0, 5000);
+							RenderList();
+							reject({
+								where: 'CreateZip',
+								message: res
+							});
+						}
+					}
+				);
+			});
+		}
+
+		async function Process() {
+			try {
+				const validationRes = await ValidateZipname(
+					'archival_form',
+					'archive_name'
+				);
+
+				const zipnameRes = await Zipname(form, archive_json);
+
+				const createzipRes = await CreateZip(zipnameRes);
+
+			} catch (e) {
+				console.error(`${e.where}\n${e.message}`);
+			}
+		}
+
+		Process();
 	});
 });
+
+function ValidateZipname(form_id, name) {
+	let empty = /^\s*$/,
+		formid = `form#${form_id} `,
+		name_attr = formid + `[name="${name}"]`,
+		input = $(name_attr).val();
+
+	return new Promise((resolve, reject) => {
+		if (!input.match(empty)) {
+			$.post(
+				'./assets/hndlr/Records.php',
+				{ new_archivename: input },
+				function (res) {
+					if (res === 'false') {
+						$(name_attr).removeClass('is-invalid');
+						$('small.' + name)
+							.removeClass('text-danger')
+							.html('');
+						resolve(true);
+					} else if (res === 'true') {
+						$(name_attr).addClass('is-invalid');
+						$('small.' + name)
+							.removeClass('text-success')
+							.addClass('text-danger')
+							.html(`An archive alreay contain the name '${input}.'`);
+						resolve(false);
+					} else {
+						ErrorModal(0, 0, 5000);
+						// console.error('ERR', res);
+						reject({
+							where: 'ValidateZipname',
+							message: res
+						});
+					}
+				}
+			);
+		} else {
+			$(name_attr).addClass('is-invalid');
+			$('small.' + name)
+				.removeClass('text-success')
+				.addClass('text-danger')
+				.html('Field required.');
+		}
+	});
+}
 
 function ValidateAttachment(form_id, name, dummy_name) {
 	let ctrl = true,
