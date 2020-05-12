@@ -22,16 +22,16 @@ function RenderList() {
 	}
 
 	$.post(
-		'./assets/hndlr/Records.php',
+		'./assets/hndlr/Documents.php',
 		{
-			fetchrecords: 'all'
+			fetchdocuments: 'all'
 		},
 		function (res) {
-			$('.records-container').html('');
+			$('.documents-container').html('');
 
 			if (!res.match(/\b(\w*err:fetch\w*)\b/g)) {
 				$.each(JSON.parse(res), function (idx, el) {
-					let dir = el.doctype == 'record' ? 'records' : el.doctype,
+					let dir = el.doctype == 'document' ? 'documents' : el.doctype,
 						attachment_title = el.title,
 						attachment_format = el.attachment,
 						attachment_filename;
@@ -40,8 +40,8 @@ function RenderList() {
 					attachment_format = attachment_format.split('.');
 					attachment_filename = `${attachment_title}.${attachment_format[1]}`;
 
-					$('.records-container').append(`
-					<div class="col-sm-5 col-md-4 col-lg-3 record-card">
+					$('.documents-container').append(`
+					<div class="col-sm-6 col-md-4 col-lg-3 document-card">
 						<div class="card card-shadow">
 
 							<div class="custom-control custom-checkbox m-2">
@@ -111,7 +111,7 @@ function RenderList() {
 $(function () {
 	RenderList();
 
-	$('.records-container').on('click', '.download_file', function (e) {
+	$('.documents-container').on('click', '.download_file', function (e) {
 		e.stopPropagation();
 	});
 
@@ -211,7 +211,7 @@ $(function () {
 
 				$.ajax({
 					type: 'POST',
-					url: './assets/hndlr/Records.php',
+					url: './assets/hndlr/Documents.php',
 					data: form_data,
 					contentType: false,
 					processData: false,
@@ -239,34 +239,32 @@ $(function () {
 	});
 
 	/* Fetch event for edit modal */
-	$('.edit_record').click(function (e) {
-		let record = $(this).attr('data-target');
+	$('.edit_document').click(function (e) {
+		let document = $(this).attr('data-target');
 
-		$('#EditRecord')
-			.modal('show')
-			.on('shown.bs.modal', function () {
-				let formid = $(this).find('form').attr('id');
-
-				$.post(
-					'./assets/hndlr/Records.php',
-					{
-						record
-					},
-					function (res) {
-						if (res != 'err:fetch') {
-							$.each(JSON.parse(res), function (idx, el) {
-								$(`#${formid} [name="record_id"]`).val(el.record_id);
-								$(`#${formid} [name="edt_title"]`).val(el.title);
-								$(`#${formid} [name="edt_description"]`).val(el.description);
-							});
-						} else {
-						}
-					}
-				);
-			});
+		$.ajax({
+			type: 'POST',
+			url: './assets/hndlr/Documents.php',
+			data: { document },
+			success: function (res) {
+				if (res != 'err:fetch') {
+					$.each(JSON.parse(res), function (idx, el) {
+						$(`#edit_form [name="document_id"]`).val(el.document_id);
+						$(`#edit_form [name="edt_title"]`).val(el.title);
+						$(`#edit_form [name="edt_description"]`).val(el.description);
+					});
+				} else {
+					ErrorModal(0, 0, 5000)
+					console.log('ERR', res)
+				}
+			},
+			complete: function() {
+				$('#EditDocument').modal('show')
+			}
+		});
 	});
 
-	/* Edit record */
+	/* Edit document */
 	$('#edit_form').submit(function (e) {
 		e.preventDefault();
 
@@ -279,10 +277,10 @@ $(function () {
 				break;
 
 			default:
-				$.post('./assets/hndlr/Records.php', form, function (res) {
+				$.post('./assets/hndlr/Documents.php', form, function (res) {
 					switch (res) {
 						case 'true':
-							SuccessModal('Updated record.', 0, 5000);
+							SuccessModal('Updated document.', 0, 5000);
 							RenderList();
 							break;
 
@@ -295,35 +293,35 @@ $(function () {
 		}
 	});
 
-	/* Delete record */
-	$('.delete_record').click(function (e) {
+	/* Delete document */
+	$('.delete_document').click(function (e) {
 		e.preventDefault();
 
 		let del = $(this).attr('data-target');
 		PromptModal(
-			'Are you deleting this record?',
+			'Are you deleting this document?',
 			0,
 			10000,
-			'delete_record',
+			'delete_document',
 			del
 		);
-		PromptConfirm('Record deleted.', './assets/hndlr/Records.php');
+		PromptConfirm('Document deleted.', './assets/hndlr/Documents.php');
 	});
 
 	/* Read more */
-	$('.records-container').on('click', '.readmore', function (e) {
+	$('.documents-container').on('click', '.readmore', function (e) {
 		e.preventDefault();
 
 		let id = $(this).attr('data-target');
 
 		if (!e.ctrlKey) {
 			e.stopPropagation();
-			$.post(
-				'./assets/hndlr/Records.php',
-				{
-					record: id
-				},
-				function (res) {
+
+			$.ajax({
+				type: 'POST',
+				url: './assets/hndlr/Documents.php',
+				data: { document: id },
+				success: function (res) {
 					if (res != 'err:fetch') {
 						let id,
 							title,
@@ -335,26 +333,22 @@ $(function () {
 							attachment_filename;
 
 						$.each(JSON.parse(res), function (idx, el) {
-							id = el.record_id;
+							id = el.document_id;
 							title = el.title;
-							dir = el.doctype == 'record' ? 'records' : el.doctype;
+							dir = el.doctype == 'document' ? 'documents' : el.doctype;
 							attachment = el.attachment;
 							attachment_title = el.title;
 							attachment_format = el.attachment;
 							description = el.description;
 						});
 
-						attachment_title = attachment_title.replace(
-							/[^A-Za-z0-9_.-]/g,
-							'_'
-						);
+						attachment_title = attachment_title.replace(/[^A-Za-z0-9_.-]/g, '_');
 						attachment_format = attachment_format.split('.');
 						attachment_filename = `${attachment_title}.${attachment_format[1]}`;
 						description = !description.match(/^\s*$/)
 							? description.replace(/&nbsp;/g, ' ')
 							: '<p><i>No description...</i></p>';
 
-						$('#ReadMore').modal('show');
 
 						$('#ReadMore')
 							.on('shown.bs.modal', function () {
@@ -382,22 +376,25 @@ $(function () {
 									.removeAttr('download');
 							});
 					} else {
-						console.log(res);
+						console.log('ERR', res);
 					}
+				},
+				complete: function () {
+					$('#ReadMore').modal('show');
 				}
-			);
+			});
 		}
 	});
 }); // ready function
 
 $(function () {
-	/* Show arhive button */
-	$('.records-container').on('click', '.record-card', function (e) {
+	/* Show arhive & delete button */
+	$('.documents-container').on('click', '.document-card', function (e) {
 		let checkbox = $(this).find('.checkboxes'),
 			archive = () => {
 				$('.checkboxes:checked').length > 0
-					? $('#archive_btn').removeClass('d-none')
-					: $('#archive_btn').addClass('d-none');
+					? $('#archive_btn, #delete_btn').removeClass('d-none')
+					: $('#archive_btn, #delete_btn').addClass('d-none');
 			};
 
 		if (e.ctrlKey) {
@@ -411,6 +408,33 @@ $(function () {
 	});
 
 	/* Open archive name modal */
+	$('#delete_btn').click(function (e) {
+		let checked = $('.documents-container').find('.checkboxes:checked'),
+			checked_data = $.map(checked, function (el) {
+				return $(el).data('id');
+			});
+
+		PromptModal('Delete selected file/s?', 0, 5000, 'delete_selected', 1);
+
+		$('#prompt_form #yes_prompt').click(function (e) {
+			$.post(
+				'./assets/hndlr/Documents.php',
+				{ delete: JSON.stringify(checked_data) },
+				function (res) {
+					if (res === 'true') {
+						SuccessModal('Archived files.', 0, 5000);
+						RenderList();
+					} else {
+						console.log('ERR', res)
+						ErrorModal(0, 0, 5000);
+						RenderList();
+					}
+				}
+			);
+		});
+	});
+
+	/* Open archive name modal */
 	$('#archive_btn').click(function (e) {
 		$('#ArchiveFile').modal('show');
 	});
@@ -420,7 +444,7 @@ $(function () {
 		e.preventDefault();
 
 		let form = $(this).serialize(),
-			checked = $('.records-container').find('.checkboxes:checked'),
+			checked = $('.documents-container').find('.checkboxes:checked'),
 			checked_data = $.map(checked, function (el) {
 				return $(el).data('id');
 			}),
@@ -430,7 +454,7 @@ $(function () {
 
 		function Zipname(form, archiveJson) {
 			return new Promise((resolve, reject) => {
-				$.post('./assets/hndlr/Records.php', form, function (lid) {
+				$.post('./assets/hndlr/Documents.php', form, function (lid) {
 					try {
 						$.each(JSON.parse(lid), function (idx, el) {
 							archiveJson['archive_id'] = parseInt(el.lid);
@@ -451,11 +475,12 @@ $(function () {
 		function CreateZip(archiveJson) {
 			return new Promise((resolve, reject) => {
 				$.post(
-					'./assets/hndlr/Records.php',
+					'./assets/hndlr/Documents.php',
 					{ archive: JSON.stringify(archiveJson) },
 					function (res) {
 						if (res === 'true') {
 							SuccessModal('Archived files.', 0, 5000);
+							$('#archive_btn, #delete_btn').addClass('d-none');
 							RenderList();
 							resolve(res);
 						} else {
@@ -477,11 +502,13 @@ $(function () {
 					'archival_form',
 					'archive_name'
 				);
+				if (validationRes === false) {
+					return;
+				}
 
 				const zipnameRes = await Zipname(form, archive_json);
 
 				const createzipRes = await CreateZip(zipnameRes);
-
 			} catch (e) {
 				console.error(`${e.where}\n${e.message}`);
 			}
@@ -489,6 +516,7 @@ $(function () {
 
 		Process();
 	});
+
 });
 
 function ValidateZipname(form_id, name) {
@@ -500,7 +528,7 @@ function ValidateZipname(form_id, name) {
 	return new Promise((resolve, reject) => {
 		if (!input.match(empty)) {
 			$.post(
-				'./assets/hndlr/Records.php',
+				'./assets/hndlr/Documents.php',
 				{ new_archivename: input },
 				function (res) {
 					if (res === 'false') {

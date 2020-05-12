@@ -1,7 +1,7 @@
 <?php
 
 /* Fetch for render */
-if (isset($_POST['fetchrecords'])) {
+if (isset($_POST['fetchdocuments'])) {
 	require 'db.hndlr.php';
 
 	$stmnt = 'SELECT * FROM document WHERE status = "present" ;';
@@ -32,7 +32,7 @@ if (isset($_POST['fetchrecords'])) {
 	}
 }
 
-/* Add new record */
+/* Add new document */
 if (isset($_POST['title']) && isset($_POST['author'])) {
 	require 'db.hndlr.php';
 	require 'Global.php';
@@ -45,12 +45,12 @@ if (isset($_POST['title']) && isset($_POST['author'])) {
 	$extension = strtolower(pathinfo($_FILES['select_file']['name'], PATHINFO_EXTENSION));
 	$attachment = preg_replace('/[^A-Za-z0-9_.-]+/', '_', ucwords($title)) . '_' . date('ymd_his') . '.' . $extension;
 	$folder = date('Y-m');
-	$destination = '../../files/records/' . basename($attachment);
+	$destination = '../../files/documents/' . basename($attachment);
 
 	$db->beginTransaction();
 	$stmnt = 'INSERT INTO document (u_id, title, description, attachment, doc_type, file_format) VALUES (?, ?, ?, ?, ?, ?) ;';
 	$query = $db->prepare($stmnt);
-	$param = [$author, $title, $description, $attachment, 'record', $file_format];
+	$param = [$author, $title, $description, $attachment, 'document', $file_format];
 	$query->execute($param);
 	$count = $query->rowCount();
 	if ($count > 0) {
@@ -67,15 +67,15 @@ if (isset($_POST['title']) && isset($_POST['author'])) {
 	}
 }
 
-/* Fetch 1 record to update */
-if (isset($_POST['record'])) {
+/* Fetch 1 document to update */
+if (isset($_POST['document'])) {
 	require 'db.hndlr.php';
 
-	$record = $_POST['record'];
+	$document = $_POST['document'];
 
 	$stmnt = 'SELECT * FROM document WHERE doc_id = ? ;';
 	$query = $db->prepare($stmnt);
-	$param = [$record];
+	$param = [$document];
 	$query->execute($param);
 	$count = $query->rowCount();
 	if ($count <= 0) {
@@ -84,25 +84,25 @@ if (isset($_POST['record'])) {
 	} elseif ($count > 0) {
 		$dbData = [];
 		foreach ($query as $data) {
-			$record_id = $data['doc_id'];
+			$document_id = $data['doc_id'];
 			$title = $data['title'];
 			$attachment = $data['attachment'];
 			$doctype = $data['doc_type'];
 			$format = $data['file_format'];
 			$description = $data['description'];
 
-			$dbData[] = ['record_id' => $record_id, 'title' => $title, 'attachment' => $attachment, 'doctype' => $doctype, 'format' => $format, 'description' => $description];
+			$dbData[] = ['document_id' => $document_id, 'title' => $title, 'attachment' => $attachment, 'doctype' => $doctype, 'format' => $format, 'description' => $description];
 		}
 		$arrObject = json_encode($dbData);
 		echo $arrObject;
 	}
 }
 
-/* Update record */
-if (isset($_POST['record_id']) && isset($_POST['edt_title'])) {
+/* Update document */
+if (isset($_POST['document_id']) && isset($_POST['edt_title'])) {
 	require 'db.hndlr.php';
 
-	$id = $_POST['record_id'];
+	$id = $_POST['document_id'];
 	$title = $_POST['edt_title'];
 	$description = $_POST['edt_description'];
 
@@ -121,16 +121,16 @@ if (isset($_POST['record_id']) && isset($_POST['edt_title'])) {
 	}
 }
 
-/* Delete record */
+/* Delete 1 document */
 if (isset($_POST['action']) && isset($_POST['id'])) {
 	require 'db.hndlr.php';
 
-	$record = $_POST['id'];
-	$dir = '../../files/records/';
+	$document = $_POST['id'];
+	$dir = '../../files/documents/';
 
 	$stmnt = 'SELECT attachment FROM document WHERE doc_id = ?';
 	$query = $db->prepare($stmnt);
-	$param = [$record];
+	$param = [$document];
 	$query->execute($param);
 	$count = $query->rowCount();
 	if ($count > 0) {
@@ -143,7 +143,7 @@ if (isset($_POST['action']) && isset($_POST['id'])) {
 					$db->beginTransaction();
 					$stmnt = 'DELETE FROM document WHERE doc_id = ? ;';
 					$query = $db->prepare($stmnt);
-					$param = [$record];
+					$param = [$document];
 					$query->execute($param);
 					$count = $query->rowCount();
 					if ($count > 0) {
@@ -163,7 +163,59 @@ if (isset($_POST['action']) && isset($_POST['id'])) {
 	}
 }
 
-/* Validate zip name */
+/* Delete selected files */
+if (isset($_POST['delete'])) {
+	require './db.hndlr.php';
+
+	$deletefiles = json_decode($_POST['delete']);
+	$rootDir = realpath('../../files/documents/') . '/';
+	$files = [];
+
+	$stmnt = 'SELECT * FROM document WHERE doc_id = ?;';
+	$query = $db->prepare($stmnt);
+	foreach ($deletefiles as $file) {
+		$param = [$file];
+		$query->execute($param);
+		$count = $query->rowCount();
+		if ($count > 0) {
+			foreach ($query as $data) {
+				$id = $data['doc_id'];
+				$attachment = $data['attachment'];
+				$path = str_replace('/', DIRECTORY_SEPARATOR, $rootDir . $attachment);
+				$files[] = [
+					'doc_id' => $id,
+					'attachment' => $attachment,
+					'path' => $path
+				];
+			}
+		}
+	}
+
+	$db->beginTransaction();
+	$stmnt = "DELETE FROM document WHERE doc_id = ? ;";
+	$query = $db->prepare($stmnt);
+	foreach ($files as $file) {
+		$id = $file['doc_id'];
+		$param = [$id];
+		$query->execute($param);
+	}
+	$count = $query->rowCount();
+	if ($count > 0) {
+			$db->commit();
+			foreach ($files as $file) {
+				$attachment = $file['path'];
+				if (file_exists($attachment)) {
+					unlink($attachment);
+				}
+			}
+			echo 'true';
+		} else {
+			$db->rollBack();
+			echo 'false';
+		}
+}
+
+/* Validate new zip name -> validationRes */
 if (isset($_POST['new_archivename'])) {
 	require './db.hndlr.php';
 
@@ -181,7 +233,7 @@ if (isset($_POST['new_archivename'])) {
 	}
 }
 
-/* Create archive zipname record entry */
+/* Create archive document entry -> zipnameRes */
 if (isset($_POST['archive_author']) && isset($_POST['archive_name'])) {
 	require './db.hndlr.php';
 
@@ -208,7 +260,7 @@ if (isset($_POST['archive_author']) && isset($_POST['archive_name'])) {
 	}
 }
 
-/* Archive files */
+/* Archive selected files */
 if (isset($_POST['archive'])) {
 	require './db.hndlr.php';
 
@@ -249,7 +301,7 @@ if (isset($_POST['archive'])) {
 	/* Compress files passed */
 	function Zipper($files, $archiveName) {
 		$ctrl = false;
-		$rootDir = realpath('../../files/records/') . '/';
+		$rootDir = realpath('../../files/documents/') . '/';
 		$archiveName = $rootDir . $archiveName . '.zip';
 
 		$zip = new ZipArchive;
@@ -287,7 +339,7 @@ if (isset($_POST['archive'])) {
 	$archive_id = $archiveJson->{'archive_id'};
 	$archive_name = ArchiveName($archive_id);
 	$files_id = $archiveJson->{'files'};
-	$rootDir = realpath('../../files/records/') . '/';
+	$rootDir = realpath('../../files/documents/') . '/';
 	$files = [];
 
 	/* Put data in an array '$files" */
@@ -312,9 +364,10 @@ if (isset($_POST['archive'])) {
 		}
 	}
 
-	// TODO: Archival
+	// TODO: Retrieval
 	// - Read zip file on modal
 	// - Add retrieval
+	// - Show list from database, retrieve by doc name
 
 	$db->beginTransaction();
 	$stmnt = 'INSERT INTO archived_documents (archv_id, doc_id) VALUES (?, ?) ;';

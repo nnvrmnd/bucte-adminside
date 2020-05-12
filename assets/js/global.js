@@ -13,7 +13,7 @@ $(function () {
 		$.post(
 			'./assets/hndlr/AuthSignin.php',
 			{
-				sudo_exit: 'y',
+				sudo_exit: 'y'
 			},
 			function (res) {
 				location.reload();
@@ -40,7 +40,12 @@ $(function () {
 		$('.Pages')
 			.addClass('font-weight-bold active')
 			.attr('aria-expanded', 'true');
-		$('#Pages').addClass('show');
+		$('#Pages').addClass('show').find('#pages_home').addClass('active');
+	} else if (documenttitle.match(/\b(\w*Documents\w*)\b/g)) {
+		$('.Records')
+			.addClass('font-weight-bold active')
+			.attr('aria-expanded', 'true');
+		$('#Records').addClass('show').find('#records_documents').addClass('active');
 	}
 });
 
@@ -51,41 +56,39 @@ function WhoAmI(location) {
 	let regex = /^\s*$/,
 		whoiam = $('#whoiam').val();
 	if (!whoiam.match(regex) === true) {
-		$.post('./assets/hndlr/Global.php', { who: whoiam, },
-			function (res) {
-				let el = res != 'INTRUDER!' ? JSON.parse(res) : '';
-				switch (location) {
-					case 'topnav':
-						$('#topnav-who').html(`${el.given}`);
-						break;
+		$.post('./assets/hndlr/Global.php', { who: whoiam }, function (res) {
+			let el = res != 'INTRUDER!' ? JSON.parse(res) : '';
+			switch (location) {
+				case 'topnav':
+					$('#topnav-who').html(`${el.given}`);
+					break;
 
-					default:
-						break;
-				}
+				default:
+					break;
 			}
-		);
+		});
 	}
 }
 
 /* Fetch id of username */
 function AuthorId(form_id) {
-	let currentauthor = $('#whoiam').val()
+	let currentauthor = $('#whoiam').val();
 
-  $.ajax({
-    type: 'POST',
-    url: './assets/hndlr/Global.php',
-    data: { username: currentauthor },
-    success: function (res) {
-      let input_name = $('body').find(form_id + ' [name="author"]'),
+	$.ajax({
+		type: 'POST',
+		url: './assets/hndlr/Global.php',
+		data: { username: currentauthor },
+		success: function (res) {
+			let input_name = $('body').find(form_id + ' [name="author"]'),
 				input_class = $('body').find(form_id + ' .author');
-      $.each(input_name, function (idx, el) {
-        el.value = res;
-      });
-      $.each(input_class, function (idx, el) {
-        el.value = res;
-      });
-    },
-  });
+			$.each(input_name, function (idx, el) {
+				el.value = res;
+			});
+			$.each(input_class, function (idx, el) {
+				el.value = res;
+			});
+		}
+	});
 }
 
 /* Fetch name of id */
@@ -96,12 +99,12 @@ function AuthorName(id) {
 		type: 'POST',
 		url: './assets/hndlr/Global.php',
 		data: {
-			userid: id,
+			userid: id
 		},
 		async: false,
 		success: function (res) {
 			name = res;
-		},
+		}
 	});
 
 	return name;
@@ -179,21 +182,19 @@ function PromptConfirm(msg, url) {
 		let action = $(this).attr('data-action'),
 			id = $(this).attr('data-target');
 
-		$.post(url, { action, id },
-			function (res) {
-				switch (res) {
-					case 'true':
-						SuccessModal(msg, 0, 5000);
-						RenderList();
-						break;
+		$.post(url, { action, id }, function (res) {
+			switch (res) {
+				case 'true':
+					SuccessModal(msg, 0, 5000);
+					RenderList();
+					break;
 
-					default:
-						console.log('ERR', res)
-						ErrorModal(0, 0, 5000);
-						break;
-				}
+				default:
+					console.log('ERR', res);
+					ErrorModal(0, 0, 5000);
+					break;
 			}
-		);
+		});
 	});
 }
 
@@ -240,7 +241,7 @@ function unicode(name) {
 
 /* Filedownload */
 function fileDownload(dir, file) {
-	console.log(dir, file)
+	console.log(dir, file);
 	/* fetch(dir)
 		.then((resp) => resp.blob())
 		.then((blob) => {

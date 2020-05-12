@@ -6,7 +6,7 @@ SeshStart('page');
 <html>
 
 <head>
-	<title>Records Management | BUCTE Administration</title>
+	<title>Documents | BUCTE Administration</title>
 	<?php include './components/layout/Head.php'; ?>
 
 	<style>
@@ -28,22 +28,19 @@ SeshStart('page');
 			<div class="container-fluid">
 				<div class="header-body">
 					<div class="row align-items-center py-4">
-						<div class="col-lg-6 col-7">
-							<h6 class="h2 d-inline-block mb-0">Records</h6>
+						<div class="col-lg-6">
+							<h6 class="h2 d-inline-block mb-0">Documents</h6>
 							<nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
 								<ol class="breadcrumb breadcrumb-links">
-									<li class="breadcrumb-item"><a href="javascript:void(0)"><i
-												class="fas fa-home"></i></a></li>
-									<li class="breadcrumb-item active" aria-current="page">Records Management</li>
+									<li class="breadcrumb-item"><a href="javascript:void(0)"><i class="fas fa-home"></i></a></li>
+									<li class="breadcrumb-item active" aria-current="page">Records</li>
 								</ol>
 							</nav>
 						</div>
-						<div class="col-lg-6 col-5 text-right">
-							<button class="btn btn-sm btn-secondary text-warning d-none" id="archive_btn">Archive
-								file/s</button>
-							<button class="btn btn-sm btn-secondary text-primary" data-toggle="modal"
-								data-target="#UploadFile">Upload
-								file</button>
+						<div class="col-lg-6 text-right">
+							<button class="btn btn-sm btn-secondary text-danger d-none" id="delete_btn" title="Delete selected file/s...">Delete file/s</button>
+							<button class="btn btn-sm btn-secondary text-warning d-none" id="archive_btn" title="Archive selected file/s...">Archive file/s</button>
+							<button class="btn btn-sm btn-secondary text-primary" data-toggle="modal" data-target="#UploadFile" title="Upoad new file...">Upload file</button>
 						</div>
 					</div>
 				</div>
@@ -51,7 +48,7 @@ SeshStart('page');
 		</div>
 		<!-- Page content -->
 		<div class="container-fluid mt--6">
-			<div class="row card-wrapper records-container">
+			<div class="row card-wrapper documents-container">
 				<!-- MAIN CONTENT HERE -->
 
 
@@ -85,7 +82,7 @@ SeshStart('page');
 							<div class="col-md-12">
 								<div class="form-group mb-2">
 									<label class="form-control-label" for="title">File title</label>
-									<input type="text" class="form-control text-dark record-input" name="title"
+									<input type="text" class="form-control text-dark document-input" name="title"
 										id="title" maxlength="190" title="For easy search later" placeholder="Title...">
 									<small class="title"></small>
 								</div>
@@ -101,7 +98,7 @@ SeshStart('page');
 								</div>
 								<div class="form-group mb-2">
 									<label class="form-control-label" for="description">Description</label>
-									<textarea class="form-control text-dark record-input" name="description"
+									<textarea class="form-control text-dark document-input" name="description"
 										id="description" rows="5" placeholder="Write file description..."></textarea>
 								</div>
 							</div>
@@ -117,31 +114,31 @@ SeshStart('page');
 		</div>
 	</div>
 
-	<div class="modal fade" id="EditRecord" tabindex="-1" role="dialog" aria-labelledby="EditRecordLabel"
+	<div class="modal fade" id="EditDocument" tabindex="-1" role="dialog" aria-labelledby="EditDocumentLabel"
 		aria-hidden="true">
 		<div class="modal-dialog modal-lg" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h5 class="modal-title" id="EditRecordLabel">Edit record</h5>
+					<h5 class="modal-title" id="EditDocumentLabel">Edit document</h5>
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 						<span aria-hidden="true">&times;</span>
 					</button>
 				</div>
 				<form role="form" id="edit_form">
 					<div class="modal-body">
-						<input type="password" class="d-none" name="record_id" id="record_id">
+						<input type="password" class="d-none" name="document_id" id="document_id">
 						<div class="row">
 							<div class="col-md-12">
 								<div class="form-group mb-2">
 									<label class="form-control-label" for="edt_title">File title</label>
-									<input type="text" class="form-control text-dark record-input" name="edt_title"
+									<input type="text" class="form-control text-dark document-input" name="edt_title"
 										id="edt_title" maxlength="190" title="For easy search later"
 										placeholder="Title...">
 									<small class="edt_title"></small>
 								</div>
 								<div class="form-group mb-2">
 									<label class="form-control-label" for="edt_description">Description</label>
-									<textarea class="form-control text-dark record-input" name="edt_description"
+									<textarea class="form-control text-dark document-input" name="edt_description"
 										id="edt_description" rows="5"
 										placeholder="Write file description..."></textarea>
 								</div>
@@ -176,7 +173,7 @@ SeshStart('page');
 								<div class="form-group mb-2">
 									<label class="form-control-label" for="archive_name">Archive name</label>
 									<input type="text" class="form-control text-dark" name="archive_name"
-										id="archive_name" maxlength="190" placeholder="Write name..." value="test">
+										id="archive_name" maxlength="190" placeholder="Write name...">
 									<small class="archive_name"></small>
 								</div>
 							</div>
@@ -206,12 +203,11 @@ SeshStart('page');
 				<div class="modal-body"></div>
 
 				<div class="modal-footer">
-					<button type="button" class="btn btn-sm btn-secondary text-purple edit_delete edit_record"
-						title="Edit title/desciprtion..." data-dismiss="modal">
+					<button type="button" class="btn btn-sm btn-secondary text-purple edit_delete edit_document" title="Edit title/desciprtion..."  data-dismiss="modal">
 						<i class="fa fa-edit" aria-hidden="true"></i>
 					</button>
-					<button type="button" class="btn btn-sm btn-secondary text-danger edit_delete delete_record"
-						title="Delete record..." data-dismiss="modal">
+					<button type="button" class="btn btn-sm btn-secondary text-danger edit_delete delete_document"
+						title="Delete document..." data-dismiss="modal">
 						<i class="fa fa-trash" aria-hidden="true"></i>
 					</button>
 					<a class="btn btn-link text-blue ml-auto mt-2 download_btn" title="Download file...">
@@ -225,7 +221,7 @@ SeshStart('page');
 
 	<!-- Scripts -->
 	<?php include './components/layout/Scripts.php'; ?>
-	<script src="./assets/js/records.js"></script>
+	<script src="./assets/js/documents.js"></script>
 </body>
 
 </html>

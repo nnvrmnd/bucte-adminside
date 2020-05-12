@@ -47,7 +47,7 @@
 						<div class="collapse" id="Pages">
 							<ul class="nav nav-sm flex-column">
 								<li class="nav-item">
-									<a href="./homepage.php" class="nav-link">
+									<a href="./homepage.php" class="nav-link" id="pages_home">
 										<span class="sidenav-mini-icon"> HP </span>
 										<span class="sidenav-normal"> Home Page </span>
 									</a>
@@ -68,10 +68,25 @@
 						</a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link Records" href="./records.php">
+						<a class="nav-link Records" href="#Records" data-toggle="collapse" role="button"
+							aria-expanded="false" aria-controls="Records">
 							<i class="ni ni-archive-2 text-red"></i>
 							<span class="nav-link-text">Records</span>
 						</a>
+						<div class="collapse" id="Records">
+							<ul class="nav nav-sm flex-column">
+								<li class="nav-item">
+									<a href="./documents.php" class="nav-link" id="records_documents">
+										<span class="sidenav-mini-icon"> D </span>
+										<span class="sidenav-normal"> Documents </span>
+									</a>
+									<a href="./archives.php" class="nav-link">
+										<span class="sidenav-mini-icon"> A </span>
+										<span class="sidenav-normal"> Archives </span>
+									</a>
+								</li>
+							</ul>
+						</div>
 					</li>
 				</ul>
 				<!-- Divider -->
