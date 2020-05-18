@@ -71,10 +71,8 @@ if (isset($_POST['save_changes'])) {
         if ($count > 0) {  
         foreach($image_data as $image){
             try {
-                $extension = strtolower(pathinfo($_FILES[$image]['name'], PATHINFO_EXTENSION));
-                $attachment = $image.".".$extension;
-                $existFile = '../../files/images/';
-                $destination = './files/images/' . basename($attachment);
+                $existFile = SAVE_PATH;
+                $destination = getImagePath($image, DESTINATION);
                 $boolean = checkFileExist($existFile, $image, 1);
                 if($boolean){
                     $stmnt = 'UPDATE content_images SET folder = ? where image = ?';
@@ -124,9 +122,7 @@ if (isset($_POST['save_changes'])) {
         if ($count > 0) {  
         foreach($image_data as $image){
             try {
-                $extension = strtolower(pathinfo($_FILES[$image]['name'], PATHINFO_EXTENSION));
-                $attachment = $image.".".$extension;
-                $destination = '../../files/images/' . basename($attachment);
+                $destination = getImagePath($image, SAVE_PATH);
                 $stmnt = 'INSERT INTO content_images (c_id, folder, image) VALUES (?, ?, ?) ';
                 $query = $db->prepare($stmnt);       
                 $param = [$contentKey, $destination, $image];
@@ -156,8 +152,8 @@ if (isset($_POST['save_changes'])) {
             try {
                 $extension = strtolower(pathinfo($_FILES[$image]['name'], PATHINFO_EXTENSION));
                 $attachment = $image.".".$extension;
-                $existFile = '../../files/images/';
-                $destination = './files/images/' . basename($attachment);
+                $existFile = SAVE_PATH;
+                $destination = getImagePath($image, DESTINATION);
                 $boolean = checkFileExist($existFile, $image, 1);
                 $errorUpload = 0;
                 $db->beginTransaction();

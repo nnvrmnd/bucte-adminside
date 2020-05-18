@@ -4,6 +4,8 @@ define("INSERT", "insert");
 define("UPDATE", "update");
 define("OPTIONAL", "optional");
 define("CONTENT", "content");
+define("SAVE_PATH", "../../files/images/"); //folder path where images is saved
+define("DESTINATION", "./files/images/"); //folder path to be saved in database
 
 //Data validation
 function checkFileExist($filepath,$file, $operation){
@@ -18,23 +20,21 @@ function checkFileExist($filepath,$file, $operation){
     return $boolean;
 }
 
+function getImagePath($image, $path){
+    $extension = strtolower(pathinfo($_FILES[$image]['name'], PATHINFO_EXTENSION));
+    $attachment = $image.".".$extension;
+    $destination = $path . basename($attachment);
+    return $destination;
+}
+
 function uploadImage($image){
     try {
-        $extension = strtolower(pathinfo($_FILES[$image]['name'], PATHINFO_EXTENSION));
-        $attachment = $image.".".$extension;
-        $destination = '../../files/images/' . basename($attachment);        
+        $destination = getImagePath($image, SAVE_PATH);
         //if(file_exists($destination)) unlink($destination);
         move_uploaded_file($_FILES[$image]['tmp_name'], $destination);
     } catch (\Throwable $th) {
         return "UPLOAD ERROR";//$errCount++;
     }         
-}
-
-function getImageData($image){
-    $extension = strtolower(pathinfo($_FILES[$image]['name'], PATHINFO_EXTENSION));
-    $attachment = $image.".".$extension;
-    $destination = './files/images/' . basename($attachment);
-    return $destination;
 }
 
 function filterExistIndex($posts){
@@ -55,10 +55,8 @@ function getExistValues($action, $data, $additionalData){
     $values = [];
      foreach($data as $key){
         if(file_exists(@$_FILES[$key]['tmp_name']) || is_uploaded_file(@$_FILES[$key]['tmp_name'])) {
-            $extension = strtolower(pathinfo($_FILES[$key]['name'], PATHINFO_EXTENSION));
-            $attachment = $key.".".$extension;
-            $existFile = '../../files/images/';
-            $destination = './files/images/' . basename($attachment);
+            $existFile = SAVE_PATH;
+            $destination =  getImagePath($key, DESTINATION ); 
             $boolean = checkFileExist($existFile, $key, 2);
             uploadImage($key);
             $values[':'.$key] = $destination;   
