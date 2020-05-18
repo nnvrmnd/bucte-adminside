@@ -30,6 +30,13 @@ function uploadImage($image){
     }         
 }
 
+function getImageData($image){
+    $extension = strtolower(pathinfo($_FILES[$image]['name'], PATHINFO_EXTENSION));
+    $attachment = $image.".".$extension;
+    $destination = './files/images/' . basename($attachment);
+    return $destination;
+}
+
 function filterExistIndex($posts){
     $keys = array_filter($posts, function ($key) {
         return  isset($_POST[$key]) || (isset($_FILES[$key]['name'])  && !empty($_FILES[$key]['tmp_name']) );
