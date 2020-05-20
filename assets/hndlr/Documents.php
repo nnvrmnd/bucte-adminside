@@ -364,11 +364,6 @@ if (isset($_POST['archive'])) {
 		}
 	}
 
-	// TODO: Retrieval
-	// - Read zip file on modal
-	// - Add retrieval
-	// - Show list from database, retrieve by doc name
-
 	$db->beginTransaction();
 	$stmnt = 'INSERT INTO archived_documents (archv_id, doc_id) VALUES (?, ?) ;';
 	$query = $db->prepare($stmnt);

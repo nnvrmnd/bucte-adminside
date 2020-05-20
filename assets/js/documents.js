@@ -1,5 +1,3 @@
-'use_strict';
-
 /* Fetch list */
 function RenderList() {
 	// change thumbnail according to file format
@@ -51,7 +49,7 @@ function RenderList() {
 									data-id="${el.doc_id}">
 								<label class="custom-control-label" for="check_${
 									el.doc_id
-								}" title="Select to archive file/s..."></label>
+								}" title="Select to archive or delete file/s..."></label>
 							</div>
 
 							<div class="d-flex align-items-center justify-content-center pointer-here readmore"
@@ -80,29 +78,15 @@ function RenderList() {
 				`);
 				});
 			} else {
-				if ($('body').hasClass('modal-open') === true) {
-					$('.modal').on('shown.bs.modal', function () {
-						let modalid = $(this).attr('id');
-						if (modalid == 'SuccessModal') {
-							$('#SuccessModal').on('hidden.bs.modal', function () {
-								ErrorModal('List is empty.', 0, 10000);
-							});
-						}
-					});
-				} else {
-					if ($('body').hasClass('modal-open') === true) {
-						$('.modal').on('shown.bs.modal', function () {
-							let modalid = $(this).attr('id');
-							if (modalid == 'SuccessModal') {
-								$('#SuccessModal').on('hidden.bs.modal', function () {
-									ErrorModal('List is empty.', 0, 10000);
-								});
-							}
-						});
-					} else {
-						ErrorModal('List is empty.', 0, 10000);
-					}
-				}
+				$('.documents-container').html(`
+					<div class="col notfound mb-5 pb-5">
+						<div class="d-none d-sm-block notfound-404">
+							<h1>Oops!</h1>
+						</div>
+						<h2 class="ml-2">Oops! List is empty</h2>
+						<p class="ml-2">No items to display</p>
+					</div>
+				`);
 			}
 		}
 	);
@@ -254,12 +238,12 @@ $(function () {
 						$(`#edit_form [name="edt_description"]`).val(el.description);
 					});
 				} else {
-					ErrorModal(0, 0, 5000)
-					console.log('ERR', res)
+					ErrorModal(0, 0, 5000);
+					console.log('ERR', res);
 				}
 			},
-			complete: function() {
-				$('#EditDocument').modal('show')
+			complete: function () {
+				$('#EditDocument').modal('show');
 			}
 		});
 	});
@@ -342,13 +326,15 @@ $(function () {
 							description = el.description;
 						});
 
-						attachment_title = attachment_title.replace(/[^A-Za-z0-9_.-]/g, '_');
+						attachment_title = attachment_title.replace(
+							/[^A-Za-z0-9_.-]/g,
+							'_'
+						);
 						attachment_format = attachment_format.split('.');
 						attachment_filename = `${attachment_title}.${attachment_format[1]}`;
 						description = !description.match(/^\s*$/)
 							? description.replace(/&nbsp;/g, ' ')
 							: '<p><i>No description...</i></p>';
-
 
 						$('#ReadMore')
 							.on('shown.bs.modal', function () {
@@ -425,7 +411,7 @@ $(function () {
 						SuccessModal('Archived files.', 0, 5000);
 						RenderList();
 					} else {
-						console.log('ERR', res)
+						console.log('ERR', res);
 						ErrorModal(0, 0, 5000);
 						RenderList();
 					}
@@ -516,7 +502,6 @@ $(function () {
 
 		Process();
 	});
-
 });
 
 function ValidateZipname(form_id, name) {

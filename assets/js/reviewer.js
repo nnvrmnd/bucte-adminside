@@ -1,5 +1,3 @@
-'use_strict';
-
 // IDEA: Maybe add a "1 minute per item" time duration
 
 /* Fetch list */
@@ -113,7 +111,9 @@ function RenderList() {
                     <div class="text-truncate desc" data-target="desc_${
 											el.rvwr_id
 										}"><small>${description}</small></div>
-										<p id="desc_${el.rvwr_id}"><small title="Click to read description...">${readmore}</small></p>
+										<p id="desc_${
+											el.rvwr_id
+										}"><small title="Click to read description...">${readmore}</small></p>
 										<small>
 											<dl class="row">
 												<dt class="col-sm-3">Level:</dt>
@@ -127,7 +127,9 @@ function RenderList() {
 											</dl>
 										</small>
                     <p>
-											<small class="text-muted">by ${AuthorName(el.author)} on ${el.created_at}</small>
+											<small class="text-muted">by ${AuthorName(el.author)} on ${
+							el.created_at
+						}</small>
 										</p>
                   </div>
 								</div>
@@ -138,30 +140,15 @@ function RenderList() {
 					}
 				});
 			} else {
-				if ($('body').hasClass('modal-open') === true) {
-					$('.modal').on('shown.bs.modal', function () {
-						let modalid = $(this).attr('id');
-						if (modalid == 'SuccessModal') {
-							$('#SuccessModal').on('hidden.bs.modal', function () {
-								ErrorModal('List is empty. Create a new reviewer.', 0, 10000);
-							});
-						}
-					});
-				} else {
-					if ($('body').hasClass('modal-open') === true) {
-						$('.modal').on('shown.bs.modal', function () {
-							let modalid = $(this).attr('id');
-							if (modalid == 'SuccessModal') {
-								$('#SuccessModal').on('hidden.bs.modal', function () {
-									ErrorModal('List is empty. Create a new reviewer.', 0, 10000);
-								});
-							}
-						});
-					} else {
-						ErrorModal('List is empty. Create a new reviewer.', 0, 10000);
-					}
-				}
-				console.log('ERR', 'err:fetch');
+				$('.reviewers-container').html(`
+					<div class="col notfound mb-5 pb-5">
+						<div class="d-none d-sm-block notfound-404">
+							<h1>Oops!</h1>
+						</div>
+						<h2 class="ml-2">Oops! List is empty</h2>
+						<p class="ml-2">No items to display</p>
+					</div>
+				`);
 			}
 		}
 	});
@@ -169,160 +156,157 @@ function RenderList() {
 
 /* Triggers */
 $(function () {
-  RenderList();
+	RenderList();
 
-  /* On modal open/close */
-  $('#NewReviewer, #EditReviewer')
-    .on('shown.bs.modal', function () {
-      let formid = 'form#' + $(this).find('form').attr('id');
+	/* On modal open/close */
+	$('#NewReviewer, #EditReviewer')
+		.on('shown.bs.modal', function () {
+			let formid = 'form#' + $(this).find('form').attr('id');
 
 			AuthorId(formid);
-    })
-    .on('hidden.bs.modal', function () {
-      let formid =
-        'form#' +
-        $(this)
-        .find('form')
-        .attr('id');
-      $(formid + ' .form-control').removeClass('is-invalid is-valid');
-      $(
-        formid + ' small.title, small.level, small.duration, small.source'
-      ).html('');
-      // $(formid + ' [name=""]').prop('selected', true);
-    });
+		})
+		.on('hidden.bs.modal', function () {
+			let formid = 'form#' + $(this).find('form').attr('id');
+			$(formid + ' .form-control').removeClass('is-invalid is-valid');
+			$(
+				formid + ' small.title, small.level, small.duration, small.source'
+			).html('');
+			// $(formid + ' [name=""]').prop('selected', true);
+		});
 
-  /* New reviewer validation/submit */
-  $('#reviewer_form').submit(function (e) {
-    e.preventDefault();
+	/* New reviewer validation/submit */
+	$('#reviewer_form').submit(function (e) {
+		e.preventDefault();
 
-    let form = $(this).serialize();
+		let form = $(this).serialize();
 
-    switch (false) {
-      case ValidateRequired('reviewer_form', 'title'):
-      case ValidateRequired('reviewer_form', 'source'):
-      case ValidateRequired('reviewer_form', 'level'):
-      case ValidateRequired('reviewer_form', 'duration'):
-        break;
+		switch (false) {
+			case ValidateRequired('reviewer_form', 'title'):
+			case ValidateRequired('reviewer_form', 'source'):
+			case ValidateRequired('reviewer_form', 'level'):
+			case ValidateRequired('reviewer_form', 'duration'):
+				break;
 
-      default:
-        $.ajax({
-          type: 'POST',
-          url: './assets/hndlr/Reviewer.php',
-          data: form,
-          success: function (res) {
-            switch (res) {
-              case 'true':
-                SuccessModal('Created new reviewer.', 0, 5000);
-                RenderList();
-                break;
+			default:
+				$.ajax({
+					type: 'POST',
+					url: './assets/hndlr/Reviewer.php',
+					data: form,
+					success: function (res) {
+						switch (res) {
+							case 'true':
+								SuccessModal('Created new reviewer.', 0, 5000);
+								RenderList();
+								break;
 
-              default:
-                ErrorModal(0, 0, 5000);
-                console.log('ERR', res);
-                break;
-            }
-          }
-        });
+							default:
+								ErrorModal(0, 0, 5000);
+								console.log('ERR', res);
+								break;
+						}
+					}
+				});
 
-        break;
-    }
-  });
+				break;
+		}
+	});
 
-  /* Open reviewer */
-  $('.reviewers-container').on('click', '.card.pointer-here', function (e) {
-    let id = $(this).attr('data-id');
+	/* Open reviewer */
+	$('.reviewers-container').on('click', '.card.pointer-here', function (e) {
+		let id = $(this).attr('data-id');
 
-    sessionStorage.setItem('rvwr', id);
-    window.location.href = 'questionnaire.php';
-  });
+		sessionStorage.setItem('rvwr', id);
+		window.location.href = 'questionnaire.php';
+	});
 
-  /* Fetch reviewer for modal */
-  $('.reviewers-container').on('click', '.edit_reviewer', function (e) {
-    e.stopPropagation();
-    e.preventDefault();
+	/* Fetch reviewer for modal */
+	$('.reviewers-container').on('click', '.edit_reviewer', function (e) {
+		e.stopPropagation();
+		e.preventDefault();
 
-    let reviewer = $(this).attr('data-target'),
-      formid = 'form#edit_form ';
+		let reviewer = $(this).attr('data-target'),
+			formid = 'form#edit_form ';
 
-    $('#EditReviewer').modal('show');
-    $.post(
-      './assets/hndlr/Reviewer.php', {
-        reviewer
-      },
-      function (res) {
-        if (res != 'err:fetch') {
-          $.each(JSON.parse(res), function (idx, el) {
-            $(formid + '[name="reviewer_id"]').val(el.reviewer_id);
-            $(formid + '[name="title"]').val(el.title);
-            $(formid + '[name="source"]').val(el.source);
-            $(formid + `[name="level"] option[value="${el.level}"]`).prop(
-              'selected',
-              true
-            );
-            $(formid + `[name="duration"] option[value="${el.duration}"]`).prop(
-              'selected',
-              true
-            );
-            $(formid + '[name="description"]').val(el.description);
-          });
-        } else {
-          console.log('err:fetch');
-        }
-      }
-    );
-  });
+		$('#EditReviewer').modal('show');
+		$.post(
+			'./assets/hndlr/Reviewer.php',
+			{
+				reviewer
+			},
+			function (res) {
+				if (res != 'err:fetch') {
+					$.each(JSON.parse(res), function (idx, el) {
+						$(formid + '[name="reviewer_id"]').val(el.reviewer_id);
+						$(formid + '[name="title"]').val(el.title);
+						$(formid + '[name="source"]').val(el.source);
+						$(formid + `[name="level"] option[value="${el.level}"]`).prop(
+							'selected',
+							true
+						);
+						$(formid + `[name="duration"] option[value="${el.duration}"]`).prop(
+							'selected',
+							true
+						);
+						$(formid + '[name="description"]').val(el.description);
+					});
+				} else {
+					console.log('err:fetch');
+				}
+			}
+		);
+	});
 
-  /* Update reviewer validation/submit */
-  $('#edit_form').submit(function (e) {
-    e.preventDefault();
+	/* Update reviewer validation/submit */
+	$('#edit_form').submit(function (e) {
+		e.preventDefault();
 
-    let form = $(this).serialize();
+		let form = $(this).serialize();
 
-    switch (false) {
-      case ValidateRequired('edit_form', 'title'):
-      case ValidateRequired('edit_form', 'source'):
-      case ValidateRequired('edit_form', 'level'):
-      case ValidateRequired('edit_form', 'duration'):
-        break;
+		switch (false) {
+			case ValidateRequired('edit_form', 'title'):
+			case ValidateRequired('edit_form', 'source'):
+			case ValidateRequired('edit_form', 'level'):
+			case ValidateRequired('edit_form', 'duration'):
+				break;
 
-      default:
-        $.ajax({
-          type: 'POST',
-          url: './assets/hndlr/Reviewer.php',
-          data: form,
-          success: function (res) {
-            switch (res) {
-              case 'true':
-                SuccessModal('Updated reviewer.', 0, 5000);
-                RenderList();
-                break;
+			default:
+				$.ajax({
+					type: 'POST',
+					url: './assets/hndlr/Reviewer.php',
+					data: form,
+					success: function (res) {
+						switch (res) {
+							case 'true':
+								SuccessModal('Updated reviewer.', 0, 5000);
+								RenderList();
+								break;
 
-              default:
-                ErrorModal(0, 0, 5000);
-                console.log('ERR', res);
-                break;
-            }
-          }
-        });
+							default:
+								ErrorModal(0, 0, 5000);
+								console.log('ERR', res);
+								break;
+						}
+					}
+				});
 
-        break;
-    }
-  });
+				break;
+		}
+	});
 
-  /* Delete reviewer */
-  $('.reviewers-container').on('click', '.delete_reviewer', function (e) {
-    e.stopPropagation();
-    e.preventDefault();
+	/* Delete reviewer */
+	$('.reviewers-container').on('click', '.delete_reviewer', function (e) {
+		e.stopPropagation();
+		e.preventDefault();
 
-    let del = $(this).attr('data-target');
-    PromptModal(
-      'Are you deleting this reviewer?',
-      0,
-      10000,
-      'delete_reviewer',
-      del
-    );
-    PromptConfirm('Reviewer deleted.', './assets/hndlr/Reviewer.php');
+		let del = $(this).attr('data-target');
+		PromptModal(
+			'Are you deleting this reviewer?',
+			0,
+			10000,
+			'delete_reviewer',
+			del
+		);
+		PromptConfirm('Reviewer deleted.', './assets/hndlr/Reviewer.php');
 	});
 
 	/* Read more */
@@ -344,20 +328,22 @@ $(function () {
 				description = description.replace(/&nbsp;/g, ' ');
 				$('#ReadMore').modal('show');
 
-				$('#ReadMore').on('shown.bs.modal', function () {
-					$(this).find('.modal-title').html('<i class="text-muted">Read more:</i><br>&emsp;' + title);
-					$(this).find('.modal-body').html(description);
-					$(this).find('blockquote').addClass('blockquote');
-				})
-				.on('hidden.bs.modal', function () {
-					$(this).find('.modal-title').html('');
-					$(this).find('.modal-body').html('');
-					$(this).find('blockquote').addClass('blockquote');
-				});
+				$('#ReadMore')
+					.on('shown.bs.modal', function () {
+						$(this)
+							.find('.modal-title')
+							.html('<i class="text-muted">Read more:</i><br>&emsp;' + title);
+						$(this).find('.modal-body').html(description);
+						$(this).find('blockquote').addClass('blockquote');
+					})
+					.on('hidden.bs.modal', function () {
+						$(this).find('.modal-title').html('');
+						$(this).find('.modal-body').html('');
+						$(this).find('blockquote').addClass('blockquote');
+					});
 			} else {
 				console.log('err:fetch', res);
 			}
 		});
 	});
-
 }); // ready fn

@@ -1,4 +1,4 @@
-'use strict';
+
 
 $(function () {
 	$('#sudo_auth').submit(function (e) {

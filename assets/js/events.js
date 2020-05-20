@@ -1,4 +1,4 @@
-'use_strict';
+
 
 /* Fetch list */
 function RenderList() {
@@ -25,7 +25,10 @@ function RenderList() {
 					let regex = /^\s*$/,
 						event_id = el.event_id,
 						desc_raw = el.description,
-						desc_replace = desc_raw.replace(/<\/?[br|li|ol|ul|p|strong|blockquotes]+\/?>/gim, ''),
+						desc_replace = desc_raw.replace(
+							/<\/?[br|li|ol|ul|p|strong|blockquotes]+\/?>/gim,
+							''
+						),
 						deadline = el.deadline,
 						start = el.start,
 						end = el.end,
@@ -98,9 +101,7 @@ function RenderList() {
 										title="Edit event..." data-target="${event_id}">
 										<i class="fa fa-edit" aria-hidden="true"></i>
 									</button>
-									<p class="font-weight-bold text-primary">${
-										el.title
-									} </p>
+									<p class="font-weight-bold text-primary">${el.title} </p>
 									<small>
 										<dl class="row">
 											<dt class="col-sm-2">Schedule:</dt>
@@ -127,29 +128,15 @@ function RenderList() {
 					`);
 				});
 			} else {
-				if ($('body').hasClass('modal-open') === true) {
-					$('.modal').on('shown.bs.modal', function () {
-						let modalid = $(this).attr('id');
-						if (modalid == 'SuccessModal') {
-							$('#SuccessModal').on('hidden.bs.modal', function () {
-								ErrorModal('List is empty. Create a new event.', 0, 10000);
-							});
-						}
-					});
-				} else {
-					if ($('body').hasClass('modal-open') === true) {
-						$('.modal').on('shown.bs.modal', function () {
-							let modalid = $(this).attr('id');
-							if (modalid == 'SuccessModal') {
-								$('#SuccessModal').on('hidden.bs.modal', function () {
-									ErrorModal('List is empty. Create a new event.', 0, 10000);
-								});
-							}
-						});
-					} else {
-						ErrorModal('List is empty. Create a new event.', 0, 10000);
-					}
-				}
+				$('.events-container').html(`
+					<div class="col notfound mb-5 pb-5">
+						<div class="d-none d-sm-block notfound-404">
+							<h1>Oops!</h1>
+						</div>
+						<h2 class="ml-2">Oops! List is empty</h2>
+						<p class="ml-2">No items to display</p>
+					</div>
+				`);
 			}
 		}
 	});
@@ -162,7 +149,7 @@ $(function () {
 	/* Fancybox */
 	$('body').fancybox({
 		selector: '[data-fancybox="events_gallery"]',
-		buttons: ['zoom', 'thumbs', 'close'],
+		buttons: ['zoom', 'thumbs', 'close']
 	});
 
 	/* CKEditor */
@@ -170,7 +157,7 @@ $(function () {
 	let ckwrites = $('body').find('.ckwrite');
 	ckwrites.each(function (i, e) {
 		CKEDITOR.replace(e.name, {
-			customConfig: '/bucte/admin/assets/js/ck_events.js',
+			customConfig: '/bucte/admin/assets/js/ck_events.js'
 		});
 	});
 
@@ -185,9 +172,9 @@ $(function () {
 			next: 'fa fa-chevron-right',
 			today: 'fa fa-screenshot',
 			clear: 'fa fa-trash',
-			close: 'fa fa-remove',
+			close: 'fa fa-remove'
 		},
-		useCurrent: false,
+		useCurrent: false
 	});
 
 	$('#start_datetime').on('dp.change', function (e) {
@@ -356,7 +343,7 @@ $(function () {
 								'show';
 								break;
 						}
-					},
+					}
 				});
 				break;
 		}
@@ -368,7 +355,7 @@ $(function () {
 		e.preventDefault();
 
 		let event = $(this).attr('data-target'),
-			image = (filename) => {
+			image = filename => {
 				if (filename.length >= 12) {
 					// if file name is long
 					return (
@@ -470,7 +457,7 @@ $(function () {
 								console.log('ERR', res);
 								break;
 						}
-					},
+					}
 				});
 				break;
 		}
@@ -502,16 +489,19 @@ $(function () {
 				description = description.replace(/&nbsp;/g, ' ');
 				$('#ReadMore').modal('show');
 
-				$('#ReadMore').on('shown.bs.modal', function () {
-					$(this).find('.modal-title').html('<i class="text-muted">Read more:</i><br>&emsp;' + title);
-					$(this).find('.modal-body').html(description);
-					$(this).find('blockquote').addClass('blockquote');
-				})
-				.on('hidden.bs.modal', function () {
-					$(this).find('.modal-title').html('');
-					$(this).find('.modal-body').html('');
-					$(this).find('blockquote').addClass('blockquote');
-				});
+				$('#ReadMore')
+					.on('shown.bs.modal', function () {
+						$(this)
+							.find('.modal-title')
+							.html('<i class="text-muted">Read more:</i><br>&emsp;' + title);
+						$(this).find('.modal-body').html(description);
+						$(this).find('blockquote').addClass('blockquote');
+					})
+					.on('hidden.bs.modal', function () {
+						$(this).find('.modal-title').html('');
+						$(this).find('.modal-body').html('');
+						$(this).find('blockquote').addClass('blockquote');
+					});
 			} else {
 				console.log('err:fetch', res);
 			}

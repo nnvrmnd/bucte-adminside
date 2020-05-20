@@ -80,7 +80,7 @@
 										<span class="sidenav-mini-icon"> D </span>
 										<span class="sidenav-normal"> Documents </span>
 									</a>
-									<a href="./archives.php" class="nav-link">
+									<a href="./archives.php" class="nav-link" id="records_archives">
 										<span class="sidenav-mini-icon"> A </span>
 										<span class="sidenav-normal"> Archives </span>
 									</a>

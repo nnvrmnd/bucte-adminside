@@ -1,4 +1,4 @@
-'use strict';
+
 
 $(function () {
 	/* Display current user */
@@ -46,6 +46,11 @@ $(function () {
 			.addClass('font-weight-bold active')
 			.attr('aria-expanded', 'true');
 		$('#Records').addClass('show').find('#records_documents').addClass('active');
+	} else if (documenttitle.match(/\b(\w*Archives\w*)\b/g)) {
+		$('.Records')
+			.addClass('font-weight-bold active')
+			.attr('aria-expanded', 'true');
+		$('#Records').addClass('show').find('#records_archives').addClass('active');
 	}
 });
 
