@@ -69,8 +69,14 @@
 					</li>
 					<li class="nav-item">
 						<a class="nav-link E-learning" href="./reviewer.php">
-							<i class="ni ni-single-copy-04 text-green"></i>
+							<i class="ni ni-single-copy-04 text-gray"></i>
 							<span class="nav-link-text">E-LET Reviewer</span>
+						</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link Resource" href="./resource.php">
+							<i class="far fa-bookmark text-green"></i>
+							<span class="nav-link-text">Learning Resource</span>
 						</a>
 					</li>
 					<li class="nav-item">

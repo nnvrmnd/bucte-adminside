@@ -56,6 +56,10 @@ $(function () {
 			.addClass('font-weight-bold active')
 			.attr('aria-expanded', 'true');
 		$('#Records').addClass('show').find('#records_archives').addClass('active');
+	} else if (documenttitle.match(/\b(\w*Resource\w*)\b/g)) {
+		$('.Resource')
+			.addClass('font-weight-bold active')
+			.attr('aria-expanded', 'true');
 	}
 });
 
