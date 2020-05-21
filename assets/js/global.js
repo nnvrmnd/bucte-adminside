@@ -36,11 +36,16 @@ $(function () {
 		$('.E-learning').addClass('font-weight-bold active');
 	} else if (documenttitle.match(/\b(\w*Events\w*)\b/g)) {
 		$('.Events').addClass('font-weight-bold active');
-	} else if (documenttitle.match(/\b(\w*Page\w*)\b/g)) {
+	} else if (documenttitle.match(/\b(\w*Home\w*)\b/g)) {
 		$('.Pages')
 			.addClass('font-weight-bold active')
 			.attr('aria-expanded', 'true');
 		$('#Pages').addClass('show').find('#pages_home').addClass('active');
+	} else if (documenttitle.match(/\b(\w*About\w*)\b/g)) {
+		$('.Pages')
+			.addClass('font-weight-bold active')
+			.attr('aria-expanded', 'true');
+		$('#Pages').addClass('show').find('#pages_about').addClass('active');
 	} else if (documenttitle.match(/\b(\w*Documents\w*)\b/g)) {
 		$('.Records')
 			.addClass('font-weight-bold active')

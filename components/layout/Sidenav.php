@@ -52,6 +52,12 @@
 										<span class="sidenav-normal"> Home Page </span>
 									</a>
 								</li>
+								<li class="nav-item">
+									<a href="./about.php" class="nav-link" id="pages_about">
+										<span class="sidenav-mini-icon"> AP </span>
+										<span class="sidenav-normal"> About Page </span>
+									</a>
+								</li>
 							</ul>
 						</div>
 					</li>

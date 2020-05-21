@@ -91,7 +91,7 @@ if (isset($_POST['user_profile'])) {
     }
 }
 
-/* Change password */
+/* Change password */ 
 if (isset($_POST['user_profile2'])) {
     require 'db.hndlr.php';
 
