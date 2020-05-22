@@ -5,7 +5,7 @@ function SetToken($token, $who)
 	// echo $token;
 	// echo $who;
 
-	require 'db.hndlr.php';
+	require './db.hndlr.php';
 
 	$db->beginTransaction();
 	$stmnt = "UPDATE user SET token = ? WHERE username = ? ;";
@@ -23,7 +23,7 @@ function SetToken($token, $who)
 }
 
 if (isset($_POST['sudo_username']) && isset($_POST['sudo_password'])) {
-	require 'db.hndlr.php';
+	require './db.hndlr.php';
 
 	$who = $_POST['sudo_username'];
 	$key = $_POST['sudo_password'];

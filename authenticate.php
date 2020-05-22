@@ -86,7 +86,7 @@ SeshStart('auth');
 											<span class="input-group-text auth-icon"><i class="ni ni-email-83"></i></span>
 										</div>
 										<input type="text" class="form-control text-dark auth-input" placeholder="Email or Username"
-											name="sudo_username" maxlength="16" autofocus>
+											name="sudo_username" maxlength="16">
 									</div>
 								</div>
 								<div class="form-group">

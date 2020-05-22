@@ -17,7 +17,7 @@ $(function () {
 						$('span.auth-icon')
 							.removeClass('text-danger')
 							.addClass('text-success');
-						$(location).attr('href', 'dashboard.php');
+						$(location).attr('href', 'events.php');
 						break;
 
 					default:
@@ -38,6 +38,6 @@ $(function () {
 	});
 
 	setTimeout(() => {
-		$('[autofocus]').focus();
+		$('[name="sudo_username"]').focus();
 	}, 500);
 });

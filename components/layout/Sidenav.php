@@ -32,34 +32,11 @@
 					<span class="docs-mini">C</span>
 				</h6>
 				<ul class="navbar-nav">
-					<li class="nav-item">
+					<li class="nav-item d-none">
 						<a class="nav-link Dashboard" href="./dashboard.php">
 							<i class="ni ni-shop text-primary"></i>
 							<span class="nav-link-text">Dashboard</span>
 						</a>
-					</li>
-					<li class="nav-item">
-						<a class="nav-link Pages" href="#Pages" data-toggle="collapse" role="button"
-							aria-expanded="false" aria-controls="Pages">
-							<i class="ni ni-align-left-2 text-default"></i>
-							<span class="nav-link-text">Pages</span>
-						</a>
-						<div class="collapse" id="Pages">
-							<ul class="nav nav-sm flex-column">
-								<li class="nav-item">
-									<a href="./homepage.php" class="nav-link" id="pages_home">
-										<span class="sidenav-mini-icon"> HP </span>
-										<span class="sidenav-normal"> Home Page </span>
-									</a>
-								</li>
-								<li class="nav-item">
-									<a href="./about.php" class="nav-link" id="pages_about">
-										<span class="sidenav-mini-icon"> AP </span>
-										<span class="sidenav-normal"> About Page </span>
-									</a>
-								</li>
-							</ul>
-						</div>
 					</li>
 					<li class="nav-item">
 						<a class="nav-link Events" href="./events.php">
@@ -95,6 +72,29 @@
 									<a href="./archives.php" class="nav-link" id="records_archives">
 										<span class="sidenav-mini-icon"> A </span>
 										<span class="sidenav-normal"> Archives </span>
+									</a>
+								</li>
+							</ul>
+						</div>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link Pages" href="#Pages" data-toggle="collapse" role="button"
+							aria-expanded="false" aria-controls="Pages">
+							<i class="ni ni-align-left-2 text-default"></i>
+							<span class="nav-link-text">Pages</span>
+						</a>
+						<div class="collapse" id="Pages">
+							<ul class="nav nav-sm flex-column">
+								<li class="nav-item">
+									<a href="./homepage.php" class="nav-link" id="pages_home">
+										<span class="sidenav-mini-icon"> HP </span>
+										<span class="sidenav-normal"> Home Page </span>
+									</a>
+								</li>
+								<li class="nav-item">
+									<a href="./about.php" class="nav-link" id="pages_about">
+										<span class="sidenav-mini-icon"> AP </span>
+										<span class="sidenav-normal"> About Page </span>
 									</a>
 								</li>
 							</ul>

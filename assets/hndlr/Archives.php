@@ -7,6 +7,9 @@ if (isset($_POST['fetcharchives'])) {
 	function ZipEmpty() {
 		require './db.hndlr.php';
 
+		$ctrl = true;
+		$empty_archive = [];
+
 		$stmnt = 'SELECT * FROM archive ;';
 		$query = $db->prepare($stmnt);
 		$query->execute();
@@ -20,26 +23,29 @@ if (isset($_POST['fetcharchives'])) {
 				$query->execute($param);
 				$count = $query->rowCount();
 				if ($count <= 0) {
-					$db->beginTransaction();
-					$stmnt = 'DELETE FROM archive WHERE archv_id = ? ;';
-					$query = $db->prepare($stmnt);
-					$param = [$aid];
-					$query->execute($param);
-					$count = $query->rowCount();
-					if ($count > 0) {
-						$db->commit();
-						return true;
-					} else {
-						$db->rollBack();
-						return false;
-					}
-				} else {
-					return true;
+					$empty_archive[] = $aid;
 				}
 			}
-		} else {
-			return true;
 		}
+
+		if (!empty($empty_archive)) {
+			$db->beginTransaction();
+			$stmnt = 'DELETE FROM archive WHERE archv_id = ? ;';
+			$query = $db->prepare($stmnt);
+			foreach ($empty_archive as $id) {
+				$param = [$id];
+				$query->execute($param);
+			}
+			$count = $query->rowCount();
+			if ($count > 0) {
+				$db->commit();
+			} else {
+				$db->rollBack();
+				$ctrl = false;
+			}
+		}
+
+		return $ctrl;
 	}
 
 	if (ZipEmpty() === true) {
@@ -64,7 +70,6 @@ if (isset($_POST['fetcharchives'])) {
 			echo $arrObject;
 		}
 	}
-
 }
 
 /* Fetch 1 archive */
