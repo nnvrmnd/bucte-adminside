@@ -178,6 +178,8 @@ $(function () {
 	$('#reviewer_form').submit(function (e) {
 		e.preventDefault();
 
+		WaitModal('Processing...', 0, 5000);
+
 		let form = $(this).serialize();
 
 		switch (false) {
@@ -259,6 +261,8 @@ $(function () {
 	/* Update reviewer validation/submit */
 	$('#edit_form').submit(function (e) {
 		e.preventDefault();
+
+		WaitModal('Processing...', 0, 5000);
 
 		let form = $(this).serialize();
 

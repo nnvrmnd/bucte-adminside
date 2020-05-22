@@ -71,6 +71,8 @@ $(function() {
   $('#profile_form').submit(function(e) {
     e.preventDefault();
 
+		WaitModal('Processing...', 0, 5000);
+
     let profile_form = $(this).serialize();
 
     $.ajax({
@@ -111,7 +113,9 @@ $(function() {
   });
 
   $('#newpassword_form').submit(function(e) {
-    e.preventDefault();
+		e.preventDefault();
+
+		WaitModal('Processing...', 0, 5000);
 
     let newpassword_form = $(this).serialize();
     var neww = $('#new').val(),

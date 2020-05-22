@@ -22,57 +22,37 @@ SeshStart('auth');
 	<link rel="stylesheet" href="./assets/css/style.css" type="text/css">
 </head>
 
-<body class="">
+<body>
 
 	<!-- Main content -->
 	<div class="main-content">
-
-		<!-- Page Header -->
-		<div class="header pt-7 mt--5">
+		<!-- Header -->
+		<div class="header py-4 py-lg-1 pt-lg-6">
 			<div class="container">
-				<div class="header-body text-center mb-7">
+				<div class="header-body text-center mb-4">
 					<div class="row justify-content-center">
 						<div class="col-xl-5 col-lg-6 col-md-8 px-5">
-							<h1 class="text-white">Welcome!</h1>
-							<!-- <p class="text-lead text-white">BUCTE Control Panel</p> -->
-							<!-- <button class="logout">logout</button> -->
+							<h1 class="text-white">&nbsp;</h1>
+							<p class="text-lead text-white">&nbsp;</p>
 						</div>
 					</div>
 				</div>
 			</div>
-			<!-- <div class="separator separator-bottom separator-skew zindex-100">
-				<svg x="0" y="0" viewBox="0 0 2560 100" preserveAspectRatio="none" version="1.1" xmlns="http://www.w3.org/2000/svg">
-					<polygon class="fill-default" points="2560 0 2560 100 0 100"></polygon>
-				</svg>
-			</div> -->
 		</div>
-
 		<!-- Page content -->
 		<div class="container mt--8 pb-5">
 			<div class="row justify-content-center">
 				<div class="col-lg-5 col-md-7">
-					<div class="card bg-secondary card-shadow border-0 mb-0">
+					<div class="card bg-secondary border-0 mb-0 card-shadow">
 						<div class="card-header bg-transparent pb-4">
 							<div class="text-muted text-center mt-2 mb-3"><small>Dashboard</small></div>
-							<div>
-								<center>
-									<img src="./dist/img/brand/cte.png" style="width: 50%;">
-								</center>
+							<div class="btn-wrapper text-center">
+								<img src="./dist/img/brand/cte.png" style="width: 50%;">
 							</div>
-							<!-- <div class="btn-wrapper text-center">
-                <a href="#" class="btn btn-neutral btn-icon">
-                  <span class="btn-inner--icon"><img src="./dist/img/icons/common/github.svg"></span>
-                  <span class="btn-inner--text">Github</span>
-                </a>
-                <a href="#" class="btn btn-neutral btn-icon">
-                  <span class="btn-inner--icon"><img src="./dist/img/icons/common/google.svg"></span>
-                  <span class="btn-inner--text">Google</span>
-                </a>
-              </div> -->
 						</div>
 						<div class="card-body px-lg-5 py-lg-5">
 							<div class="text-center text-muted mb-4">
-								<small class="">Sign in with credentials</small>
+								<small>Sign in with credentials</small>
 							</div>
 							<form role="form" id="sudo_auth">
 								<div class="">
@@ -94,8 +74,8 @@ SeshStart('auth');
 										<div class="input-group-prepend">
 											<span class="input-group-text auth-icon"><i class="ni ni-lock-circle-open"></i></span>
 										</div>
-										<input type="password" class="form-control text-dark auth-input" placeholder="Password" name="sudo_password"
-											maxlength="16">
+										<input type="password" class="form-control text-dark auth-input" placeholder="Password"
+											name="sudo_password" maxlength="16">
 									</div>
 								</div>
 								<div class="custom-control custom-control-alternative custom-checkbox">
@@ -111,21 +91,21 @@ SeshStart('auth');
 							</form>
 						</div>
 					</div>
-					<!-- <div class="row mt-3">
-            <div class="col-6">
-              <a href="#" class="text-light"><small>Forgot password?</small></a>
-            </div>
-            <div class="col-6 text-right">
-              <a href="#" class="text-light"><small>Create new account</small></a>
-            </div>
-          </div> -->
+					<div class="row mt-3">
+						<div class="col-6">
+							<a href="#" class="text-light"><small>&nbsp;</small></a>
+						</div>
+						<div class="col-6 text-right">
+							<a href="#" class="text-light"><small>&nbsp;</small></a>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
 	</div>
 
 	<!-- Footer -->
-	<footer class="py-5" id="footer-main">
+	<footer class="py-5 mt-6" id="footer-main">
 		<div class="container">
 			<div class="row align-items-center justify-content-xl-between">
 				<div class="col-xl-6">

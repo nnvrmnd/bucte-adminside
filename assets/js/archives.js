@@ -157,6 +157,8 @@ $(function () {
 		e.preventDefault();
 		e.stopPropagation();
 
+		WaitModal('Processing...', 0, 5000);
+
 		let target = $(this).attr('data-target');
 
 		$.ajax({

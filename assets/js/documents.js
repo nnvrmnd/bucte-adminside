@@ -178,6 +178,8 @@ $(function () {
 	$('#upload_form').submit(function (e) {
 		e.preventDefault();
 
+		WaitModal('Processing...', 0, 5000);
+
 		let form = $(this).serializeArray(),
 			form_data = new FormData(),
 			file = $('#select_file')[0].files[0];
@@ -251,6 +253,8 @@ $(function () {
 	/* Edit document */
 	$('#edit_form').submit(function (e) {
 		e.preventDefault();
+
+		WaitModal('Processing...', 0, 5000);
 
 		let empty = /^\s*$/,
 			form = $(this).serialize();
@@ -403,6 +407,9 @@ $(function () {
 		PromptModal('Delete selected file/s?', 0, 5000, 'delete_selected', 1);
 
 		$('#prompt_form #yes_prompt').click(function (e) {
+
+			WaitModal('Processing...', 0, 5000);
+
 			$.post(
 				'./assets/hndlr/Documents.php',
 				{ delete: JSON.stringify(checked_data) },
@@ -428,6 +435,8 @@ $(function () {
 	/* Create archive */
 	$('#archival_form').submit(function (e) {
 		e.preventDefault();
+
+		WaitModal('Processing...', 0, 5000);
 
 		let form = $(this).serialize(),
 			checked = $('.documents-container').find('.checkboxes:checked'),

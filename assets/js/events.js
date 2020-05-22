@@ -1,5 +1,3 @@
-
-
 /* Fetch list */
 function RenderList() {
 	$.ajax({
@@ -303,6 +301,8 @@ $(function () {
 	$('#event_form').submit(function (e) {
 		e.preventDefault();
 
+		WaitModal('Processing...', 0, 5000);
+
 		InstanceCKE();
 
 		let form = $(this).serializeArray(),
@@ -408,6 +408,8 @@ $(function () {
 	/* Edit event */
 	$('#edit_form').submit(function (e) {
 		e.preventDefault();
+
+		WaitModal('Processing...', 0, 5000);
 
 		InstanceCKE();
 

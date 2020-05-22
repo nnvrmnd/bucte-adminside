@@ -150,6 +150,8 @@ $(function () {
 	$('#item_form').submit(function (e) {
 		e.preventDefault();
 
+		WaitModal('Processing...', 0, 5000);
+
 		let form = $(this).serialize();
 
 		switch (false) {
@@ -225,6 +227,8 @@ $(function () {
 	/* Update item validation/submit */
 	$('#update_form').submit(function (e) {
 		e.preventDefault();
+
+		WaitModal('Processing...', 0, 5000);
 
 		let form = $(this).serialize();
 

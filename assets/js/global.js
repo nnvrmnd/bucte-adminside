@@ -128,6 +128,29 @@ function AuthorName(id) {
 
 var timer = null; // for timeouts
 
+function WaitModal(msg, redirect, timeout) {
+	if (redirect !== 0) {
+		$('#WaitModal').on('hidden.bs.modal', function () {
+			window.location.href = redirect;
+		});
+	}
+
+	$('.modal').modal('hide');
+	window.clearTimeout(timer);
+	$('#SuccessModal, #ErrorModal').on('shown.bs.modal', function () {
+		$('#WaitModal').modal('hide');
+	});
+	$('#wait-modal-msg').html(msg);
+	$('#WaitModal').modal('show');
+
+
+	timer = setTimeout(() => {
+		$('#wait-modal-msg').html('');
+		$('#WaitModal').modal('hide');
+		timer = null;
+	}, timeout - 1000);
+}
+
 function SuccessModal(msg, redirect, timeout) {
 	if (redirect !== 0) {
 		$('#SuccessModal').on('hidden.bs.modal', function () {
@@ -135,9 +158,9 @@ function SuccessModal(msg, redirect, timeout) {
 		});
 	}
 
+	$('.modal').modal('hide');
 	window.clearTimeout(timer);
 	$('#success-modal-msg').html(msg);
-	$('.modal').modal('hide');
 	$('#SuccessModal').modal('show');
 
 	timer = setTimeout(() => {
@@ -156,9 +179,9 @@ function ErrorModal(msg, redirect, timeout) {
 		});
 	}
 
+	$('.modal').modal('hide');
 	window.clearTimeout(timer);
 	$('#error-modal-msg').html(message);
-	$('.modal').modal('hide');
 	$('#ErrorModal').modal('show');
 
 	timer = setTimeout(() => {
@@ -192,6 +215,8 @@ function PromptModal(msg, redirect, timeout, action, id) {
 function PromptConfirm(msg, url) {
 	$('#prompt_form #yes_prompt').click(function (e) {
 		e.preventDefault();
+
+		WaitModal('Processing...', 0, 5000);
 
 		let action = $(this).attr('data-action'),
 		id = $(this).attr('data-target');

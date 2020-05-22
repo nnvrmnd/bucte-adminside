@@ -37,6 +37,10 @@ img.card-img-top {
 
 }
 
+.bg-gradient-info {
+  background: linear-gradient(87deg, #2dcecc 0, #6cd4ed 100%) !important;
+}
+
 .image-holder {
   display: flex;
   align-items: center;
