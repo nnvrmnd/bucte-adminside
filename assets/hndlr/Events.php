@@ -193,22 +193,22 @@ if (isset($_POST['action']) && isset($_POST['id'])) {
 		foreach ($query as $data) {
 			$image = $data['image'];
 
-			if (unlink($rootDir . $image)) {
-				$db->beginTransaction();
-				$stmnt = 'DELETE FROM events WHERE evnt_id = ? ;';
-				$query = $db->prepare($stmnt);
-				$param = [$event];
-				$query->execute($param);
-				$count = $query->rowCount();
-				if ($count > 0) {
-					$db->commit();
-					echo 'true';
-				} else {
-					$db->rollBack();
-					echo 'err:delete';
-				}
+			if (file_exists($rootDir . $image)) {
+				unlink($rootDir . $image);
+			}
+
+			$db->beginTransaction();
+			$stmnt = 'DELETE FROM events WHERE evnt_id = ? ;';
+			$query = $db->prepare($stmnt);
+			$param = [$event];
+			$query->execute($param);
+			$count = $query->rowCount();
+			if ($count > 0) {
+				$db->commit();
+				echo 'true';
 			} else {
-				echo 'err:rm';
+				$db->rollBack();
+				echo 'err:delete';
 			}
 		}
 	}
@@ -228,16 +228,10 @@ function DeleteCurrentImage($event) {
 		foreach ($query as $data) {
 			$image = $data['image'];
 			$image = $rootDir . $image;
-
-			if (file_exists($image) === true) {
-				if (unlink($image)) {
-					return true;
-				} else {
-					return false;
-				}
-			} else {
-				return false;
+			if (file_exists($image)) {
+				unlink($image);
 			}
 		}
+		return true;
 	}
 }

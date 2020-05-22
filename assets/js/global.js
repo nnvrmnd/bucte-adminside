@@ -194,7 +194,7 @@ function PromptConfirm(msg, url) {
 		e.preventDefault();
 
 		let action = $(this).attr('data-action'),
-			id = $(this).attr('data-target');
+		id = $(this).attr('data-target');
 
 		$.post(url, { action, id }, function (res) {
 			switch (res) {
@@ -204,7 +204,7 @@ function PromptConfirm(msg, url) {
 					break;
 
 				default:
-					console.log('ERR', res);
+					console.error('ERR', res);
 					ErrorModal(0, 0, 5000);
 					break;
 			}

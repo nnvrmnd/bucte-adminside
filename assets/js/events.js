@@ -454,7 +454,7 @@ $(function () {
 
 							default:
 								ErrorModal(0, 0, 5000);
-								console.log('ERR', res);
+								console.error('ERR', res);
 								break;
 						}
 					}

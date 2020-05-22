@@ -21,7 +21,7 @@ $(function () {
 						break;
 
 					default:
-						console.log('ERR', res);
+						console.error('ERR', res);
 						$('#auth-alert').html('Incorrect credentials');
 						$('[name="sudo_username"]').select();
 						$('[name="sudo_password"]').val('');

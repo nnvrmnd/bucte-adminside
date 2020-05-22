@@ -239,7 +239,7 @@ $(function () {
 					});
 				} else {
 					ErrorModal(0, 0, 5000);
-					console.log('ERR', res);
+					console.error('ERR', res);
 				}
 			},
 			complete: function () {
@@ -362,7 +362,7 @@ $(function () {
 									.removeAttr('download');
 							});
 					} else {
-						console.log('ERR', res);
+						console.error('ERR', res);
 					}
 				},
 				complete: function () {
@@ -411,7 +411,7 @@ $(function () {
 						SuccessModal('Archived files.', 0, 5000);
 						RenderList();
 					} else {
-						console.log('ERR', res);
+						console.error('ERR', res);
 						ErrorModal(0, 0, 5000);
 						RenderList();
 					}
