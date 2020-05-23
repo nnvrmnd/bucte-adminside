@@ -75,6 +75,7 @@ function WhoAmI(location) {
 			switch (location) {
 				case 'topnav':
 					$('#topnav-who').html(`${el.given}`);
+					$('#topnav-avatar').attr('src', `./assets/img/${el.gender}.png`);
 					break;
 
 				default:

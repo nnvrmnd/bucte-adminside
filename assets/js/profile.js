@@ -14,6 +14,7 @@ $(function() {
           $('[name="surname"]').val(el.surname);
           $('[name="email"]').val(el.email);
           $('[name="username"]').val(el.username);
+					$('#profile-avatar').attr('src', `./assets/img/${el.gender}.png`);
 					$('#position').html(el.position);
 
 					$('#name').html(el.given + '&nbsp;' + el.surname);
@@ -170,5 +171,7 @@ $(function() {
         }
       });
     }
-  });
+	});
+
+	DocumentReady();
 });

@@ -20,10 +20,11 @@ if (isset($_POST['who'])) {
             $surname = $row['surname'];
             $username = $row['username'];
             $email = $row['email'];
+            $gender = $row['gender'];
             $position = $row['position'];
             $password = $row['passkey'];
             $created_at = $row['created_at'];
-            $dbData[] = ['id' => $id, 'given' => $given, 'surname' => $surname, 'username' => $username, 'email' => $email, 'position' => $position];
+            $dbData[] = ['id' => $id, 'given' => $given, 'surname' => $surname, 'username' => $username, 'email' => $email, 'position' => $position, 'gender' => $gender];
         }
         $arrObject = json_encode($dbData);
         echo $arrObject;
@@ -91,7 +92,7 @@ if (isset($_POST['user_profile'])) {
     }
 }
 
-/* Change password */ 
+/* Change password */
 if (isset($_POST['user_profile2'])) {
     require 'db.hndlr.php';
 

@@ -43,23 +43,23 @@ SeshStart('page');
     <div class="container-fluid mt--5">
       <div class="row">
         <div class="col-xl-4 order-xl-2 mb-5 mb-xl-0">
-          <div class="card card-profile shadow">
+          <div class="card card-profile card-shadow">
             <div class="row justify-content-center">
               <div class="col-lg-3 order-lg-2">
                 <div class="card-profile-image">
                   <a href="javascript:void(0)">
-                    <img src="./dist/img/theme/team-4.jpg" class="rounded-circle">
+										<img class="rounded-circle" id="profile-avatar">
                   </a>
                 </div>
               </div>
             </div>
-            <div class="card-header text-center border-0 pt-8 pt-md-4 pb-0 pb-md-4">
+            <div class="card-header text-center border-0 pt-8 pt-md-4 pb-0 pb-md-4" style="border-radius: calc(.375rem - 1px) calc(.375rem - 1px) 0 0;">
               <div class="d-flex justify-content-between">
                 <!-- <a href="javascript:void(0)" class="btn btn-sm btn-info mr-4">Connect</a> -->
                 <!-- <a href="javascript:void(0)" class="btn btn-sm btn-default float-right">Message</a> -->
               </div>
             </div>
-            <div class="card-body pt-0 pt-md-4 mt-3">
+            <div class="card-body pt-0 pt-md-5">
               <div class="text-center">
                 <span class="d-block mb-1" id="name"></span>
                 <small class="h4 font-weight-light text-muted" id="position"></small>
@@ -83,7 +83,7 @@ SeshStart('page');
           </div>
         </div>
         <div class="col-xl-8 order-xl-1">
-          <div class="card bg-secondary shadow">
+          <div class="card bg-secondary card-shadow">
             <div class="card-header bg-white border-0">
               <div class="row align-items-center">
                 <div class="col-8">
