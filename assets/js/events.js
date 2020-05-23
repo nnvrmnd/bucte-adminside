@@ -125,8 +125,6 @@ function RenderList() {
 					</div>
 				`);
 			}
-
-			DocumentReady();
 		},
 		complete: function () {
 			$('.desc').each(function (idx, el) {
@@ -138,8 +136,6 @@ function RenderList() {
 						.html('&nbsp;');
 				}
 			});
-
-			DocumentReady();
 		}
 	});
 }
@@ -513,6 +509,8 @@ $(function () {
 			}
 		});
 	});
+
+	DocumentReady();
 }); // ready fn
 
 function InstanceCKE() {

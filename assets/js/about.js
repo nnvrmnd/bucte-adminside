@@ -1,4 +1,3 @@
-'use_strict';
 $(function () {
 	let whoiam = $('#whoiam').val();
 	//getId
@@ -111,6 +110,8 @@ $(function () {
 			}
 		});
 	});
+
+	DocumentReady();
 });
 
 (function () {

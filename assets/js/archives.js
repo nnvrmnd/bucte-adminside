@@ -44,9 +44,6 @@ function RenderList() {
 					</div>
 				`);
 			}
-		},
-		complete: function () {
-			DocumentReady();
 		}
 	});
 }
@@ -186,4 +183,6 @@ $(function () {
 			}
 		});
 	});
+
+	DocumentReady();
 }); // ready fn

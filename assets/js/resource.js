@@ -87,9 +87,6 @@ function RenderList() {
 					</div>
 				`);
 			}
-		},
-		complete: function () {
-			DocumentReady();
 		}
 	});
 
@@ -510,6 +507,8 @@ $(function () {
 
 		Process();
 	}); */
+
+	DocumentReady();
 });
 
 function ValidateZipname(form_id, name) {

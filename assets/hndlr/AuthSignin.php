@@ -28,7 +28,7 @@ if (isset($_POST['sudo_username']) && isset($_POST['sudo_password'])) {
 	$who = $_POST['sudo_username'];
 	$key = $_POST['sudo_password'];
 
-	$stmnt = "SELECT * FROM user WHERE BINARY (username = ? OR email = ?) AND (position = 'Super Admin' OR position = 'Admin') ;";
+	$stmnt = "SELECT * FROM user WHERE BINARY (username = ? OR email = ?) AND (position = 'Super Admin' OR position = 'Admin')  AND account_status = '1' ;";
 	$query = $db->prepare($stmnt);
 	$param = [$who, $who];
 	$query->execute($param);

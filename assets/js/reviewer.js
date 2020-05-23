@@ -148,8 +148,6 @@ function RenderList() {
 						.html('&nbsp;');
 				}
 			});
-
-			DocumentReady();
 		}
 	});
 }
@@ -350,4 +348,6 @@ $(function () {
 			}
 		});
 	});
+
+	DocumentReady();
 }); // ready fn

@@ -72,9 +72,6 @@ function RenderList() {
 					</div>
 				`);
 			}
-		},
-		complete: function () {
-			DocumentReady();
 		}
 	});
 }
@@ -276,6 +273,8 @@ $(function () {
 		PromptModal('Are you deleting this item?', 0, 10000, 'delete_item', del);
 		PromptConfirm('Item deleted.', './assets/hndlr/Questionnaire.php');
 	});
+
+	DocumentReady();
 });
 /* Triggers */
 

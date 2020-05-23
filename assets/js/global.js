@@ -241,7 +241,7 @@ function PromptConfirm(msg, url) {
 
 /* Window ready */
 function DocumentReady() {
-	$('.loader').fadeOut();
+	$('.loader').fadeOut('slow');
 	$('#preloader').delay(400).fadeOut('slow');
 }
 
