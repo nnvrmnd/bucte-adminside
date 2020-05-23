@@ -239,6 +239,12 @@ function PromptConfirm(msg, url) {
 
 /* *************************************************** */
 
+/* Window ready */
+function DocumentReady() {
+	$('.loader').fadeOut();
+	$('#preloader').delay(400).fadeOut('slow');
+}
+
 /* ASCII code to Unicode */
 function unicode(name) {
 	let this_name = $(`[name="${name}"]`).val();

@@ -1,8 +1,7 @@
 <!-- Preloader -->
-<!-- <div id="preloader">
+<div id="preloader">
 	<div class="loader"></div>
-</div> -->
-<!-- /Preloader -->
+</div>
 
 <nav class="sidenav navbar navbar-vertical  fixed-left  navbar-expand-xs navbar-light bg-white" id="sidenav-main">
 	<div class="scrollbar-inner">

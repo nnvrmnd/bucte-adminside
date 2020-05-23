@@ -6,17 +6,6 @@ function RenderList() {
 		type: 'POST',
 		url: './assets/hndlr/Reviewer.php',
 		data: { fetchreviewers: 'all' },
-		complete: function (res) {
-			$('.desc').each(function (idx, el) {
-				let target = $(el).attr('data-target'),
-					condition = el.scrollWidth > el.clientWidth;
-				if (condition === false) {
-					$('.reviewers-container')
-						.find('#' + target)
-						.html('&nbsp;');
-				}
-			});
-		},
 		success: function (res) {
 			$('.reviewers-container').html('');
 
@@ -127,14 +116,12 @@ function RenderList() {
 											</dl>
 										</small>
                     <p>
-											<small class="text-muted">by ${AuthorName(el.author)} on ${
-							el.created_at
-						}</small>
+											<small class="text-muted">by ${AuthorName(el.author)} on ${el.created_at}</small>
 										</p>
                   </div>
 								</div>
               </div>
-					`);
+						`);
 					} else {
 						console.log('err:res');
 					}
@@ -150,6 +137,19 @@ function RenderList() {
 					</div>
 				`);
 			}
+		},
+		complete: function (res) {
+			$('.desc').each(function (idx, el) {
+				let target = $(el).attr('data-target'),
+					condition = el.scrollWidth > el.clientWidth;
+				if (condition === false) {
+					$('.reviewers-container')
+						.find('#' + target)
+						.html('&nbsp;');
+				}
+			});
+
+			DocumentReady();
 		}
 	});
 }

@@ -48,7 +48,7 @@
 			</div>
 			<div class="modal-footer">
 				<!-- <button type="button" class="btn btn-link text-white ml-auto" data-dismiss="modal">Close</button> -->
-				<button type="button" class="btn btn-white" data-dismiss="modal">Ok, Got it</button>
+				<!-- <button type="button" class="btn btn-white" data-dismiss="modal">Ok, Got it</button> -->
 			</div>
 		</div>
 	</div>
@@ -76,7 +76,7 @@
 			</div>
 			<div class="modal-footer">
 				<!-- <button type="button" class="btn btn-link text-white ml-auto" data-dismiss="modal">Close</button> -->
-				<button type="button" class="btn btn-white" data-dismiss="modal">Ok, Got it</button>
+				<!-- <button type="button" class="btn btn-white" data-dismiss="modal">Ok, Got it</button> -->
 			</div>
 		</div>
 	</div>

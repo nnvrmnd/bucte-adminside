@@ -1,10 +1,12 @@
 /* Fetch list */
 function RenderList() {
 	let reviewer = sessionStorage.getItem('rvwr');
-	$.post(
-		'./assets/hndlr/Questionnaire.php',
-		{ fetchitems: 'all', reviewer: reviewer },
-		function (res) {
+
+	$.ajax({
+		type: 'POST',
+		url: './assets/hndlr/Questionnaire.php',
+		data: { fetchitems: 'all', reviewer: reviewer },
+		success: function (res) {
 			$('.items-container').html('');
 
 			if (res != 'err:fetch') {
@@ -27,37 +29,37 @@ function RenderList() {
 					}
 
 					$('.items-container').append(`
-              <div class="col-lg-12">
-                <div class="card card-shadow">
-                    <div class="card-body pb-1">
-                      <button type="button" class="btn btn-sm btn-secondary text-danger float-right delete_item" data-target="${
-												el.question_id
-											}" title="Delete item...">
-                          <i class="fa fa-trash" aria-hidden="true"></i>
-                      </button>
-                      <button type="button" class="btn btn-sm btn-secondary text-purple float-right edit_item" data-id="${
-												el.question_id
-											}" title="Edit item...">
-                          <i class="fa fa-edit" aria-hidden="true"></i>
-                      </button>
-                      <p class="font-weight-bold mb-0 text-primary item">
-                      ${count--}.&ensp;${el.question}</p>
-                      <p class="pl-3 text-dark">
-                          <small>A.&emsp;${el.optionA}</small> <br>
-                          <small>B.&emsp;${el.optionB}</small> <br>
-                          ${optionC}
-                          ${optionD}
-                      </p>
-                      <p>
-                          <small>Correct Answer:&emsp;<span
-                                class="text-uppercase font-weight-bold">${
-																	el.answer
-																}</span></small>
-                      </p>
-                    </div>
-                </div>
-              </div>
-            `);
+						<div class="col-lg-12">
+							<div class="card card-shadow">
+									<div class="card-body pb-1">
+										<button type="button" class="btn btn-sm btn-secondary text-danger float-right delete_item" data-target="${
+											el.question_id
+										}" title="Delete item...">
+												<i class="fa fa-trash" aria-hidden="true"></i>
+										</button>
+										<button type="button" class="btn btn-sm btn-secondary text-purple float-right edit_item" data-id="${
+											el.question_id
+										}" title="Edit item...">
+												<i class="fa fa-edit" aria-hidden="true"></i>
+										</button>
+										<p class="font-weight-bold mb-0 text-primary item">
+										${count--}.&ensp;${el.question}</p>
+										<p class="pl-3 text-dark">
+												<small>A.&emsp;${el.optionA}</small> <br>
+												<small>B.&emsp;${el.optionB}</small> <br>
+												${optionC}
+												${optionD}
+										</p>
+										<p>
+											<small>
+												Correct Answer:&emsp;
+												<span class="text-uppercase font-weight-bold">${el.answer}</span>
+											</small>
+										</p>
+									</div>
+							</div>
+						</div>
+					`);
 				});
 			} else {
 				$('.items-container').html(`
@@ -70,8 +72,11 @@ function RenderList() {
 					</div>
 				`);
 			}
+		},
+		complete: function () {
+			DocumentReady();
 		}
-	);
+	});
 }
 
 // TODO: Add CKEditor to questions

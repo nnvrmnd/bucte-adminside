@@ -19,12 +19,11 @@ function RenderList() {
 		}
 	}
 
-	$.post(
-		'./assets/hndlr/Documents.php',
-		{
-			fetchdocuments: 'all'
-		},
-		function (res) {
+	$.ajax({
+		type: 'POST',
+		url: './assets/hndlr/Documents.php',
+		data: { fetchdocuments: 'all' },
+		success: function (res) {
 			$('.documents-container').html('');
 
 			if (!res.match(/\b(\w*err:fetch\w*)\b/g)) {
@@ -39,43 +38,43 @@ function RenderList() {
 					attachment_filename = `${attachment_title}.${attachment_format[1]}`;
 
 					$('.documents-container').append(`
-					<div class="col-sm-6 col-md-4 col-lg-3 document-card">
-						<div class="card card-shadow">
+						<div class="col-sm-6 col-md-4 col-lg-3 document-card">
+							<div class="card card-shadow">
 
-							<div class="custom-control custom-checkbox m-2">
-								<input type="checkbox" class="custom-control-input checkboxes" id="check_${
-									el.doc_id
-								}"
-									data-id="${el.doc_id}">
-								<label class="custom-control-label" for="check_${
-									el.doc_id
-								}" title="Select to archive or delete file/s..."></label>
-							</div>
-
-							<div class="d-flex align-items-center justify-content-center pointer-here readmore"
-								data-target="${el.doc_id}" title="Click to read more...">
-								<img class="card-img-top mx-auto mt-4"
-									src="./assets/img/file_format/${file_format(
-										el.format
-									)}" alt="Filetype thumbnail">
-							</div>
-
-							<div class="card-body pb-1">
-								<p class="font-weight-bold card-title text-truncate mb-0 pointer-here readmore"
-									data-id="${
+								<div class="custom-control custom-checkbox m-2">
+									<input type="checkbox" class="custom-control-input checkboxes" id="check_${
 										el.doc_id
-									}" data-target="${el.doc_id}" title="${el.title}">${el.title}</p>
-								<small class="text-muted">by ${AuthorName(
-									el.author
-								)} on ${el.uploaded_at}</small> <br>
-								<a href="./files/${dir}/${el.attachment}" download="${attachment_filename}"
-									class="btn btn-link px-0 float-right download_file" title="Download file...">
-									<i class="fas fa-cloud-download-alt fa-lg"></i>
-								</a>
+									}"
+										data-id="${el.doc_id}">
+									<label class="custom-control-label" for="check_${
+										el.doc_id
+									}" title="Select to archive or delete file/s..."></label>
+								</div>
+
+								<div class="d-flex align-items-center justify-content-center pointer-here readmore"
+									data-target="${el.doc_id}" title="Click to read more...">
+									<img class="card-img-top mx-auto mt-4"
+										src="./assets/img/file_format/${file_format(
+											el.format
+										)}" alt="Filetype thumbnail">
+								</div>
+
+								<div class="card-body pb-1">
+									<p class="font-weight-bold card-title text-truncate mb-0 pointer-here readmore"
+										data-id="${
+											el.doc_id
+										}" data-target="${el.doc_id}" title="${el.title}">${el.title}</p>
+									<small class="text-muted">by ${AuthorName(
+										el.author
+									)} on ${el.uploaded_at}</small> <br>
+									<a href="./files/${dir}/${el.attachment}" download="${attachment_filename}"
+										class="btn btn-link px-0 float-right download_file" title="Download file...">
+										<i class="fas fa-cloud-download-alt fa-lg"></i>
+									</a>
+								</div>
 							</div>
 						</div>
-					</div>
-				`);
+					`);
 				});
 			} else {
 				$('.documents-container').html(`
@@ -88,8 +87,11 @@ function RenderList() {
 					</div>
 				`);
 			}
+		},
+		complete: function () {
+			DocumentReady();
 		}
-	);
+	});
 }
 
 $(function () {

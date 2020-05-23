@@ -13,5 +13,6 @@
 <link rel="stylesheet" href="./dist/css/argon.min5438.css?v=1.2.0" type="text/css">
 
 <!-- Neil Francis E. Bayna -->
+<link rel="stylesheet" href="./assets/css/preloader.css" type="text/css">
 <link rel="stylesheet" href="./assets/css/style.css" type="text/css">
 <link rel="stylesheet" href="./assets/css/oops.css" type="text/css">

@@ -4,17 +4,6 @@ function RenderList() {
 		type: 'POST',
 		url: './assets/hndlr/Events.php',
 		data: { fetchevents: 'all' },
-		complete: function (res) {
-			$('.desc').each(function (idx, el) {
-				let target = $(el).attr('data-target'),
-					condition = el.scrollWidth > el.clientWidth;
-				if (condition === false) {
-					$('.events-container')
-						.find('#' + target)
-						.html('&nbsp;');
-				}
-			});
-		},
 		success: function (res) {
 			$('.events-container').html('');
 
@@ -136,6 +125,21 @@ function RenderList() {
 					</div>
 				`);
 			}
+
+			DocumentReady();
+		},
+		complete: function () {
+			$('.desc').each(function (idx, el) {
+				let target = $(el).attr('data-target'),
+					condition = el.scrollWidth > el.clientWidth;
+				if (condition === false) {
+					$('.events-container')
+						.find('#' + target)
+						.html('&nbsp;');
+				}
+			});
+
+			DocumentReady();
 		}
 	});
 }

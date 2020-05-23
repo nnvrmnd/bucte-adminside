@@ -1,46 +1,52 @@
 /* Fetch list */
 function RenderList() {
-	$.post('./assets/hndlr/Archives.php', { fetcharchives: 'all' }, res => {
-		$('.archives-container').html('');
+	$.ajax({
+		type: 'POST',
+		url: './assets/hndlr/Archives.php',
+		data: { fetcharchives: 'all' },
+		success: function (res) {
+			if (!res.match(/\b(\w*err:fetch\w*)\b/g)) {
+				$.each(JSON.parse(res), function (idx, el) {
+					$('.archives-container').append(`
+						<div class="col-sm-6 col-md-4 col-lg-3 document-card">
+							<div class="card card-shadow">
 
-		if (!res.match(/\b(\w*err:fetch\w*)\b/g)) {
-			$.each(JSON.parse(res), function (idx, el) {
-				$('.archives-container').append(`
-					<div class="col-sm-6 col-md-4 col-lg-3 document-card">
-						<div class="card card-shadow">
+								<div class="d-flex align-items-center justify-content-center mt-4 pointer-here readarchive"
+									data-target="${el.archive_id}" title="Click to read more...">
+									<img class="card-img-top mx-auto mt-4" src="./assets/img/file_format/zip.png" alt="Filetype thumbnail">
+								</div>
 
-							<div class="d-flex align-items-center justify-content-center mt-4 pointer-here readarchive"
-								data-target="${el.archive_id}" title="Click to read more...">
-								<img class="card-img-top mx-auto mt-4" src="./assets/img/file_format/zip.png" alt="Filetype thumbnail">
-							</div>
-
-							<div class="card-body pb-1">
-								<p class="font-weight-bold card-title text-truncate mb-0 pointer-here readarchive"
-									data-id="${
-										el.archive_id
-									}" data-target="${el.archive_id}" title="${el.zipname}">${el.zipname}</p>
-								<small class="text-muted">by ${AuthorName(
-									el.author
-								)} on ${el.created_at}</small> <br>
-								<a href="./files/documents/${el.zipname}.zip" download="${el.zipname}.zip"
-									class="btn btn-link px-0 float-right download_file" title="Download file...">
-									<i class="fas fa-cloud-download-alt fa-lg"></i>
-								</a>
+								<div class="card-body pb-1">
+									<p class="font-weight-bold card-title text-truncate mb-0 pointer-here readarchive"
+										data-id="${
+											el.archive_id
+										}" data-target="${el.archive_id}" title="${el.zipname}">${el.zipname}</p>
+									<small class="text-muted">by ${AuthorName(
+										el.author
+									)} on ${el.created_at}</small> <br>
+									<a href="./files/documents/${el.zipname}.zip" download="${el.zipname}.zip"
+										class="btn btn-link px-0 float-right download_file" title="Download file...">
+										<i class="fas fa-cloud-download-alt fa-lg"></i>
+									</a>
+								</div>
 							</div>
 						</div>
+					`);
+				});
+			} else {
+				$('.archives-container').html(`
+					<div class="col notfound mb-5 pb-5">
+						<div class="d-none d-sm-block notfound-404">
+							<h1>Oops!</h1>
+						</div>
+						<h2 class="ml-2">Oops! List is empty</h2>
+						<p class="ml-2">No items to display</p>
 					</div>
 				`);
-			});
-		} else {
-			$('.archives-container').html(`
-				<div class="col notfound mb-5 pb-5">
-					<div class="d-none d-sm-block notfound-404">
-						<h1>Oops!</h1>
-					</div>
-					<h2 class="ml-2">Oops! List is empty</h2>
-					<p class="ml-2">No items to display</p>
-				</div>
-			`);
+			}
+		},
+		complete: function () {
+			DocumentReady();
 		}
 	});
 }
