@@ -176,8 +176,6 @@ $(function () {
 	$('#reviewer_form').submit(function (e) {
 		e.preventDefault();
 
-		WaitModal('Processing...', 0, 5000);
-
 		let form = $(this).serialize();
 
 		switch (false) {
@@ -185,9 +183,12 @@ $(function () {
 			case ValidateRequired('reviewer_form', 'source'):
 			case ValidateRequired('reviewer_form', 'level'):
 			case ValidateRequired('reviewer_form', 'duration'):
+				$('.modal').animate({ scrollTop: $('[name="title"]').offset().top }, 500);
 				break;
 
 			default:
+				WaitModal('Processing...', 0, 5000);
+
 				$.ajax({
 					type: 'POST',
 					url: './assets/hndlr/Reviewer.php',
@@ -260,8 +261,6 @@ $(function () {
 	$('#edit_form').submit(function (e) {
 		e.preventDefault();
 
-		WaitModal('Processing...', 0, 5000);
-
 		let form = $(this).serialize();
 
 		switch (false) {
@@ -269,9 +268,12 @@ $(function () {
 			case ValidateRequired('edit_form', 'source'):
 			case ValidateRequired('edit_form', 'level'):
 			case ValidateRequired('edit_form', 'duration'):
+				$('.modal').animate({ scrollTop: $('#title').offset().top }, 500);
 				break;
 
 			default:
+				WaitModal('Processing...', 0, 5000);
+
 				$.ajax({
 					type: 'POST',
 					url: './assets/hndlr/Reviewer.php',

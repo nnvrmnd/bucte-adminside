@@ -177,8 +177,6 @@ $(function () {
 	$('#upload_form').submit(function (e) {
 		e.preventDefault();
 
-		WaitModal('Processing...', 0, 5000);
-
 		let form = $(this).serializeArray(),
 			form_data = new FormData(),
 			file = $('#select_file')[0].files[0];
@@ -189,6 +187,8 @@ $(function () {
 				break;
 
 			default:
+				WaitModal('Processing...', 0, 5000);
+
 				form_data.append('select_file', file);
 				$.each(form, function (key, input) {
 					form_data.append(input.name, input.value);
@@ -253,8 +253,6 @@ $(function () {
 	$('#edit_form').submit(function (e) {
 		e.preventDefault();
 
-		WaitModal('Processing...', 0, 5000);
-
 		let empty = /^\s*$/,
 			form = $(this).serialize();
 
@@ -264,6 +262,8 @@ $(function () {
 				break;
 
 			default:
+				WaitModal('Processing...', 0, 5000);
+
 				$.post('./assets/hndlr/Documents.php', form, function (res) {
 					switch (res) {
 						case 'true':
@@ -435,8 +435,6 @@ $(function () {
 	$('#archival_form').submit(function (e) {
 		e.preventDefault();
 
-		WaitModal('Processing...', 0, 5000);
-
 		let form = $(this).serialize(),
 			checked = $('.documents-container').find('.checkboxes:checked'),
 			checked_data = $.map(checked, function (el) {
@@ -492,6 +490,8 @@ $(function () {
 
 		async function Process() {
 			try {
+				WaitModal('Processing...', 0, 5000);
+
 				const validationRes = await ValidateZipname(
 					'archival_form',
 					'archive_name'

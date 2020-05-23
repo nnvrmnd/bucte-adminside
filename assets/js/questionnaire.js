@@ -152,8 +152,6 @@ $(function () {
 	$('#item_form').submit(function (e) {
 		e.preventDefault();
 
-		WaitModal('Processing...', 0, 5000);
-
 		let form = $(this).serialize();
 
 		switch (false) {
@@ -163,6 +161,8 @@ $(function () {
 				break;
 
 			default:
+				WaitModal('Processing...', 0, 5000);
+
 				$.ajax({
 					type: 'POST',
 					url: './assets/hndlr/Questionnaire.php',
@@ -230,8 +230,6 @@ $(function () {
 	$('#update_form').submit(function (e) {
 		e.preventDefault();
 
-		WaitModal('Processing...', 0, 5000);
-
 		let form = $(this).serialize();
 
 		switch (false) {
@@ -241,6 +239,8 @@ $(function () {
 				break;
 
 			default:
+				WaitModal('Processing...', 0, 5000);
+
 				$.ajax({
 					type: 'POST',
 					url: './assets/hndlr/Questionnaire.php',

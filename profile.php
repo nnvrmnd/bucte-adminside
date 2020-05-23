@@ -106,7 +106,7 @@ SeshStart('page');
                         <input type="password" class="d-none" name="user_profile">
                         <input type="text" class="form-control form-control-alternative bg-white profileform"
                           name="username" id="username" maxlength="16" readonly>
-                        <small class="username"></small>
+                        <small class="acct username"></small>
                       </div>
                     </div>
                     <div class="col-lg-6">
@@ -114,7 +114,7 @@ SeshStart('page');
                         <label class="form-control-label email" for="email">Email address</label>
                         <input type="email" class="form-control form-control-alternative bg-white profileform"
                           name="email" id="email" readonly>
-                        <small class="email"></small>
+                        <small class="acct email"></small>
                       </div>
                     </div>
                   </div>
@@ -124,7 +124,7 @@ SeshStart('page');
                         <label class="form-control-label given" for="given">First name</label>
                         <input type="text" class="form-control form-control-alternative bg-white profileform"
                           name="given" id="given" readonly>
-                        <small class="given"></small>
+                        <small class="acct given"></small>
                       </div>
                     </div>
                     <div class="col-lg-6">
@@ -132,7 +132,7 @@ SeshStart('page');
                         <label class="form-control-label surname" for="surname">Last name</label>
                         <input type="text" class="form-control form-control-alternative bg-white profileform"
                           name="surname" id="surname" readonly>
-                        <small class="surname"></small>
+                        <small class="acct surname"></small>
                       </div>
                     </div>
                   </div>

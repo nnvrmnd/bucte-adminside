@@ -43,6 +43,8 @@ $(function() {
 
     FetchInfo(whoiam);
 
+    $('.acct').html('');
+    $('.form-control-label').removeClass('text-danger').removeClass('text-success');
     $('.profileform').attr('readonly', '');
     $('#submit-btn').attr('disabled', '');
     $('#edit-btn').removeClass('d-none');
@@ -116,8 +118,6 @@ $(function() {
   $('#newpassword_form').submit(function(e) {
 		e.preventDefault();
 
-		WaitModal('Processing...', 0, 5000);
-
     let newpassword_form = $(this).serialize();
     var neww = $('#new').val(),
       confirmed = $('#confirmed').val(),
@@ -150,6 +150,8 @@ $(function() {
               .addClass('text-danger')
               .html('Incorrect password.');
           } else {
+						WaitModal('Processing...', 0, 5000);
+
             if (res.match(/\b(update)\b/g)) {
               ErrorModal(0, 0, 5000);('show');
               console.log(res);

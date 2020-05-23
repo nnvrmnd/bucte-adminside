@@ -242,8 +242,10 @@ function PromptConfirm(msg, url) {
 
 /* Window ready */
 function DocumentReady() {
-	$('.loader').fadeOut('slow');
-	$('#preloader').delay(400).fadeOut('slow');
+	setTimeout(() => {
+		$('.loader').fadeOut('slow');
+		$('#preloader').delay(400).fadeOut('slow');
+	}, 4000);
 }
 
 /* ASCII code to Unicode */

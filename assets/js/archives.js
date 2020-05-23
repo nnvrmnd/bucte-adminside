@@ -5,6 +5,8 @@ function RenderList() {
 		url: './assets/hndlr/Archives.php',
 		data: { fetcharchives: 'all' },
 		success: function (res) {
+			$('.archives-container').html('');
+
 			if (!res.match(/\b(\w*err:fetch\w*)\b/g)) {
 				$.each(JSON.parse(res), function (idx, el) {
 					$('.archives-container').append(`

@@ -139,22 +139,19 @@ if (isset($_POST['action']) && isset($_POST['id'])) {
 			$file = $dir . $file;
 
 			if (file_exists($file) === true) {
-				if (unlink($file)) {
-					$db->beginTransaction();
-					$stmnt = 'DELETE FROM document WHERE doc_id = ? ;';
-					$query = $db->prepare($stmnt);
-					$param = [$document];
-					$query->execute($param);
-					$count = $query->rowCount();
-					if ($count > 0) {
-						$db->commit();
-						echo 'true';
-					} else {
-						$db->rollBack();
-						echo 'err:delete';
-					}
+				$db->beginTransaction();
+				$stmnt = 'DELETE FROM document WHERE doc_id = ? ;';
+				$query = $db->prepare($stmnt);
+				$param = [$document];
+				$query->execute($param);
+				$count = $query->rowCount();
+				if ($count > 0) {
+					$db->commit();
+					unlink($file);
+					echo 'true';
 				} else {
-					echo 'err:rm';
+					$db->rollBack();
+					echo 'err:delete';
 				}
 			} else {
 				echo 'err:!exist';
@@ -192,7 +189,7 @@ if (isset($_POST['delete'])) {
 	}
 
 	$db->beginTransaction();
-	$stmnt = "DELETE FROM document WHERE doc_id = ? ;";
+	$stmnt = 'DELETE FROM document WHERE doc_id = ? ;';
 	$query = $db->prepare($stmnt);
 	foreach ($files as $file) {
 		$id = $file['doc_id'];
@@ -201,18 +198,18 @@ if (isset($_POST['delete'])) {
 	}
 	$count = $query->rowCount();
 	if ($count > 0) {
-			$db->commit();
-			foreach ($files as $file) {
-				$attachment = $file['path'];
-				if (file_exists($attachment)) {
-					unlink($attachment);
-				}
+		$db->commit();
+		foreach ($files as $file) {
+			$attachment = $file['path'];
+			if (file_exists($attachment)) {
+				unlink($attachment);
 			}
-			echo 'true';
-		} else {
-			$db->rollBack();
-			echo 'false';
 		}
+		echo 'true';
+	} else {
+		$db->rollBack();
+		echo 'false';
+	}
 }
 
 /* Validate new zip name -> validationRes */
@@ -324,12 +321,11 @@ if (isset($_POST['archive'])) {
 			if ($ctrl === true) {
 				foreach ($files as $file) {
 					$filePath = $file['path'];
-					/* CAUTION: Enable 'unlink' on production */
-					unlink($filePath);
+					if (file_exists($filePath)) {
+						unlink($filePath);
+					}
 				}
 			}
-
-
 		}
 
 		return $ctrl;

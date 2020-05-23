@@ -301,8 +301,6 @@ $(function () {
 	$('#event_form').submit(function (e) {
 		e.preventDefault();
 
-		WaitModal('Processing...', 0, 5000);
-
 		InstanceCKE();
 
 		let form = $(this).serializeArray(),
@@ -320,6 +318,8 @@ $(function () {
 				break;
 
 			default:
+				WaitModal('Processing...', 0, 5000);
+
 				form_data.append('select_file', file);
 				$.each(form, function (key, input) {
 					form_data.append(input.name, input.value);
@@ -409,8 +409,6 @@ $(function () {
 	$('#edit_form').submit(function (e) {
 		e.preventDefault();
 
-		WaitModal('Processing...', 0, 5000);
-
 		InstanceCKE();
 
 		let empty = /^\s*$/,
@@ -436,6 +434,8 @@ $(function () {
 				break;
 
 			default:
+				WaitModal('Processing...', 0, 5000);
+
 				form_data.append('edt_select_file', file);
 				$.each(form, function (key, input) {
 					form_data.append(input.name, input.value);
