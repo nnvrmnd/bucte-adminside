@@ -63,6 +63,54 @@ $(function () {
 		});
 	});
 
+	//Delete Image
+	$(document).on('click', 'i[class*="fa-trash"]', function(){
+		let getImage = $(this).parent().prev(), //.find("img").attr("id");
+		    currentDiv = $(this).parent(),
+			imageName = getImage.find("label").attr('for'),
+			image =  getImage.find("img");
+		swal({
+			title: `Proceed deleting ${imageName}?`,
+			text: "Note: the image will be directly deleted without saving.",
+			icon: 'warning',
+			buttons: true,
+			dangerMode: true,
+			showCloseButton: true
+		}).then(result=>{
+			if(result){
+			   		$.post('./assets/hndlr/Homepage.php',
+					{ image: imageName },
+					function(res){
+						console.log(res)
+						switch (res) {
+							case 'true':
+								Swal.fire({
+									icon: 'success',
+									title: 'Deleted successfully!',
+									showConfirmButton: false,
+									timer: 2500
+								});
+								image.attr("src", "assets/img/no-image.png")
+								image.attr("class", "no-image-size")
+								currentDiv.css({"display": "none"}) 
+								currentDiv.prev().css({"padding": "40px"})
+								break;
+							default:
+								Swal.fire({
+									icon: 'error',
+									title: 'Error Occured!',
+									text: 'Please try again.',
+									showConfirmButton: false,
+									timer: 2500
+								});
+								break;
+						}
+					}
+				)		
+			}
+		})		
+	})
+
 	//Save Changes in Form
 	$('#homepage_form').submit(function (e) {
 		e.preventDefault();
@@ -122,6 +170,5 @@ $(function () {
 			} //else swal.close();
 		});
 	});
-
 	DocumentReady();
 });

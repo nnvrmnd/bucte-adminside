@@ -196,3 +196,20 @@ if (isset($_POST['save_changes'])) {
 		}
 	}
 }
+
+if(isset($_POST['image'])){
+	require 'db.hndlr.php';
+	$db->beginTransaction();
+		$stmnt = 'DELETE FROM content_images WHERE image = ?';
+		$query = $db->prepare($stmnt);
+		$param = [$_POST['image']];
+		$query->execute($param);
+		$row = $query -> rowCount(); 
+		if ($row > 0) {
+			$db->commit();
+			echo "true";
+		} else {
+			$db->rollBack();
+			echo "Err: delete";
+		}	
+}

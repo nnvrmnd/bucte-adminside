@@ -32,6 +32,7 @@ if ($count > 0) {
 										</div>
 								</div>
 						</div>
+						<div class="delete-round"><i class="fa fa-trash" aria-hidden="true"></i></div>
 				</div>
 		</div>
 		';

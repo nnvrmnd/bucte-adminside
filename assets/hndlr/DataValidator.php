@@ -37,7 +37,6 @@ function getImageName($image) {
 function uploadImage($image) {
 	try {
 		$destination = getImagePath($image, SAVE_PATH);
-		//if(file_exists($destination)) unlink($destination);
 		move_uploaded_file($_FILES[$image]['tmp_name'], $destination);
 	} catch (\Throwable $th) {
 		return 'UPLOAD ERROR';//$errCount++;
