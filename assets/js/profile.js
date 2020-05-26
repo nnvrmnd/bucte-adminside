@@ -74,7 +74,7 @@ $(function() {
   $('#profile_form').submit(function(e) {
     e.preventDefault();
 
-		WaitModal('Processing...', 0, 5000);
+		WaitModal(5000);
 
     let profile_form = $(this).serialize();
 
@@ -98,7 +98,7 @@ $(function() {
             break;
 
           default:
-            ErrorModal(0, 0, 5000);('show');
+            ErrorModal(5000);('show');
             console.error('ERR', res);
             break;
         }
@@ -150,10 +150,10 @@ $(function() {
               .addClass('text-danger')
               .html('Incorrect password.');
           } else {
-						WaitModal('Processing...', 0, 5000);
+						WaitModal(5000);
 
             if (res.match(/\b(update)\b/g)) {
-              ErrorModal(0, 0, 5000);('show');
+              ErrorModal(5000);('show');
               console.log(res);
             } else if (res == 'true') {
               $('#ChangePassword-Modal').modal('hide');
@@ -166,7 +166,7 @@ $(function() {
                 $('#sudo_exit').click();
               });
             } else {
-              ErrorModal(0, 0, 5000);('show');
+              ErrorModal(5000);('show');
 
             }
           }

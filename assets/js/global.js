@@ -1,5 +1,3 @@
-
-
 $(function () {
 	/* Display current user */
 	WhoAmI('topnav');
@@ -36,6 +34,8 @@ $(function () {
 		$('.E-learning').addClass('font-weight-bold active');
 	} else if (documenttitle.match(/\b(\w*Events\w*)\b/g)) {
 		$('.Events').addClass('font-weight-bold active');
+	} else if (documenttitle.match(/\b(\w*Assessment\w*)\b/g)) {
+		$('.Events').addClass('font-weight-bold active');
 	} else if (documenttitle.match(/\b(\w*Home\w*)\b/g)) {
 		$('.Pages')
 			.addClass('font-weight-bold active')
@@ -50,14 +50,17 @@ $(function () {
 		$('.Records')
 			.addClass('font-weight-bold active')
 			.attr('aria-expanded', 'true');
-		$('#Records').addClass('show').find('#records_documents').addClass('active');
+		$('#Records')
+			.addClass('show')
+			.find('#records_documents')
+			.addClass('active');
 	} else if (documenttitle.match(/\b(\w*Archives\w*)\b/g)) {
 		$('.Records')
 			.addClass('font-weight-bold active')
 			.attr('aria-expanded', 'true');
 		$('#Records').addClass('show').find('#records_archives').addClass('active');
-	} else if (documenttitle.match(/\b(\w*Resource\w*)\b/g)) {
-		$('.Resource')
+	} else if (documenttitle.match(/\b(\w*Library\w*)\b/g)) {
+		$('.Library')
 			.addClass('font-weight-bold active')
 			.attr('aria-expanded', 'true');
 	}
@@ -129,7 +132,9 @@ function AuthorName(id) {
 
 var timer = null; // for timeouts
 
-function WaitModal(msg, redirect, timeout) {
+function WaitModal(timeout, msg = 0, redirect = 0) {
+	let message = msg === 0 ? 'Processing...' : msg;
+
 	if (redirect !== 0) {
 		$('#WaitModal').on('hidden.bs.modal', function () {
 			window.location.href = redirect;
@@ -141,9 +146,8 @@ function WaitModal(msg, redirect, timeout) {
 	$('#SuccessModal, #ErrorModal').on('shown.bs.modal', function () {
 		$('#WaitModal').modal('hide');
 	});
-	$('#wait-modal-msg').html(msg);
+	$('#wait-modal-msg').html(message);
 	$('#WaitModal').modal('show');
-
 
 	timer = setTimeout(() => {
 		$('#wait-modal-msg').html('');
@@ -152,7 +156,7 @@ function WaitModal(msg, redirect, timeout) {
 	}, timeout - 1000);
 }
 
-function SuccessModal(msg, redirect, timeout) {
+function SuccessModal(msg, timeout, redirect = 0,) {
 	if (redirect !== 0) {
 		$('#SuccessModal').on('hidden.bs.modal', function () {
 			window.location.href = redirect;
@@ -171,7 +175,7 @@ function SuccessModal(msg, redirect, timeout) {
 	}, timeout - 1000);
 }
 
-function ErrorModal(msg, redirect, timeout) {
+function ErrorModal(timeout, msg = 0, redirect = 0) {
 	let message = msg === 0 ? 'Something went wrong.' : msg;
 
 	if (redirect !== 0) {
@@ -192,7 +196,7 @@ function ErrorModal(msg, redirect, timeout) {
 	}, timeout - 1000);
 }
 
-function PromptModal(msg, redirect, timeout, action, id) {
+function PromptModal(timeout, action, id, msg, redirect = 0) {
 	$('#yes_prompt').attr('data-action', action).attr('data-target', id);
 
 	if (redirect !== 0) {
@@ -213,25 +217,25 @@ function PromptModal(msg, redirect, timeout, action, id) {
 	}, timeout - 1000);
 }
 
-function PromptConfirm(msg, url) {
+function PromptConfirm(msg, url, renderId = 0) {
 	$('#prompt_form #yes_prompt').click(function (e) {
 		e.preventDefault();
 
-		WaitModal('Processing...', 0, 5000);
+		WaitModal(5000);
 
 		let action = $(this).attr('data-action'),
-		id = $(this).attr('data-target');
+			id = $(this).attr('data-target');
 
 		$.post(url, { action, id }, function (res) {
 			switch (res) {
 				case 'true':
-					SuccessModal(msg, 0, 5000);
-					RenderList();
+					SuccessModal(msg, 5000);
+					RenderList(renderId);
 					break;
 
 				default:
 					console.error('ERR', res);
-					ErrorModal(0, 0, 5000);
+					ErrorModal(5000);
 					break;
 			}
 		});
@@ -245,7 +249,16 @@ function DocumentReady() {
 	setTimeout(() => {
 		$('.loader').fadeOut('slow');
 		$('#preloader').delay(400).fadeOut('slow');
-	}, 4000);
+	}, 1000);
+}
+
+/* Encrpyt */
+function Encrypt(param) {
+	return CryptoJS.AES.encrypt(param, "In JESUS' Name!").toString();
+}
+/* Decrypt */
+function Decrypt(param) {
+	return CryptoJS.AES.decrypt(param, "In JESUS' Name!").toString(CryptoJS.enc.Utf8);
 }
 
 /* ASCII code to Unicode */

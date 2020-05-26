@@ -186,7 +186,7 @@ $(function () {
 				break;
 
 			default:
-				WaitModal('Processing...', 0, 5000);
+				WaitModal(5000);
 
 				form_data.append('select_file', file);
 				$.each(form, function (key, input) {
@@ -202,12 +202,12 @@ $(function () {
 					success: function (res) {
 						switch (res) {
 							case 'true':
-								SuccessModal('Uploaded new resource.', 0, 5000);
+								SuccessModal('Uploaded new resource.', 5000);
 								RenderList();
 								break;
 
 							default:
-								ErrorModal(0, 0, 5000);
+								ErrorModal(5000);
 								console.log(res);
 								break;
 						}
@@ -238,7 +238,7 @@ $(function () {
 						$(`#edit_form [name="edt_description"]`).val(el.description);
 					});
 				} else {
-					ErrorModal(0, 0, 5000);
+					ErrorModal(5000);
 					console.error('ERR', res);
 				}
 			},
@@ -261,17 +261,17 @@ $(function () {
 				break;
 
 			default:
-				WaitModal('Processing...', 0, 5000);
+				WaitModal(5000);
 
 				$.post('./assets/hndlr/Resource.php', form, function (res) {
 					switch (res) {
 						case 'true':
-							SuccessModal('Updated resource.', 0, 5000);
+							SuccessModal('Updated resource.', 5000);
 							RenderList();
 							break;
 
 						default:
-							ErrorModal(0, 0, 5000);
+							ErrorModal(5000);
 							break;
 					}
 				});
@@ -402,22 +402,22 @@ $(function () {
 				return $(el).data('id');
 			});
 
-		PromptModal('Delete selected file/s?', 0, 5000, 'delete_selected', 1);
+		PromptModal(5000, 'delete_selected', 1, 'Delete selected file/s?');
 
 		$('#prompt_form #yes_prompt').click(function (e) {
 
-			WaitModal('Processing...', 0, 5000);
+			WaitModal(5000);
 
 			$.post(
 				'./assets/hndlr/Resource.php',
 				{ delete: JSON.stringify(checked_data) },
 				function (res) {
 					if (res === 'true') {
-						SuccessModal('Archived files.', 0, 5000);
+						SuccessModal('Archived files.', 5000);
 						RenderList();
 					} else {
 						console.error('ERR', res);
-						ErrorModal(0, 0, 5000);
+						ErrorModal(5000);
 						RenderList();
 					}
 				}
@@ -453,7 +453,7 @@ $(function () {
 
 						resolve(archiveJson);
 					} catch (e) {
-						ErrorModal(0, 0, 5000);
+						ErrorModal(5000);
 						reject({
 							where: 'Zipname',
 							message: lid
@@ -470,12 +470,12 @@ $(function () {
 					{ archive: JSON.stringify(archiveJson) },
 					function (res) {
 						if (res === 'true') {
-							SuccessModal('Archived files.', 0, 5000);
+							SuccessModal('Archived files.', 5000);
 							$('#archive_btn, #delete_btn').addClass('d-none');
 							RenderList();
 							resolve(res);
 						} else {
-							ErrorModal(0, 0, 5000);
+							ErrorModal(5000);
 							RenderList();
 							reject({
 								where: 'CreateZip',
@@ -537,7 +537,7 @@ function ValidateZipname(form_id, name) {
 							.html(`An archive alreay contain the name '${input}.'`);
 						resolve(false);
 					} else {
-						ErrorModal(0, 0, 5000);
+						ErrorModal(5000);
 						// console.error('ERR', res);
 						reject({
 							where: 'ValidateZipname',

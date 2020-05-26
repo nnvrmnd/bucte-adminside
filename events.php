@@ -18,6 +18,7 @@ SeshStart('page');
 			padding-left: 3%;
 			padding-right: 3%;
 		}
+
 	</style>
 </head>
 
@@ -33,7 +34,7 @@ SeshStart('page');
 			<div class="container-fluid">
 				<div class="header-body">
 					<div class="row align-items-center py-4">
-						<div class="col-lg-6 col-7">
+						<div class="col-lg-6">
 							<h6 class="h2 d-inline-block mb-0">Events</h6>
 							<nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
 								<ol class="breadcrumb breadcrumb-links">
@@ -43,9 +44,14 @@ SeshStart('page');
 								</ol>
 							</nav>
 						</div>
-						<div class="col-lg-6 col-5 text-right">
-							<button class="btn btn-sm btn-neutral" data-toggle="modal" data-target="#NewEvent">New
-								event</button>
+						<div class="col-lg-6 text-right">
+							<a href="assessment.php" class="btn btn-sm btn-neutral" id="assessment_form"
+								title="Create new assessment form...">
+								Assessment form
+							</a>
+							<button class="btn btn-sm btn-neutral" data-toggle="modal" data-target="#NewEvent">
+								New event
+							</button>
 						</div>
 					</div>
 				</div>
@@ -248,8 +254,35 @@ SeshStart('page');
 		</div>
 	</div>
 
+	<div class="modal fade" id="EventAssessment" tabindex="-1" role="dialog" aria-labelledby="EventAssessmentLabel"
+		aria-hidden="true">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="EventAssessmentLabel"></h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+
+				<div class="modal-body">
+					<div class="chart">
+						<!-- Chart wrapper -->
+						<canvas id="chart-bar-stacked7" class="chart-canvas"></canvas>
+					</div>
+				</div>
+
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
 	<!-- Scripts -->
 	<?php include './components/layout/Scripts.php'; ?>
+	<script src="./dist/vendor/chart.js/dist/Chart.min.js"></script>
+	<script src="./dist/vendor/chart.js/dist/Chart.extension.js"></script>
 	<script src="./dist/vendor/ckeditor/ckeditor.js"></script>
 	<script src="./dist/vendor/fancybox/jquery.fancybox.min.js"></script>
 	<script src="./assets/js/events.js"></script>

@@ -50,9 +50,9 @@
 						</a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link Resource" href="./resource.php">
+						<a class="nav-link Library" href="./library.php">
 							<i class="far fa-bookmark text-green"></i>
-							<span class="nav-link-text">Learning Resource</span>
+							<span class="nav-link-text">Library</span>
 						</a>
 					</li>
 					<li class="nav-item">

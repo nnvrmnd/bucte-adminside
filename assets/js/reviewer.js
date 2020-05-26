@@ -187,7 +187,7 @@ $(function () {
 				break;
 
 			default:
-				WaitModal('Processing...', 0, 5000);
+				WaitModal(5000);
 
 				$.ajax({
 					type: 'POST',
@@ -196,12 +196,12 @@ $(function () {
 					success: function (res) {
 						switch (res) {
 							case 'true':
-								SuccessModal('Created new reviewer.', 0, 5000);
+								SuccessModal('Created new reviewer.', 5000);
 								RenderList();
 								break;
 
 							default:
-								ErrorModal(0, 0, 5000);
+								ErrorModal(5000);
 								console.error('ERR', res);
 								break;
 						}
@@ -272,7 +272,7 @@ $(function () {
 				break;
 
 			default:
-				WaitModal('Processing...', 0, 5000);
+				WaitModal(5000);
 
 				$.ajax({
 					type: 'POST',
@@ -281,12 +281,12 @@ $(function () {
 					success: function (res) {
 						switch (res) {
 							case 'true':
-								SuccessModal('Updated reviewer.', 0, 5000);
+								SuccessModal('Updated reviewer.', 5000);
 								RenderList();
 								break;
 
 							default:
-								ErrorModal(0, 0, 5000);
+								ErrorModal(5000);
 								console.error('ERR', res);
 								break;
 						}
@@ -304,11 +304,10 @@ $(function () {
 
 		let del = $(this).attr('data-target');
 		PromptModal(
-			'Are you deleting this reviewer?',
-			0,
 			10000,
 			'delete_reviewer',
-			del
+			del,
+			'Are you deleting this reviewer?'
 		);
 		PromptConfirm('Reviewer deleted.', './assets/hndlr/Reviewer.php');
 	});

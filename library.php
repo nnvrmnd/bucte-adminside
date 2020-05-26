@@ -6,7 +6,7 @@ SeshStart('page');
 <html>
 
 <head>
-	<title>Learning Resource | BUCTE Administration</title>
+	<title>Library | BUCTE Administration</title>
 	<?php include './components/layout/Head.php'; ?>
 
 	<style>
@@ -29,11 +29,11 @@ SeshStart('page');
 				<div class="header-body">
 					<div class="row align-items-center py-4">
 						<div class="col-lg-6">
-							<h6 class="h2 d-inline-block mb-0">Learning Resource</h6>
+							<h6 class="h2 d-inline-block mb-0">Library</h6>
 							<nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
 								<ol class="breadcrumb breadcrumb-links">
 									<li class="breadcrumb-item"><a href="javascript:void(0)"><i class="fas fa-home"></i></a></li>
-									<li class="breadcrumb-item active" aria-current="page">Learning Resource</li>
+									<li class="breadcrumb-item active" aria-current="page">Library</li>
 								</ol>
 							</nav>
 						</div>

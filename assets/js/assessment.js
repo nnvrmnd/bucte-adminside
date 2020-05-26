@@ -1,15 +1,14 @@
 /* Fetch list */
 function RenderList() {
-	let reviewer = sessionStorage.getItem('rvwr');
 
 	$.ajax({
 		type: 'POST',
-		url: './assets/hndlr/Questionnaire.php',
-		data: { fetchitems: 'all', reviewer: reviewer },
+		url: './assets/hndlr/Assessment.php',
+		data: { fetchitems: 'all' },
 		success: function (res) {
 			$('.items-container').html('');
 
-			if (res != 'err:fetch') {
+			try {
 				let count = JSON.parse(res).length;
 				$.each(JSON.parse(res), function (idx, el) {
 					let regex = /^\s*$/,
@@ -28,79 +27,93 @@ function RenderList() {
 							break;
 					}
 
+					if (el.count >= 10) {
+						$('#add_btn')
+							.attr('title', 'Reached maximum number of items...')
+							.attr('disabled', true);
+					} else {
+						$('#add_btn')
+							.attr('title', 'Add item...')
+							.removeAttr('disabled');
+					}
+
 					$('.items-container').append(`
-						<div class="col-lg-12">
-							<div class="card card-shadow">
-									<div class="card-body pb-1">
-										<button type="button" class="btn btn-sm btn-secondary text-danger float-right delete_item" data-target="${
-											el.question_id
-										}" title="Delete item...">
-												<i class="fa fa-trash" aria-hidden="true"></i>
-										</button>
-										<button type="button" class="btn btn-sm btn-secondary text-purple float-right edit_item" data-id="${
-											el.question_id
-										}" title="Edit item...">
-												<i class="fa fa-edit" aria-hidden="true"></i>
-										</button>
-										<p class="font-weight-bold mb-0 text-primary item">
-										${count--}.&ensp;${el.question}</p>
-										<p class="pl-3 text-dark">
-												<small>A.&emsp;${el.optionA}</small> <br>
-												<small>B.&emsp;${el.optionB}</small> <br>
-												${optionC}
-												${optionD}
-										</p>
-										<p>
-											<small>
-												Correct Answer:&emsp;
-												<span class="text-uppercase font-weight-bold">${el.answer}</span>
-											</small>
-										</p>
-									</div>
-							</div>
+					<div class="col-lg-12">
+						<div class="card card-shadow">
+								<div class="card-body pb-1">
+									<button type="button" class="btn btn-sm btn-secondary text-danger float-right delete_item" data-target="${
+										el.assessment_id
+									}" title="Delete item...">
+											<i class="fa fa-trash" aria-hidden="true"></i>
+									</button>
+									<button type="button" class="btn btn-sm btn-secondary text-purple float-right edit_item" data-id="${
+										el.assessment_id
+									}" title="Edit item...">
+											<i class="fa fa-edit" aria-hidden="true"></i>
+									</button>
+									<p class="font-weight-bold mb-0 text-primary item">
+									${count--}.&ensp;${el.question}</p>
+									<p class="pl-3 text-dark">
+											<small>A.&emsp;${el.optionA}</small> <br>
+											<small>B.&emsp;${el.optionB}</small> <br>
+											${optionC}
+											${optionD}
+									</p>
+									<p>
+										<small>
+											Correct Answer:&emsp;
+											<span class="text-uppercase font-weight-bold">${el.answer}</span>
+										</small>
+									</p>
+								</div>
 						</div>
+					</div>
 					`);
 				});
-			} else {
+			} catch (e) {
+				console.error('ERR', res);
 				$('.items-container').html(`
-					<div class="col notfound mb-5 pb-5">
-						<div class="d-none d-sm-block notfound-404">
-							<h1>Oops!</h1>
-						</div>
-						<h2 class="ml-2">Oops! List is empty</h2>
-						<p class="ml-2">No items to display</p>
+				<div class="col notfound mb-5 pb-5">
+					<div class="d-none d-sm-block notfound-404">
+						<h1>Oops!</h1>
 					</div>
+					<h2 class="ml-2">Oops! List is empty</h2>
+					<p class="ml-2">No items to display</p>
+				</div>
 				`);
 			}
 		}
 	});
+
 }
 
-// TODO: Add CKEditor to questions
+// IDEA: Add CKEditor to questions
 
 /* Triggers */
 $(function () {
-	RenderList();
-
-	/* Reviewer selected exist */
-	let sesh = sessionStorage.getItem('rvwr');
-	// console.log('sesh', sesh);
-	if (sesh == null) {
-		ErrorModal(5000, 'Select a reviewer from the list.', 'reviewer.php');
+	RenderList()
+	/* const urlParam = new URLSearchParams(window.location.search);
+	let event;
+	if (urlParam.has('e')) {
+		event = Decrypt(urlParam.get('e'));
+		RenderList();
 	} else {
-		$.post('./assets/hndlr/Questionnaire.php', { sesh: sesh }, function (res) {
-			if (res == '!exist') {
-				ErrorModal(
-					'This reviewer does not exist anymore.<br>Select from the list.',
-					'reviewer.php',
-					10000
-				);
-			} else {
-				$('div.reviewer_title').removeClass('d-none');
-				$('p.reviewer_title').html(res);
-			}
+		$('.modal').on('hidden.bs.modal', function () {
+			window.location.replace('events.php');
 		});
-	}
+		$('.items-container').html(`
+		<div class="col notfound mb-5 pb-5">
+			<div class="d-none d-sm-block notfound-404">
+				<h1>Oops!</h1>
+			</div>
+			<h2 class="ml-2">Oops! List is empty</h2>
+			<p class="ml-2">No items to display</p>
+		</div>
+		`);
+		setTimeout(() => {
+			ErrorModal(5000, 'Event does not exist.');
+		}, 2500);
+	} */
 
 	/* On modal open/close */
 	$('#AddItem, #UpdateItem')
@@ -109,14 +122,14 @@ $(function () {
 
 			AuthorId(formid);
 
-			$(formid + ' [name="reviewer"]').val(sesh);
+			$(formid + ' [name="event"]').val(event);
 		})
 		.on('hidden.bs.modal', function () {
 			$('textarea.question, input.options').removeClass('is-invalid is-valid');
 			$('div.input-group-text').removeClass('bg-pink');
 			$('small.question, small.options').html('');
 
-			$('input.answer').each(function () {
+			$('input.answer, input.edt_answer').each(function () {
 				if (!$(this).attr('disabled')) {
 					$(this).attr('disabled', 'disabled');
 				}
@@ -133,7 +146,7 @@ $(function () {
 		}
 	});
 
-	/* Validation for options */
+	/* Validation for radio options */
 	$('form#item_form .options, form#update_form .options').keyup(function (e) {
 		let regex = /^\s*$/,
 			input = $(this).val(),
@@ -165,7 +178,7 @@ $(function () {
 
 				$.ajax({
 					type: 'POST',
-					url: './assets/hndlr/Questionnaire.php',
+					url: './assets/hndlr/Assessment.php',
 					data: form,
 					success: function (res) {
 						switch (res) {
@@ -191,33 +204,33 @@ $(function () {
 		e.stopPropagation();
 		e.preventDefault();
 
-		let questionnaire = $(this).attr('data-id'),
+		let item = $(this).attr('data-id'),
 			formid = 'form#update_form ';
 
 		$('#UpdateItem').modal('show');
 		$.post(
-			'./assets/hndlr/Questionnaire.php',
-			{ item: questionnaire },
+			'./assets/hndlr/Assessment.php',
+			{ item },
 			function (res) {
 				if (res != 'err:fetch') {
 					$.each(JSON.parse(res), function (idx, el) {
-						$(formid + '[name="question_id"]').val(el.question_id);
-						$(formid + '[name="question"]').val(el.question);
+						$(formid + '[name="edt_item"]').val(el.assessment_id);
+						$(formid + '[name="edt_question"]').val(el.question);
 						$(formid + '[name="optionA"]').val(el.optionA);
 						$(formid + '[name="optionB"]').val(el.optionB);
 						$(formid + '[name="optionC"]').val(el.optionC);
 						$(formid + '[name="optionD"]').val(el.optionD);
 						$(formid + `.answer[value="${el.answer}"]`).prop('checked', true);
-						$(formid + '.delete_item').attr('data-target', el.question_id);
 					});
 				} else {
-					console.log('err:fetch');
+					console.error('ERR', res);
 				}
 
+				/* Enable radio if !empty */
 				$(formid + 'input.options').each(function (idx, el) {
 					let options = $(this).val(),
-						radio = $(this).attr('data-radio'),
-						regex = /^\s*$/;
+					radio = $(this).attr('data-radio'),
+					regex = /^\s*$/;
 					if (!options.match(regex)) {
 						$(formid + `input.answer[value="${radio}"]`).removeAttr('disabled');
 					}
@@ -233,7 +246,7 @@ $(function () {
 		let form = $(this).serialize();
 
 		switch (false) {
-			case ValidateRequired('update_form', 'question'):
+			case ValidateRequired('update_form', 'edt_question'):
 			case ValidateChoices('update_form'):
 			case ValidateAnswer('update_form'):
 				break;
@@ -243,13 +256,13 @@ $(function () {
 
 				$.ajax({
 					type: 'POST',
-					url: './assets/hndlr/Questionnaire.php',
+					url: './assets/hndlr/Assessment.php',
 					data: form,
 					success: function (res) {
 						switch (res) {
 							case 'true':
-								RenderList();
 								SuccessModal('Item updated.', 5000);
+								RenderList();
 								break;
 
 							default:
@@ -259,7 +272,6 @@ $(function () {
 						}
 					}
 				});
-
 				break;
 		}
 	});
@@ -271,7 +283,7 @@ $(function () {
 
 		let del = $(this).attr('data-target');
 		PromptModal(10000, 'delete_item', del, 'Are you deleting this item?');
-		PromptConfirm('Item deleted.', './assets/hndlr/Questionnaire.php');
+		PromptConfirm('Item deleted.', './assets/hndlr/Assessment.php', event);
 	});
 
 	DocumentReady();
@@ -303,7 +315,7 @@ function ValidateChoices(form_id) {
 				.removeClass('text-success')
 				.addClass('text-danger')
 				.html(
-					'Give at least 2-3 options. (At first, second, and third choice)'
+					'Give at least 2-3 choices. (At first, second, and third choice)'
 				);
 
 			ctrl = false;

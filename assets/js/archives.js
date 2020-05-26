@@ -162,7 +162,7 @@ $(function () {
 		e.preventDefault();
 		e.stopPropagation();
 
-		WaitModal('Processing...', 0, 5000);
+		WaitModal(5000);
 
 		let target = $(this).attr('data-target');
 
@@ -173,12 +173,12 @@ $(function () {
 			success: function (res) {
 				switch (res) {
 					case 'true':
-						SuccessModal('File extracted to Documents', 0, 5000);
+						SuccessModal('File extracted to Documents', 5000);
 						RenderList();
 						break;
 
 					default:
-						ErrorModal(0, 0, 5000);
+						ErrorModal(5000);
 						console.error('ERR', res);
 						break;
 				}

@@ -11,6 +11,7 @@ function RenderList() {
 				$.each(JSON.parse(res), function (idx, el) {
 					let regex = /^\s*$/,
 						event_id = el.event_id,
+						url_param = Encrypt(event_id),
 						desc_raw = el.description,
 						desc_replace = desc_raw.replace(
 							/<\/?[br|li|ol|ul|p|strong|blockquotes]+\/?>/gim,
@@ -54,6 +55,9 @@ function RenderList() {
 										title="Edit event..." data-target="${event_id}">
 										<i class="fa fa-edit" aria-hidden="true"></i>
 									</button>
+									<button class="btn btn-sm btn-neutral float-right event_assmnt" title="View event assessment...">
+										Assessment
+									</button>
 									<p class="font-weight-bold text-primary">${el.title}</p>
 									<small>
 										<dl class="row">
@@ -79,6 +83,7 @@ function RenderList() {
 										el.author
 									)} on ${el.created_at}</small>
 								</div>
+								<!-- xs block -->
 								<div class="col-md-9 mt-3 d-block d-sm-none d-none d-sm-block d-md-none">
 									<button type="button" class="btn btn-sm btn-secondary text-danger float-right delete_event"
 										title="Delete event..." data-target="${event_id}">
@@ -87,6 +92,10 @@ function RenderList() {
 									<button type="button" class="btn btn-sm btn-secondary text-purple float-right edit_event"
 										title="Edit event..." data-target="${event_id}">
 										<i class="fa fa-edit" aria-hidden="true"></i>
+									</button>
+									<button type="button" class="btn btn-sm btn-neutral float-right"
+										title="Go to event assessment..." data-target="${event_id}">
+										Assessment
 									</button>
 									<p class="font-weight-bold text-primary">${el.title} </p>
 									<small>
@@ -158,6 +167,195 @@ $(function () {
 			customConfig: '/bucte/admin/assets/js/ck_events.js'
 		});
 	});
+
+	/* Charts */
+	let Charts = function() {
+		var e, a = $('[data-toggle="chart"]'), t = "light", n = {
+				base: "Open Sans"
+		}, i = {
+				gray: {
+						100: "#f6f9fc",
+						200: "#e9ecef",
+						300: "#dee2e6",
+						400: "#ced4da",
+						500: "#adb5bd",
+						600: "#8898aa",
+						700: "#525f7f",
+						800: "#32325d",
+						900: "#212529"
+				},
+				theme: {
+						default: "#172b4d",
+						primary: "#5e72e4",
+						secondary: "#f4f5f7",
+						info: "#11cdef",
+						success: "#2dce89",
+						danger: "#f5365c",
+						warning: "#fb6340"
+				},
+				black: "#12263F",
+				white: "#FFFFFF",
+				transparent: "transparent"
+		};
+		function o(e, a) {
+				for (var t in a)
+						"object" != typeof a[t] ? e[t] = a[t] : o(e[t], a[t])
+		}
+		function s(e) {
+				var a = e.data("add")
+					, t = $(e.data("target")).data("chart");
+				e.is(":checked") ? (!function e(a, t) {
+						for (var n in t)
+								Array.isArray(t[n]) ? t[n].forEach(function(e) {
+										a[n].push(e)
+								}) : e(a[n], t[n])
+				}(t, a),
+				t.update()) : (!function e(a, t) {
+						for (var n in t)
+								Array.isArray(t[n]) ? t[n].forEach(function(e) {
+										a[n].pop()
+								}) : e(a[n], t[n])
+				}(t, a),
+				t.update())
+		}
+		function l(e) {
+				var a = e.data("update")
+					, t = $(e.data("target")).data("chart");
+				o(t, a),
+				function(e, a) {
+						if (void 0 !== e.data("prefix") || void 0 !== e.data("prefix")) {
+								var t = e.data("prefix") ? e.data("prefix") : ""
+									, n = e.data("suffix") ? e.data("suffix") : "";
+								a.options.scales.yAxes[0].ticks.callback = function(e) {
+										if (!(e % 10))
+												return t + e + n
+								}
+								,
+								a.options.tooltips.callbacks.label = function(e, a) {
+										var i = a.datasets[e.datasetIndex].label || ""
+											, o = e.yLabel
+											, s = "";
+										return a.datasets.length > 1 && (s += '<span class="popover-body-label mr-auto">' + i + "</span>"),
+										s += '<span class="popover-body-value">' + t + o + n + "</span>"
+								}
+						}
+				}(e, t),
+				t.update()
+		}
+		return window.Chart && o(Chart, (e = {
+				defaults: {
+						global: {
+								responsive: !0,
+								maintainAspectRatio: !1,
+								defaultColor: "dark" == t ? i.gray[700] : i.gray[600],
+								defaultFontColor: "dark" == t ? i.gray[700] : i.gray[600],
+								defaultFontFamily: n.base,
+								defaultFontSize: 13,
+								layout: {
+										padding: 0
+								},
+								legend: {
+										display: !1,
+										position: "bottom",
+										labels: {
+												usePointStyle: !0,
+												padding: 16
+										}
+								},
+								elements: {
+										point: {
+												radius: 0,
+												backgroundColor: i.theme.primary
+										},
+										line: {
+												tension: .4,
+												borderWidth: 4,
+												borderColor: i.theme.primary,
+												backgroundColor: i.transparent,
+												borderCapStyle: "rounded"
+										},
+										rectangle: {
+												backgroundColor: i.theme.warning
+										},
+										arc: {
+												backgroundColor: i.theme.primary,
+												borderColor: "dark" == t ? i.gray[800] : i.white,
+												borderWidth: 4
+										}
+								},
+								tooltips: {
+										enabled: !0,
+										mode: "index",
+										intersect: !1
+								}
+						},
+						doughnut: {
+								cutoutPercentage: 83,
+								legendCallback: function(e) {
+										var a = e.data
+											, t = "";
+										return a.labels.forEach(function(e, n) {
+												var i = a.datasets[0].backgroundColor[n];
+												t += '<span class="chart-legend-item">',
+												t += '<i class="chart-legend-indicator" style="background-color: ' + i + '"></i>',
+												t += e,
+												t += "</span>"
+										}),
+										t
+								}
+						}
+				}
+		},
+		Chart.scaleService.updateScaleDefaults("linear", {
+				gridLines: {
+						borderDash: [2],
+						borderDashOffset: [2],
+						color: "dark" == t ? i.gray[900] : i.gray[300],
+						drawBorder: !1,
+						drawTicks: !1,
+						drawOnChartArea: !0,
+						zeroLineWidth: 0,
+						zeroLineColor: "rgba(0,0,0,0)",
+						zeroLineBorderDash: [2],
+						zeroLineBorderDashOffset: [2]
+				},
+				ticks: {
+						beginAtZero: !0,
+						padding: 10,
+						callback: function(e) {
+								if (!(e % 10))
+										return e
+						}
+				}
+		}),
+		Chart.scaleService.updateScaleDefaults("category", {
+				gridLines: {
+						drawBorder: !1,
+						drawOnChartArea: !1,
+						drawTicks: !1
+				},
+				ticks: {
+						padding: 20
+				},
+				maxBarThickness: 10
+		}),
+		e)),
+		a.on({
+				change: function() {
+						var e = $(this);
+						e.is("[data-add]") && s(e)
+				},
+				click: function() {
+						var e = $(this);
+						e.is("[data-update]") && l(e)
+				}
+		}),
+		{
+				colors: i,
+				fonts: n,
+				mode: t
+		}
+	}();
 
 	/* Datetime picker */
 	$('.datetimepicker').datetimepicker({
@@ -318,7 +516,7 @@ $(function () {
 				break;
 
 			default:
-				WaitModal('Processing...', 0, 5000);
+				WaitModal(5000);
 
 				form_data.append('select_file', file);
 				$.each(form, function (key, input) {
@@ -334,12 +532,12 @@ $(function () {
 					success: function (res) {
 						switch (res) {
 							case 'true':
-								SuccessModal('Added new event.', 0, 5000);
+								SuccessModal('Added new event.', 5000);
 								RenderList();
 								break;
 
 							default:
-								ErrorModal(0, 0, 5000);
+								ErrorModal(5000);
 								'show';
 								break;
 						}
@@ -434,7 +632,7 @@ $(function () {
 				break;
 
 			default:
-				WaitModal('Processing...', 0, 5000);
+				WaitModal(5000);
 
 				form_data.append('edt_select_file', file);
 				$.each(form, function (key, input) {
@@ -450,12 +648,12 @@ $(function () {
 					success: function (res) {
 						switch (res) {
 							case 'true':
-								SuccessModal('Updated event.', 0, 5000);
+								SuccessModal('Updated event.', 5000);
 								RenderList();
 								break;
 
 							default:
-								ErrorModal(0, 0, 5000);
+								ErrorModal(5000);
 								console.error('ERR', res);
 								break;
 						}
@@ -471,7 +669,7 @@ $(function () {
 		e.preventDefault();
 
 		let del = $(this).attr('data-target');
-		PromptModal('Are you deleting this event?', 0, 10000, 'delete_event', del);
+		PromptModal(10000, 'delete_event', del, 'Are you deleting this event?');
 		PromptConfirm('Event deleted.', './assets/hndlr/Events.php');
 	});
 
@@ -508,6 +706,75 @@ $(function () {
 				console.log('err:fetch', res);
 			}
 		});
+	});
+
+	/* Event assessment */
+	$('.events-container').on('click', '.event_assmnt', function () {
+		let id = $(this).attr('data-target');
+
+		let BarStackedChart = function () {
+			var e, a, t, n, i = $('#chart-bar-stacked7');
+
+			i.length &&
+				((e = i),
+				(a = function () {
+					return Math.round(100 * Math.random());
+				}),
+				(t = {
+					labels: [
+						'Item 1',
+						'Item 2',
+						'Item 3',
+						'Item 4',
+						'Item 5',
+						'Item 6',
+						'Item 7',
+						'Item 8',
+						'Item 9',
+						'Item 10'
+					],
+					datasets: [
+						{
+							label: 'Correct',
+							backgroundColor: Charts.colors.theme.primary,
+							data: [a(), a(), a(), a(), a(), a(), a()]
+						},
+						{
+							label: 'Wrong',
+							backgroundColor: Charts.colors.theme.danger,
+							data: [a(), a(), a(), a(), a(), a(), a()]
+						}
+					]
+				}),
+				(n = new Chart(e, {
+					type: 'bar',
+					data: t,
+					options: {
+						tooltips: {
+							mode: 'index',
+							intersect: !1
+						},
+						responsive: !0,
+						scales: {
+							xAxes: [
+								{
+									stacked: !0
+								}
+							],
+							yAxes: [
+								{
+									stacked: !0
+								}
+							]
+						}
+					}
+				})),
+				e.data('chart', n));
+		};
+
+		BarStackedChart();
+
+		$('#EventAssessment').modal('show');
 	});
 
 	DocumentReady();
