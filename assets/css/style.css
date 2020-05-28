@@ -141,3 +141,15 @@ img.card-img-top {
   background-color: #fafafa;
   color: #f5365c;
 }
+
+.signature-option {
+  float: right;
+  width: 48%;
+}
+.signature-option div{
+  top: 8px;
+}
+
+.tooltip-inner {
+  background-color: white !important;
+ }

@@ -54,7 +54,7 @@ $(function () {
 		swal({
 			title: 'Are you sure?',
 			text: "Proceed on saving by clicking 'OK'.",
-			icon: 'warning',
+			type: 'warning',
 			buttons: true,
 			dangerMode: true,
 			showCloseButton: true
@@ -80,7 +80,7 @@ $(function () {
 						switch (res) {
 							case 'true':
 								Swal.fire({
-									icon: 'success',
+									type: 'success',
 									title: 'Saved successfully!',
 									showConfirmButton: false,
 									timer: 2500
@@ -88,7 +88,7 @@ $(function () {
 								break;
 							default:
 								Swal.fire({
-									icon: 'error',
+									type: 'error',
 									title: 'Error Occured!',
 									text: 'Please try again.',
 									showConfirmButton: false,
@@ -99,7 +99,7 @@ $(function () {
 					},
 					error: function () {
 						Swal.fire({
-							icon: 'error',
+							type: 'error',
 							title: 'Error Occured!',
 							text: 'Please try again.',
 							showConfirmButton: false,

@@ -103,11 +103,23 @@ SeshStart('page');
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
+                                                <div class="row signature-option">
+                                                    <div class="col-6">
+                                                     <a data-toggle="tooltip" data-html="true" title="">
+                                                        <button type="button"
+                                                            class="btn btn-outline-info" style="padding: 0px 4px;">View</button>
+                                                     </a>
+                                                    </div>
+                                                    
+                                                    <div class="col-6"><button type="button" id="remove-signature"
+                                                            class="btn btn-outline-warning" style="padding: 0px 4px; right: 50%">remove</button></div>
+                                                </div>
                                                 <div class="form-group mb-2">
                                                     <label class="form-control-label">Signature
                                                         (Image)</label>
                                                     <div class="custom-file">
-                                                        <input type="file" name="meta2" accept="image/*" class="custom-file-input" id="customFileLang">
+                                                        <input type="file" name="meta2" accept="image/*"
+                                                            class="custom-file-input" id="customFileLang">
                                                         <label class="custom-file-label" for="customFileLang"></label>
                                                     </div>
                                                 </div>
