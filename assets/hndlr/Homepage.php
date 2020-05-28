@@ -213,3 +213,19 @@ if(isset($_POST['image'])){
 			echo "Err: delete";
 		}	
 }
+
+if(isset($_POST['signatureImage'])){
+	require 'db.hndlr.php';
+	$db->beginTransaction();
+		$stmnt = 'UPDATE content SET meta2=NULL where alias="homepage"';
+		$query = $db->prepare($stmnt);
+		$query->execute();
+		$row = $query -> rowCount(); 
+		if ($row > 0) {
+			$db->commit();
+			echo "true";
+		} else {
+			$db->rollBack();
+			echo "Err: delete";
+		}	
+}
