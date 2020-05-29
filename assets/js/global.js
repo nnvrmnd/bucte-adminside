@@ -97,8 +97,8 @@ function AuthorId(form_id) {
 		url: './assets/hndlr/Global.php',
 		data: { username: currentauthor },
 		success: function (res) {
-			let input_name = $('body').find(form_id + ' [name="author"]'),
-				input_class = $('body').find(form_id + ' .author');
+			let input_name = $('body').find(`${form_id} [name="author"]`),
+				input_class = $('body').find(`${form_id} .author`);
 			$.each(input_name, function (idx, el) {
 				el.value = res;
 			});
@@ -156,7 +156,7 @@ function WaitModal(timeout, msg = 0, redirect = 0) {
 	}, timeout - 1000);
 }
 
-function SuccessModal(msg, timeout, redirect = 0,) {
+function SuccessModal(msg, timeout, redirect = 0) {
 	if (redirect !== 0) {
 		$('#SuccessModal').on('hidden.bs.modal', function () {
 			window.location.href = redirect;
@@ -207,7 +207,7 @@ function PromptModal(timeout, action, id, msg, redirect = 0) {
 
 	window.clearTimeout(timer);
 	$('#prompt-modal-msg').html(msg);
-	/* $('.modal').modal('hide'); */
+	$('.modal').modal('hide');
 	$('#PromptModal').modal('show');
 
 	timer = setTimeout(() => {
@@ -258,7 +258,9 @@ function Encrypt(param) {
 }
 /* Decrypt */
 function Decrypt(param) {
-	return CryptoJS.AES.decrypt(param, "In JESUS' Name!").toString(CryptoJS.enc.Utf8);
+	return CryptoJS.AES.decrypt(param, "In JESUS' Name!").toString(
+		CryptoJS.enc.Utf8
+	);
 }
 
 /* ASCII code to Unicode */
@@ -321,6 +323,183 @@ function fileDownload(dir, file) {
 }
 
 /* *************************************************** */
+
+/* Validate username */
+function ValidateUsername(formId, nameProp) {
+	let ctrl = true,
+		$element = $(`#${formId} [name=${nameProp}]`),
+		$msg = $(`small.${nameProp}`),
+		input = $element.val(),
+		required = !input.match(/^\s*$/) ? true : false,
+		length = input.length >= 5 ? true : false,
+		regex = new RegExp(/^[a-z0-9_]{5,16}$/gi);
+
+	switch (false) {
+		case required:
+			$element.addClass('is-invalid');
+			$msg
+				.removeClass('text-success')
+				.addClass('text-danger')
+				.html('Field required.');
+			ctrl = false;
+			break;
+		case length:
+			$element.addClass('is-invalid');
+			$msg
+				.removeClass('text-success')
+				.addClass('text-danger')
+				.html('Use at least 5 characters or more for your username.');
+			ctrl = false;
+			break;
+		case regex.test(input):
+			$element.addClass('is-invalid');
+			$msg
+				.removeClass('text-success')
+				.addClass('text-danger')
+				.html('You can use letters, numbers & underscores.');
+			ctrl = false;
+			break;
+
+		default:
+			$element.removeClass('is-invalid');
+			$msg
+				.removeClass('text-success')
+				.addClass('text-danger')
+				.empty();
+			break;
+	}
+
+	return ctrl;
+}
+
+/* Check username availability */
+function UsernameAvailability(formId, nameProp, account = 0) {
+	let ctrl = true,
+		$element = $(`#${formId} [name=${nameProp}]`),
+		$msg = $(`small.${nameProp}`),
+		input = $element.val(),
+		required = !input.match(/^\s*$/) ? true : false;
+
+	return new Promise((resolve, reject) => {
+		if (required) {
+			$.ajax({
+				type: 'POST',
+				url: './assets/hndlr/Accounts.php',
+				data: { id: account, username: input },
+				success: function (res) {
+					if (res == 'true') {
+						resolve(res); // available
+						$element.removeClass('is-invalid');
+						$msg
+							.removeClass('text-danger')
+							.addClass('text-success')
+							.html('Available');
+						setTimeout(() => {
+							$msg.empty();
+						}, 2000);
+					} else if (res == 'false') {
+						resolve(res);
+						$element.addClass('is-invalid');
+						$msg
+							.removeClass('text-success')
+							.addClass('text-danger')
+							.html('Username not available.');
+					} else {
+						reject({
+							where: 'UsernameAvailability',
+							message: res
+						});
+					}
+				}
+			});
+		}
+	});
+}
+
+/* Validate email */
+function ValidateEmail(formId, nameProp) {
+	let ctrl = true,
+		$element = $(`#${formId} [name=${nameProp}]`),
+		$msg = $(`small.${nameProp}`),
+		input = $element.val(),
+		required = !input.match(/^\s*$/) ? true : false,
+		regex = new RegExp(
+      /^([a-zA-Z0-9_\.\-\+])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/gi
+    );
+
+	switch (false) {
+		case required:
+			$element.addClass('is-invalid');
+			$msg
+				.removeClass('text-success')
+				.addClass('text-danger')
+				.html('Field required.');
+			ctrl = false;
+			break;
+		case regex.test(input):
+			$element.addClass('is-invalid');
+			$msg
+				.removeClass('text-success')
+				.addClass('text-danger')
+				.html('Not a valid email address.');
+			ctrl = false;
+			break;
+
+		default:
+			$element.removeClass('is-invalid');
+			$msg
+				.removeClass('text-success')
+				.addClass('text-danger')
+				.empty();
+			break;
+	}
+
+	return ctrl;
+}
+
+/* Check email availability */
+function EmailAvailability(formId, nameProp, account = 0) {
+	let ctrl = true,
+		$element = $(`#${formId} [name=${nameProp}]`),
+		$small = $(`small.${nameProp}`),
+		input = $element.val(),
+		required = !input.match(/^\s*$/) ? true : false;
+
+	return new Promise((resolve, reject) => {
+		if (required) {
+			$.ajax({
+				type: 'POST',
+				url: './assets/hndlr/Accounts.php',
+				data: { id: account, email: input },
+				success: function (res) {
+					if (res == 'true') {
+						resolve(res); // available
+						$element.removeClass('is-invalid');
+						$small
+							.removeClass('text-danger')
+							.addClass('text-success')
+							.html('Available');
+						setTimeout(() => {
+							$small.empty();
+						}, 2000);
+					} else if (res == 'false') {
+						resolve(res);
+						$element.addClass('is-invalid');
+						$small
+							.removeClass('text-success')
+							.addClass('text-danger')
+							.html('Username not available.');
+					} else {
+						reject({
+							where: 'EmailAvailability',
+							message: res
+						});
+					}
+				}
+			});
+		}
+	});
+}
 
 /* Validate title input */
 function ValidateTitle(form_id, name) {

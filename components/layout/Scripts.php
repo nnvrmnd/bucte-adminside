@@ -133,5 +133,5 @@
 <!-- Demo JS - remove this in your project -->
 <script src="./dist/js/demo.min.js"></script>
 <!-- Neil Francis Bayna -->
-<script src="./assets/js/functions.js"></script>
+<!-- <script src="./assets/js/functions.js"></script> -->
 <script src="./assets/js/global.js"></script>
