@@ -1,132 +1,102 @@
 <?php
 
-if (isset($_POST['who'])) {
-    require 'db.hndlr.php';
-    $who = $_POST['who'];
+if (isset($_POST['fetchaccount'])) {
+	require './db.hndlr.php';
+	$id = $_POST['fetchaccount'];
 
-    $stmnt = "SELECT * FROM user WHERE username = ? ;";
-    $query = $db->prepare($stmnt);
-    $param = [$who];
-    $query->execute($param);
-    $count = $query->rowCount();
-    if ($count <= 0) {
-        echo "err:";
-        exit();
-    } elseif ($count > 0) {
-        $dbData = [];
-        foreach ($query as $row) {
-            $id = $row['u_id'];
-            $given = $row['given_name'];
-            $surname = $row['surname'];
-            $username = $row['username'];
-            $email = $row['email'];
-            $gender = $row['gender'];
-            $position = $row['position'];
-            $password = $row['passkey'];
-            $created_at = $row['created_at'];
-            $dbData[] = ['id' => $id, 'given' => $given, 'surname' => $surname, 'username' => $username, 'email' => $email, 'position' => $position, 'gender' => $gender];
-        }
-        $arrObject = json_encode($dbData);
-        echo $arrObject;
-    }
+	$stmnt = 'SELECT * FROM user WHERE BINARY (username = ? OR email = ?) ;';
+	$query = $db->prepare($stmnt);
+	$param = [$id, $id];
+	$query->execute($param);
+	$count = $query->rowCount();
+	if ($count <= 0) {
+		exit('err:fetch');
+	} elseif ($count > 0) {
+		$dbData = [];
+		foreach ($query as $row) {
+			$id = $row['u_id'];
+			$given = $row['given_name'];
+			$surname = $row['surname'];
+			$username = $row['username'];
+			$email = $row['email'];
+			$gender = $row['gender'];
+			$position = $row['position'];
+			$dbData[] = ['id' => $id, 'given' => $given, 'surname' => $surname, 'username' => $username, 'email' => $email, 'position' => $position, 'gender' => $gender];
+		}
+		$arrObject = json_encode($dbData);
+		echo $arrObject;
+	}
 }
 
-if (isset($_POST['profile'])) {
-    $profile = $_POST['profile'];
+/* Update account */
+if (isset($_POST['username']) && isset($_POST['email'])) {
+	require './db.hndlr.php';
 
-    if (isset($_POST['validatewho'])) {
-        require 'db.hndlr.php';
-        $who = $_POST['validatewho'];
+	$id = $_POST['account'];
+	$given = $_POST['given'];
+	$surname = $_POST['surname'];
+	$username = $_POST['username'];
+	$email = $_POST['email'];
 
-        $stmnt = "SELECT * FROM user WHERE BINARY username = ?  AND NOT username = ?  ;";
-        $query = $db->prepare($stmnt);
-        $param = [$who, $profile];
-        $query->execute($param);
-        $count = $query->rowCount();
-        if ($count > 0) {
-            echo "not available";
-        } else {
-            echo "available";
-        }
-    }
-
-    if (isset($_POST['validateemail'])) {
-        require 'db.hndlr.php';
-        $who = $_POST['validateemail'];
-
-        $stmnt = "SELECT * FROM user WHERE BINARY email = ?  AND NOT username = ? ;";
-        $query = $db->prepare($stmnt);
-        $param = [$who, $profile];
-        $query->execute($param);
-        $count = $query->rowCount();
-        if ($count > 0) {
-            echo "not available";
-        } else {
-            echo "available";
-        }
-    }
+	$db->beginTransaction();
+	$stmnt = 'UPDATE user SET given_name = ?, surname = ?, username = ?, email = ? WHERE u_id = ? ;';
+	$query = $db->prepare($stmnt);
+	$param = [$given, $surname, $username, $email, $id];
+	$query->execute($param);
+	$count = $query->rowCount();
+	if ($count > 0) {
+		$db->commit();
+		exit('true');
+	} else {
+		$db->rollBack();
+		exit('err:update');
+	}
 }
 
-/* Update user profile */
-if (isset($_POST['user_profile'])) {
-    require 'db.hndlr.php';
+/* Check current password */
+if (isset($_POST['id']) && isset($_POST['current'])) {
+	require './db.hndlr.php';
 
-    $id = $_POST['user_profile'];
-    $given = $_POST['given'];
-    $surname = $_POST['surname'];
-    $username = $_POST['username'];
-    $email = $_POST['email'];
+	$id = $_POST['id'];
+	$current = $_POST['current'];
 
-    $db->beginTransaction();
-    $stmnt = "UPDATE user SET given_name = ?, surname = ?, username = ?, email = ? WHERE u_id = ? ;";
-    $query = $db->prepare($stmnt);
-    $param = [$given, $surname, $username, $email, $id];
-    $query->execute($param);
-    $count = $query->rowCount();
-    if ($count > 0) {
-        $db->commit();
-        echo "true";
-    } else {
-        $db->rollBack();
-        echo "err:update";
-    }
+	$stmnt = 'SELECT * FROM user WHERE BINARY (username = ? OR email = ?) ;';
+	$query = $db->prepare($stmnt);
+	$param = [$id, $id];
+	$query->execute($param);
+	$count = $query->rowCount();
+	if ($count > 0) {
+		foreach ($query as $data) {
+			$hash = $data['passkey'];
+			if (password_verify($current, $hash)) {
+				echo 'true';
+			} else {
+				echo 'false';
+			}
+		}
+	} else {
+		echo 'err:current';
+	}
 }
 
 /* Change password */
-if (isset($_POST['user_profile2'])) {
-    require 'db.hndlr.php';
+if (isset($_POST['account']) && isset($_POST['new'])) {
+	require './db.hndlr.php';
 
-    $id = $_POST['user_profile2'];
-    $current = $_POST['current'];
-    $confirmed = $_POST['confirmed'];
-    $newpasssword = password_hash($confirmed, PASSWORD_DEFAULT);
+	$id = $_POST['account'];
+	$new = password_hash($_POST['new'], PASSWORD_DEFAULT);
 
-    $stmnt = "SELECT passkey FROM user WHERE u_id = ? ;";
-    $query = $db->prepare($stmnt);
-    $param = [$id];
-    $query->execute($param);
-    $count = $query->rowCount();
-    if ($count > 0) {
-        foreach ($query as $data) {
-            $hash = $data['passkey'];
-            if (password_verify($current, $hash)) {
-
-                $db->beginTransaction();
-                $stmnt = "UPDATE user SET passkey = ? WHERE u_id = ? ;";
-                $query = $db->prepare($stmnt);
-                $param = [$newpasssword, $id];
-                $query->execute($param);
-                $count = $query->rowCount();
-                if ($count > 0) {
-                    $db->commit();
-                    echo "true";
-                } else {
-                    $db->rollBack();
-                    echo "err:update";
-                }
-            } else {
-                echo "err:incorrect";
-            }
-        }
-    }
+	$db->beginTransaction();
+	$stmnt = 'UPDATE user SET passkey = ? WHERE (username = ? OR email = ?) ;';
+	$query = $db->prepare($stmnt);
+	$param = [$new, $id, $id];
+	$query->execute($param);
+	$count = $query->rowCount();
+	if ($count > 0) {
+		$db->commit();
+		echo 'true';
+	} else {
+		$db->rollBack();
+		echo 'false';
+	}
 }

@@ -68,11 +68,11 @@ SeshStart('page');
                 <div class="col">
                   <div class="card-profile-stats d-flex justify-content-center mt-md-2">
                     <div>
-                      <span class="d-none" id="form-btns">
-                        <button class="btn bg-gradient-success text-white" id="submit-btn" disabled>Save</button>
-                        <button class="btn" id="cancel-btn">Cancel</button>
+                      <span class="d-none" id="form_btns">
+                        <button class="btn bg-gradient-success text-white" id="submit_btn" disabled>Save</button>
+                        <button class="btn" id="cancel_btn">Cancel</button>
                       </span>
-                      <button class="btn bg-gradient-primary text-white" id="edit-btn">
+                      <button class="btn bg-gradient-primary text-white" id="edit_btn">
                         <i class="fas fa-edit"></i>
                       </button>
                     </div>
@@ -91,7 +91,7 @@ SeshStart('page');
                 </div>
                 <div class="col-4 text-right">
                   <a href="javascript:void(0)" class="btn btn-sm btn-neutral" data-toggle="modal"
-                    data-target="#ChangePassword-Modal">Change password</a>
+                    data-target="#ChangePassword">Change password</a>
                 </div>
               </div>
             </div>
@@ -101,20 +101,21 @@ SeshStart('page');
                 <div class="pl-lg-4">
                   <div class="row">
                     <div class="col-lg-6">
+											<input type="password" class="d-none" name="account">
                       <div class="form-group">
                         <label class="form-control-label username" for="username">Username</label>
                         <input type="password" class="d-none" name="user_profile">
-                        <input type="text" class="form-control form-control-alternative bg-white profileform"
+                        <input type="text" class="form-control bg-white profileform"
                           name="username" id="username" maxlength="16" readonly>
-                        <small class="acct username"></small>
+                        <small class="msg username"></small>
                       </div>
                     </div>
                     <div class="col-lg-6">
                       <div class="form-group">
                         <label class="form-control-label email" for="email">Email address</label>
-                        <input type="email" class="form-control form-control-alternative bg-white profileform"
+                        <input type="email" class="form-control bg-white profileform"
                           name="email" id="email" readonly>
-                        <small class="acct email"></small>
+                        <small class="msg email"></small>
                       </div>
                     </div>
                   </div>
@@ -122,17 +123,17 @@ SeshStart('page');
                     <div class="col-lg-6">
                       <div class="form-group">
                         <label class="form-control-label given" for="given">First name</label>
-                        <input type="text" class="form-control form-control-alternative bg-white profileform"
+                        <input type="text" class="form-control bg-white profileform"
                           name="given" id="given" readonly>
-                        <small class="acct given"></small>
+                        <small class="msg given"></small>
                       </div>
                     </div>
                     <div class="col-lg-6">
                       <div class="form-group">
                         <label class="form-control-label surname" for="surname">Last name</label>
-                        <input type="text" class="form-control form-control-alternative bg-white profileform"
+                        <input type="text" class="form-control bg-white profileform"
                           name="surname" id="surname" readonly>
-                        <small class="acct surname"></small>
+                        <small class="msg surname"></small>
                       </div>
                     </div>
                   </div>
@@ -149,46 +150,45 @@ SeshStart('page');
   </div>
 
   <!-- CHANGE PASSWORD Modal -->
-  <div class="modal fade" id="ChangePassword-Modal" tabindex="-1" role="dialog"
-    aria-labelledby="ChangePassword-ModalLabel" data-backdrop="static" aria-hidden="true">
+  <div class="modal fade" id="ChangePassword" tabindex="-1" role="dialog"
+    aria-labelledby="ChangePasswordLabel" data-backdrop="static" aria-hidden="true">
     <div class="modal-dialog modal- modal-sm" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="ChangePassword-ModalLabel">Change password</h5>
+          <h5 class="modal-title" id="ChangePasswordLabel">Change password</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
-        <form id="newpassword_form">
+        <form id="pass_form">
           <div class="modal-body">
-            <input type="password" class="d-none" name="user_profile2">
             <div class="row">
               <div class="col-md-12">
                 <div class="form-group">
-                  <label class="form-control-label changepassword current" for="current">Current password</label>
-                  <input type="password" class="form-control form-control-alternative bg-white changepassword"
-                    name="current" id="current" maxlength="16">
-                  <small class="changepassword current"></small>
+                  <label class="form-control-label" for="current">Current password</label>
+                  <input type="password" class="form-control text-dark"
+                    name="current" id="current" maxlength="16" placeholder="Current password...">
+                  <small class="msg current"></small>
                 </div>
                 <hr>
                 <div class="form-group">
-                  <label class="form-control-label changepassword new" for="new">New password</label>
-                  <input type="password" class="form-control form-control-alternative bg-white changepassword"
-                    name="new" id="new" maxlength="16">
-                  <small class="changepassword new"></small>
+                  <label class="form-control-label" for="new">New password</label>
+                  <input type="password" class="form-control text-dark"
+                    name="new" id="new" maxlength="16" placeholder="New password...">
+                  <small class="msg new"></small>
                 </div>
                 <div class="form-group">
-                  <label class="form-control-label changepassword confirmed" for="confirmed">Confirm password</label>
-                  <input type="password" class="form-control form-control-alternative bg-white changepassword"
-                    name="confirmed" id="confirmed" maxlength="16">
-                  <small class="changepassword confirmed"></small>
+                  <label class="form-control-label" for="confirm">Confirm password</label>
+                  <input type="password" class="form-control text-dark"
+                    name="confirm" id="confirm" maxlength="16" placeholder="Re-enter password...">
+                  <small class="msg confirm"></small>
                 </div>
               </div>
             </div>
           </div>
           <div class="modal-footer">
-            <button type="submit" class="btn bg-gradient-success text-white">Save</button>
-            <button type="button" class="btn" data-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn bg-gradient-primary text-white">Save</button>
           </div>
         </form>
       </div>

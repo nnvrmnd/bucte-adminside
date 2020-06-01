@@ -52,6 +52,18 @@ function RenderList() {
 $(function () {
 	RenderList();
 
+	/* Priv */
+	$.ajax({
+		type: 'POST',
+		url: './assets/hndlr/Accounts.php',
+		data: { priv: $('#whoiam').val() },
+		success: function (res) {
+			if (res === 'false') {
+				$('#sudo_exit').click();
+			}
+		}
+	});
+
 	$('#UpdateAcct, #NewAcct')
 		.on('hidden.bs.modal', function () {
 			$('input.is-invalid').removeClass('is-invalid');
@@ -98,6 +110,8 @@ $(function () {
 
 		function Submit(createForm) {
 			return new Promise((resolve, reject) => {
+				WaitModal(5000);
+
 				$.ajax({
 					type: 'POST',
 					url: './assets/hndlr/Accounts.php',
@@ -193,6 +207,8 @@ $(function () {
 
 		function Submit(updateForm) {
 			return new Promise((resolve, reject) => {
+				WaitModal(5000);
+
 				$.ajax({
 					type: 'POST',
 					url: './assets/hndlr/Accounts.php',

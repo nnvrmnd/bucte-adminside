@@ -1,5 +1,23 @@
 <?php
 
+/* Priv */
+if (isset($_POST['priv'])) {
+	require './db.hndlr.php';
+
+	$id = $_POST['priv'];
+
+	$stmnt = 'SELECT * FROM user WHERE (username = ? OR email = ?) AND position = "Super Admin" ;';
+	$query = $db->prepare($stmnt);
+	$param = [$id, $id];
+	$query->execute($param);
+	$count = $query->rowCount();
+	if ($count > 0) {
+		exit('true');
+	} else {
+		exit('false');
+	}
+}
+
 /* Fetch for render */
 if (isset($_POST['fetchaccounts'])) {
 	require './db.hndlr.php';

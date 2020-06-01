@@ -30,7 +30,7 @@
 					<span class="docs-normal">Controls</span>
 					<span class="docs-mini">C</span>
 				</h6>
-				<ul class="navbar-nav">
+				<ul class="navbar-nav" id="sidenav">
 					<li class="nav-item d-none">
 						<a class="nav-link Dashboard" href="./dashboard.php">
 							<i class="ni ni-shop text-primary"></i>

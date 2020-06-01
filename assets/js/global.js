@@ -3,7 +3,31 @@ $(function () {
 	WhoAmI('topnav');
 
 	/* Set cookie for fileDownload */
-	document.cookie = 'fileDownload=true; path=/';
+	// document.cookie = 'fileDownload=true; path=/';
+
+	$.ajax({
+		type: 'POST',
+		url: './assets/hndlr/Accounts.php',
+		data: { priv: $('#whoiam').val() },
+		success: function (res) {
+			if (res === 'true') {
+				$('ul#sidenav').append(`
+					<li class="nav-item">
+						<a class="nav-link Accounts" href="./accounts.php">
+							<i class="far fa-user text-purple"></i>
+							<span class="nav-link-text">Accounts Management</span>
+						</a>
+					</li>
+					`);
+
+				if (documenttitle.match(/\b(\w*Account\w*)\b/g)) {
+					$('.Accounts')
+						.addClass('font-weight-bold active')
+						.attr('aria-expanded', 'true');
+				}
+			}
+		}
+	});
 
 	/* Signout */
 	$('#sudo_exit').click(function (e) {
@@ -362,10 +386,7 @@ function ValidateUsername(formId, nameProp) {
 
 		default:
 			$element.removeClass('is-invalid');
-			$msg
-				.removeClass('text-success')
-				.addClass('text-danger')
-				.empty();
+			$msg.removeClass('text-success').addClass('text-danger').empty();
 			break;
 	}
 
@@ -424,8 +445,8 @@ function ValidateEmail(formId, nameProp) {
 		input = $element.val(),
 		required = !input.match(/^\s*$/) ? true : false,
 		regex = new RegExp(
-      /^([a-zA-Z0-9_\.\-\+])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/gi
-    );
+			/^([a-zA-Z0-9_\.\-\+])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/gi
+		);
 
 	switch (false) {
 		case required:
@@ -447,10 +468,7 @@ function ValidateEmail(formId, nameProp) {
 
 		default:
 			$element.removeClass('is-invalid');
-			$msg
-				.removeClass('text-success')
-				.addClass('text-danger')
-				.empty();
+			$msg.removeClass('text-success').addClass('text-danger').empty();
 			break;
 	}
 
