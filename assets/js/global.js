@@ -349,67 +349,24 @@ function fileDownload(dir, file) {
 /* *************************************************** */
 
 /* Validate username */
-function ValidateUsername(formId, nameProp) {
-	let ctrl = true,
-		$element = $(`#${formId} [name=${nameProp}]`),
-		$msg = $(`small.${nameProp}`),
-		input = $element.val(),
-		required = !input.match(/^\s*$/) ? true : false,
-		length = input.length >= 5 ? true : false,
-		regex = new RegExp(/^[a-z0-9_]{5,16}$/gi);
-
-	switch (false) {
-		case required:
-			$element.addClass('is-invalid');
-			$msg
-				.removeClass('text-success')
-				.addClass('text-danger')
-				.html('Field required.');
-			ctrl = false;
-			break;
-		case length:
-			$element.addClass('is-invalid');
-			$msg
-				.removeClass('text-success')
-				.addClass('text-danger')
-				.html('Use at least 5 characters or more for your username.');
-			ctrl = false;
-			break;
-		case regex.test(input):
-			$element.addClass('is-invalid');
-			$msg
-				.removeClass('text-success')
-				.addClass('text-danger')
-				.html('You can use letters, numbers & underscores.');
-			ctrl = false;
-			break;
-
-		default:
-			$element.removeClass('is-invalid');
-			$msg.removeClass('text-success').addClass('text-danger').empty();
-			break;
-	}
-
-	return ctrl;
-}
-
-/* Check username availability */
-function UsernameAvailability(formId, nameProp, account = 0) {
-	let ctrl = true,
-		$element = $(`#${formId} [name=${nameProp}]`),
-		$msg = $(`small.${nameProp}`),
-		input = $element.val(),
-		required = !input.match(/^\s*$/) ? true : false;
-
+function ValidateUsername(formId, nameProp, account = 0) {
 	return new Promise((resolve, reject) => {
-		if (required) {
+		let ctrl = true,
+			$element = $(`#${formId} [name=${nameProp}]`),
+			$msg = $(`small.${nameProp}`),
+			input = $element.val(),
+			required = !input.match(/^\s*$/) ? true : false,
+			length = input.length >= 5 ? true : false,
+			regex = new RegExp(/^[a-z0-9_]{5,16}$/gi);
+
+		function UsernameAvailability(input, account) {
 			$.ajax({
 				type: 'POST',
 				url: './assets/hndlr/Accounts.php',
 				data: { id: account, username: input },
 				success: function (res) {
 					if (res == 'true') {
-						resolve(res); // available
+						resolve('true'); // available
 						$element.removeClass('is-invalid');
 						$msg
 							.removeClass('text-danger')
@@ -419,7 +376,7 @@ function UsernameAvailability(formId, nameProp, account = 0) {
 							$msg.empty();
 						}, 2000);
 					} else if (res == 'false') {
-						resolve(res);
+						resolve('false');
 						$element.addClass('is-invalid');
 						$msg
 							.removeClass('text-success')
@@ -434,79 +391,77 @@ function UsernameAvailability(formId, nameProp, account = 0) {
 				}
 			});
 		}
+
+		switch (false) {
+			case required:
+				$element.addClass('is-invalid');
+				$msg
+					.removeClass('text-success')
+					.addClass('text-danger')
+					.html('Field required.');
+				resolve('false');
+				break;
+			case length:
+				$element.addClass('is-invalid');
+				$msg
+					.removeClass('text-success')
+					.addClass('text-danger')
+					.html('Use at least 5 characters or more for your username.');
+				resolve('false');
+				break;
+			case regex.test(input):
+				$element.addClass('is-invalid');
+				$msg
+					.removeClass('text-success')
+					.addClass('text-danger')
+					.html('You can use letters, numbers & underscores.');
+				resolve('false');
+				break;
+
+			default:
+				UsernameAvailability(input, account);
+				// $element.removeClass('is-invalid');
+				// $msg.removeClass('text-success').addClass('text-danger').empty();
+				break;
+		}
 	});
 }
 
 /* Validate email */
-function ValidateEmail(formId, nameProp) {
-	let ctrl = true,
-		$element = $(`#${formId} [name=${nameProp}]`),
-		$msg = $(`small.${nameProp}`),
-		input = $element.val(),
-		required = !input.match(/^\s*$/) ? true : false,
-		regex = new RegExp(
-			/^([a-zA-Z0-9_\.\-\+])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/gi
-		);
-
-	switch (false) {
-		case required:
-			$element.addClass('is-invalid');
-			$msg
-				.removeClass('text-success')
-				.addClass('text-danger')
-				.html('Field required.');
-			ctrl = false;
-			break;
-		case regex.test(input):
-			$element.addClass('is-invalid');
-			$msg
-				.removeClass('text-success')
-				.addClass('text-danger')
-				.html('Not a valid email address.');
-			ctrl = false;
-			break;
-
-		default:
-			$element.removeClass('is-invalid');
-			$msg.removeClass('text-success').addClass('text-danger').empty();
-			break;
-	}
-
-	return ctrl;
-}
-
-/* Check email availability */
-function EmailAvailability(formId, nameProp, account = 0) {
-	let ctrl = true,
-		$element = $(`#${formId} [name=${nameProp}]`),
-		$small = $(`small.${nameProp}`),
-		input = $element.val(),
-		required = !input.match(/^\s*$/) ? true : false;
-
+function ValidateEmail(formId, nameProp, account = 0) {
 	return new Promise((resolve, reject) => {
-		if (required) {
+		let ctrl = true,
+			$element = $(`#${formId} [name=${nameProp}]`),
+			$msg = $(`small.${nameProp}`),
+			input = $element.val(),
+			required = !input.match(/^\s*$/) ? true : false,
+			regex = new RegExp(
+				/^([a-zA-Z0-9_\.\-\+])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/gi
+			);
+
+		function EmailAvailability(input, account) {
 			$.ajax({
 				type: 'POST',
 				url: './assets/hndlr/Accounts.php',
 				data: { id: account, email: input },
 				success: function (res) {
 					if (res == 'true') {
-						resolve(res); // available
+						resolve('true'); // available
 						$element.removeClass('is-invalid');
-						$small
+						$msg
 							.removeClass('text-danger')
 							.addClass('text-success')
 							.html('Available');
 						setTimeout(() => {
-							$small.empty();
+							$msg.empty();
 						}, 2000);
 					} else if (res == 'false') {
-						resolve(res);
+						resolve('false');
 						$element.addClass('is-invalid');
-						$small
+						$msg
 							.removeClass('text-success')
 							.addClass('text-danger')
-							.html('Username not available.');
+							.html('Email already registered.');
 					} else {
 						reject({
 							where: 'EmailAvailability',
@@ -515,6 +470,29 @@ function EmailAvailability(formId, nameProp, account = 0) {
 					}
 				}
 			});
+		}
+
+		switch (false) {
+			case required:
+				$element.addClass('is-invalid');
+				$msg
+					.removeClass('text-success')
+					.addClass('text-danger')
+					.html('Field required.');
+				resolve('false');
+				break;
+			case regex.test(input):
+				$element.addClass('is-invalid');
+				$msg
+					.removeClass('text-success')
+					.addClass('text-danger')
+					.html('Not a valid email address.');
+				resolve('false');
+				break;
+
+			default:
+				EmailAvailability(input, account);
+				break;
 		}
 	});
 }

@@ -136,8 +136,8 @@ $(function () {
 
 		async function Process(formId, usernameProp, emailProp, createForm) {
 			try {
-				const usernameRes = await UsernameAvailability(formId, usernameProp);
-				const emailRes = await EmailAvailability(formId, emailProp);
+				const usernameRes = await ValidateUsername(formId, usernameProp);
+				const emailRes = await ValidateEmail(formId, emailProp);
 				if (usernameRes != 'false' && emailRes != 'false') {
 					const submitRes = await Submit(createForm);
 				}
@@ -150,8 +150,6 @@ $(function () {
 		switch (false) {
 			case ValidateRequired(formid, 'given'):
 			case ValidateRequired(formid, 'surname'):
-			case ValidateUsername(formid, 'username'):
-			case ValidateEmail(formid, 'email'):
 				break;
 
 			default:
@@ -237,12 +235,12 @@ $(function () {
 			updateForm
 		) {
 			try {
-				const usernameRes = await UsernameAvailability(
+				const usernameRes = await ValidateUsername(
 					formId,
 					usernameProp,
 					account
 				);
-				const emailRes = await EmailAvailability(formId, emailProp, account);
+				const emailRes = await ValidateEmail(formId, emailProp, account);
 				if (usernameRes != 'false' && emailRes != 'false') {
 					const submitRes = await Submit(updateForm);
 				}
@@ -259,8 +257,6 @@ $(function () {
 		switch (false) {
 			case ValidateRequired(formid, 'edt_given'):
 			case ValidateRequired(formid, 'edt_surname'):
-			case ValidateUsername(formid, 'edt_username'):
-			case ValidateEmail(formid, 'edt_email'):
 				break;
 
 			default:

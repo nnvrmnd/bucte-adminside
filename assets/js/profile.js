@@ -22,6 +22,7 @@ function RenderList() {
 					$('#ErrorModal').on('hidden.bs.modal', function () {
 						$('#sudo_exit').click();
 					});
+					ErrorModal(5000, 'Due to changes you have to re-login.');
 				});
 			}
 		}
@@ -70,14 +71,14 @@ $(function () {
 	$('#profile_form').submit(function (e) {
 		e.preventDefault();
 
-		WaitModal(5000);
-
 		let form = $(this).serialize(),
 			formid = $(this).attr('id'),
 			account = $('[name=account]').val();
 
 		function Submit(updateForm) {
 			return new Promise((resolve, reject) => {
+				WaitModal(5000);
+
 				$.ajax({
 					type: 'POST',
 					url: './assets/hndlr/Profile.php',
@@ -85,7 +86,7 @@ $(function () {
 					success: function (res) {
 						if (res === 'true') {
 							resolve('updated');
-							SuccessModal('Account updated.', 5000);
+							SuccessModal('Changes applied.', 5000);
 							RenderList();
 						} else {
 							reject({
@@ -106,18 +107,18 @@ $(function () {
 			updateForm
 		) {
 			try {
-				const usernameRes = await UsernameAvailability(
+				const usernameRes = await ValidateUsername(
 					formId,
 					usernameProp,
 					account
 				);
-				const emailRes = await EmailAvailability(formId, emailProp, account);
+				const emailRes = await ValidateEmail(formId, emailProp, account);
 				if (usernameRes != 'false' && emailRes != 'false') {
 					const submitRes = await Submit(updateForm);
 				}
 			} catch (e) {
 				if (e.message == 'err:update') {
-					ErrorModal(5000, 'No changes applied.');
+					ErrorModal(3000, 'No changes applied.');
 				} else {
 					console.error(`${e.where}\n${e.message}`);
 					ErrorModal(5000);
@@ -128,8 +129,6 @@ $(function () {
 		switch (false) {
 			case ValidateRequired(formid, 'given'):
 			case ValidateRequired(formid, 'surname'):
-			case ValidateUsername(formid, 'username'):
-			case ValidateEmail(formid, 'email'):
 				break;
 
 			default:
