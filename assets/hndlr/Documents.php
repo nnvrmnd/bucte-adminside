@@ -2,9 +2,9 @@
 
 /* Fetch for render */
 if (isset($_POST['fetchdocuments'])) {
-	require 'db.hndlr.php';
+	require './db.hndlr.php';
 
-	$stmnt = 'SELECT * FROM document WHERE status = "present" ;';
+	$stmnt = 'SELECT * FROM document WHERE status = "present" ORDER BY uploaded_at ASC ;';
 	$query = $db->prepare($stmnt);
 	//  $param = [$who];
 	$query->execute();
@@ -23,7 +23,7 @@ if (isset($_POST['fetchdocuments'])) {
 			$doctype = $data['doc_type'];
 			$format = $data['file_format'];
 			$status = $data['status'];
-			$uploaded_at = date('jS M Y \a\t h:i A', strtotime($data['uploaded_at']));
+			$uploaded_at = $data['uploaded_at'];
 
 			$dbData[] = ['doc_id' => $doc_id, 'author' => $author, 'title' => $title, 'description' => $description, 'attachment' => $attachment, 'doctype' => $doctype, 'format' => $format, 'status' => $status, 'uploaded_at' => $uploaded_at];
 		}
@@ -34,8 +34,8 @@ if (isset($_POST['fetchdocuments'])) {
 
 /* Add new document */
 if (isset($_POST['title']) && isset($_POST['author'])) {
-	require 'db.hndlr.php';
-	require 'Global.php';
+	require './db.hndlr.php';
+	require './Global.php';
 
 	$author = $_POST['author'];
 	$title = $_POST['title'];
@@ -69,7 +69,7 @@ if (isset($_POST['title']) && isset($_POST['author'])) {
 
 /* Fetch 1 document to update */
 if (isset($_POST['document'])) {
-	require 'db.hndlr.php';
+	require './db.hndlr.php';
 
 	$document = $_POST['document'];
 
@@ -100,7 +100,7 @@ if (isset($_POST['document'])) {
 
 /* Update document */
 if (isset($_POST['document_id']) && isset($_POST['edt_title'])) {
-	require 'db.hndlr.php';
+	require './db.hndlr.php';
 
 	$id = $_POST['document_id'];
 	$title = $_POST['edt_title'];
@@ -123,7 +123,7 @@ if (isset($_POST['document_id']) && isset($_POST['edt_title'])) {
 
 /* Delete 1 document */
 if (isset($_POST['action']) && isset($_POST['id'])) {
-	require 'db.hndlr.php';
+	require './db.hndlr.php';
 
 	$document = $_POST['id'];
 	$dir = '../../files/documents/';
@@ -138,23 +138,21 @@ if (isset($_POST['action']) && isset($_POST['id'])) {
 			$file = $data['attachment'];
 			$file = $dir . $file;
 
-			if (file_exists($file) === true) {
-				$db->beginTransaction();
-				$stmnt = 'DELETE FROM document WHERE doc_id = ? ;';
-				$query = $db->prepare($stmnt);
-				$param = [$document];
-				$query->execute($param);
-				$count = $query->rowCount();
-				if ($count > 0) {
-					$db->commit();
+			$db->beginTransaction();
+			$stmnt = 'DELETE FROM document WHERE doc_id = ? ;';
+			$query = $db->prepare($stmnt);
+			$param = [$document];
+			$query->execute($param);
+			$count = $query->rowCount();
+			if ($count > 0) {
+				$db->commit();
+				if (file_exists($file)) {
 					unlink($file);
-					echo 'true';
-				} else {
-					$db->rollBack();
-					echo 'err:delete';
 				}
+				echo 'true';
 			} else {
-				echo 'err:!exist';
+				$db->rollBack();
+				echo 'err:delete';
 			}
 		}
 	}

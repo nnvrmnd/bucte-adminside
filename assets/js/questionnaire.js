@@ -1,5 +1,5 @@
 /* Fetch list */
-function RenderList() {
+function RenderList(search = 0) {
 	let reviewer = sessionStorage.getItem('rvwr');
 
 	$.ajax({
@@ -7,11 +7,34 @@ function RenderList() {
 		url: './assets/hndlr/Questionnaire.php',
 		data: { fetchitems: 'all', reviewer: reviewer },
 		success: function (res) {
-			$('.items-container').html('');
+			$('.items-container').empty();
 
-			if (res != 'err:fetch') {
-				let count = JSON.parse(res).length;
-				$.each(JSON.parse(res), function (idx, el) {
+			try {
+				let items = JSON.parse(res),
+					// count = items.length,
+					search_regex = new RegExp(search, 'gi');
+
+				if (search != 0) {
+					items = items.filter(items => {
+						if (items.question.match(search_regex)) {
+							return true;
+						}
+					});
+
+					if (items.length == 0) {
+						$('.items-container').html(`
+						<div class="col notfound mb-5 pb-5">
+							<div class="d-none d-sm-block notfound-404">
+								<h1>Oops!</h1>
+							</div>
+							<h2 class="ml-2">No results found</h2>
+							<p class="ml-2">No items to display</p>
+						</div>
+						`);
+					}
+				}
+
+				$.each(items, function (idx, el) {
 					let regex = /^\s*$/,
 						optC = el.optionC,
 						optD = el.optionD,
@@ -29,47 +52,43 @@ function RenderList() {
 					}
 
 					$('.items-container').append(`
-						<div class="col-lg-12">
-							<div class="card card-shadow">
-									<div class="card-body pb-1">
-										<button type="button" class="btn btn-sm btn-secondary text-danger float-right delete_item" data-target="${
-											el.question_id
-										}" title="Delete item...">
-												<i class="fa fa-trash" aria-hidden="true"></i>
-										</button>
-										<button type="button" class="btn btn-sm btn-secondary text-purple float-right edit_item" data-id="${
-											el.question_id
-										}" title="Edit item...">
-												<i class="fa fa-edit" aria-hidden="true"></i>
-										</button>
-										<p class="font-weight-bold mb-0 text-primary item">
-										${count--}.&ensp;${el.question}</p>
-										<p class="pl-3 text-dark">
-												<small>A.&emsp;${el.optionA}</small> <br>
-												<small>B.&emsp;${el.optionB}</small> <br>
-												${optionC}
-												${optionD}
-										</p>
-										<p>
-											<small>
-												Correct Answer:&emsp;
-												<span class="text-uppercase font-weight-bold">${el.answer}</span>
-											</small>
-										</p>
-									</div>
-							</div>
+					<div class="col-lg-12">
+						<div class="card card-shadow">
+								<div class="card-body pb-1">
+									<button type="button" class="btn btn-sm btn-secondary text-danger float-right delete_item" data-target="${el.question_id}" title="Delete item...">
+											<i class="fa fa-trash" aria-hidden="true"></i>
+									</button>
+									<button type="button" class="btn btn-sm btn-secondary text-purple float-right edit_item" data-id="${el.question_id}" title="Edit item...">
+											<i class="fa fa-edit" aria-hidden="true"></i>
+									</button>
+									<p class="font-weight-bold mb-0 text-primary item">${el.question}</p>
+									<p class="pl-3 text-dark">
+											<small>A.&emsp;${el.optionA}</small> <br>
+											<small>B.&emsp;${el.optionB}</small> <br>
+											${optionC}
+											${optionD}
+									</p>
+									<p>
+										<small>
+											Correct Answer:&emsp;
+											<span class="text-uppercase font-weight-bold">${el.answer}</span>
+										</small>
+									</p>
+								</div>
 						</div>
+					</div>
 					`);
 				});
-			} else {
+			} catch (e) {
+				console.error('ERR', e.message);
 				$('.items-container').html(`
-					<div class="col notfound mb-5 pb-5">
-						<div class="d-none d-sm-block notfound-404">
-							<h1>Oops!</h1>
-						</div>
-						<h2 class="ml-2">Oops! List is empty</h2>
-						<p class="ml-2">No items to display</p>
+				<div class="col notfound mb-5 pb-5">
+					<div class="d-none d-sm-block notfound-404">
+						<h1>Oops!</h1>
 					</div>
+					<h2 class="ml-2">Oops! List is empty</h2>
+					<p class="ml-2">No items to display</p>
+				</div>
 				`);
 			}
 		}
@@ -81,6 +100,32 @@ function RenderList() {
 /* Triggers */
 $(function () {
 	RenderList();
+	$('form.filter').trigger('reset');
+
+	/* Filter form */
+	let form, search;
+	function UpdateFilter() {
+		form = $('form.filter').serializeArray();
+		search = form[0].value;
+		search = search.match(/^\s*$/) ? 0 : search;
+	}
+
+	/* Search */
+	let typingtimer;
+	function DoneTyping() {
+		RenderList(search);
+	}
+
+	$('.filter [name=search]')
+		.keyup(function (e) {
+			UpdateFilter();
+			clearTimeout(typingtimer);
+			typingtimer = setTimeout(DoneTyping, 1000);
+		})
+		.keydown(function () {
+			$('.items-container').empty();
+			clearTimeout(typingtimer);
+		});
 
 	/* Reviewer selected exist */
 	let sesh = sessionStorage.getItem('rvwr');
@@ -171,7 +216,7 @@ $(function () {
 						switch (res) {
 							case 'true':
 								SuccessModal('Item added.', 5000);
-								RenderList();
+								RenderList(search);
 								break;
 
 							default:
@@ -248,7 +293,7 @@ $(function () {
 					success: function (res) {
 						switch (res) {
 							case 'true':
-								RenderList();
+								RenderList(search);
 								SuccessModal('Item updated.', 5000);
 								break;
 

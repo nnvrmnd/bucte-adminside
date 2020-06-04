@@ -4,7 +4,7 @@
 if (isset($_POST['fetchevents'])) {
 	require 'db.hndlr.php';
 
-	$stmnt = 'SELECT * FROM events ORDER BY evnt_id DESC;';
+	$stmnt = 'SELECT * FROM events ORDER BY created_at ASC;';
 	$query = $db->prepare($stmnt);
 	//  $param = [$who];
 	$query->execute();
@@ -24,7 +24,7 @@ if (isset($_POST['fetchevents'])) {
 			$deadline = $data['reg_deadline'];
 			$venue = $data['venue'];
 			$description = $data['description'];
-			$created_at = date('jS M Y \a\t h:i A', strtotime($data['created_at']));
+			$created_at = $data['created_at'];
 
 			$dbData[] = [
 				'event_id' => $event_id,
@@ -71,14 +71,14 @@ if (isset($_POST['title']) && isset($_POST['author'])) {
 	if ($count > 0) {
 		if (move_uploaded_file($_FILES['select_file']['tmp_name'], $destination)) {
 			$db->commit();
-			echo 'true';
+			exit('true');
 		} else {
 			$db->rollBack();
-			echo 'err:upload';
+			exit('err:upload');
 		}
 	} else {
 		$db->rollBack();
-		echo 'err:save';
+		exit('err:save');
 	}
 }
 
@@ -94,8 +94,7 @@ if (isset($_POST['event'])) {
 	$query->execute($param);
 	$count = $query->rowCount();
 	if ($count <= 0) {
-		echo 'err:fetch';
-		exit();
+		exit('err:fetch');
 	} elseif ($count > 0) {
 		$dbData = [];
 		foreach ($query as $data) {
@@ -156,24 +155,24 @@ if (isset($_POST['event_id']) && isset($_POST['edt_title'])) {
 	if ($count > 0) {
 		if (!isset($attachment)) {
 			$db->commit();
-			echo 'true';
+			exit('true');
 		} else {
 			if (DeleteCurrentImage($id) !== false) {
 				if (move_uploaded_file($_FILES['edt_select_file']['tmp_name'], $destination)) {
 					$db->commit();
-					echo 'true';
+					exit('true');
 				} else {
 					$db->rollBack();
-					echo 'err:upload';
+					exit('err:upload');
 				}
 			} else {
 				$db->rollBack();
-				echo 'err:delete_current';
+				exit('err:delete_current');
 			}
 		}
 	} else {
 		$db->rollBack();
-		echo 'err:save';
+		exit('err:save');
 	}
 }
 
@@ -205,10 +204,10 @@ if (isset($_POST['action']) && isset($_POST['id'])) {
 			$count = $query->rowCount();
 			if ($count > 0) {
 				$db->commit();
-				echo 'true';
+				exit('true');
 			} else {
 				$db->rollBack();
-				echo 'err:delete';
+				exit('err:delete');
 			}
 		}
 	}

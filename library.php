@@ -32,15 +32,19 @@ SeshStart('page');
 							<h6 class="h2 d-inline-block mb-0">Library</h6>
 							<nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
 								<ol class="breadcrumb breadcrumb-links">
-									<li class="breadcrumb-item"><a href="javascript:void(0)"><i class="fas fa-home"></i></a></li>
+									<li class="breadcrumb-item"><a href="javascript:void(0)"><i
+												class="fas fa-home"></i></a></li>
 									<li class="breadcrumb-item active" aria-current="page">Library</li>
 								</ol>
 							</nav>
 						</div>
 						<div class="col-lg-6 text-right">
-							<button class="btn btn-sm btn-secondary text-danger d-none" id="delete_btn" title="Delete selected file/s...">Delete file/s</button>
-							<button class="btn btn-sm btn-secondary text-warning d-none" id="archive_btn" title="Archive selected file/s...">Archive file/s</button>
-							<button class="btn btn-sm btn-secondary text-primary" data-toggle="modal" data-target="#UploadFile" title="Upoad new file...">Upload file</button>
+							<button class="btn btn-sm btn-secondary text-danger d-none" id="delete_btn"
+								title="Delete selected file/s...">Delete file/s</button>
+							<button class="btn btn-sm btn-secondary text-warning d-none" id="archive_btn"
+								title="Archive selected file/s...">Archive file/s</button>
+							<button class="btn btn-sm btn-secondary text-primary" data-toggle="modal"
+								data-target="#UploadFile" title="Upoad new file...">Upload file</button>
 						</div>
 					</div>
 				</div>
@@ -48,16 +52,37 @@ SeshStart('page');
 		</div>
 		<!-- Page content -->
 		<div class="container-fluid mt--6">
+			<form class="filter">
+				<div class="row">
+					<div class="col-lg-3 col-md-4 col-sm-5 ml-auto">
+						<div class="form-group">
+							<input type="text" class="form-control form-control-sm text-dark" name="search"
+								placeholder="Search...">
+							</select>
+						</div>
+					</div>
+					<div class="col-lg-3 col-md-4 col-sm-5">
+						<div class="form-group">
+							<div class="input-group">
+								<select class="form-control form-control-sm pointer-here" name="sort"
+									title="Sort by...">
+									<option value="title">&ensp;Title</option>
+									<option value="type">&ensp;File type</option>
+									<option value="post" selected>&ensp;Date uploaded</option>
+								</select>
+								<span class="input-group-addon input-group-append">
+									<button type="button" class="btn btn-sm btn-outline-primary" id="order"
+										data-state="desc" title="Descending order">
+										<span class="fas fa-long-arrow-alt-down"></span>
+									</button>
+								</span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</form>
 			<div class="row card-wrapper resources-container">
 				<!-- MAIN CONTENT HERE -->
-
-
-
-
-
-
-
-
 			</div>
 			<!-- Footer -->
 			<?php include './components/layout/Footer.php'; ?>
@@ -203,7 +228,8 @@ SeshStart('page');
 				<div class="modal-body"></div>
 
 				<div class="modal-footer">
-					<button type="button" class="btn btn-sm btn-secondary text-purple edit_delete edit_resource" title="Edit title/desciprtion..."  data-dismiss="modal">
+					<button type="button" class="btn btn-sm btn-secondary text-purple edit_delete edit_resource"
+						title="Edit title/desciprtion..." data-dismiss="modal">
 						<i class="fa fa-edit" aria-hidden="true"></i>
 					</button>
 					<button type="button" class="btn btn-sm btn-secondary text-danger edit_delete delete_resource"

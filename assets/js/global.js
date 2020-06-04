@@ -190,13 +190,15 @@ function SuccessModal(msg, timeout, redirect = 0) {
 	$('.modal').modal('hide');
 	window.clearTimeout(timer);
 	$('#success-modal-msg').html(msg);
-	$('#SuccessModal').modal('show');
+	setTimeout(() => {
+		$('#SuccessModal').modal('show');
+	}, 500);
 
 	timer = setTimeout(() => {
 		$('#success-modal-msg').html('');
 		$('#SuccessModal').modal('hide');
 		timer = null;
-	}, timeout - 1000);
+	}, timeout - 500);
 }
 
 function ErrorModal(timeout, msg = 0, redirect = 0) {

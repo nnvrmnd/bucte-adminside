@@ -53,15 +53,36 @@ SeshStart('page');
 		</div>
 		<!-- Page content -->
 		<div class="container-fluid mt--6">
+			<form class="filter">
+				<div class="row">
+					<div class="col-lg-3 col-md-4 col-sm-5 ml-auto">
+						<div class="form-group">
+							<input type="text" class="form-control form-control-sm text-dark" name="search"
+								placeholder="Search...">
+							</select>
+						</div>
+					</div>
+					<div class="col-lg-3 col-md-4 col-sm-5">
+						<div class="form-group">
+							<div class="input-group">
+								<select class="form-control form-control-sm pointer-here" name="sort"
+									title="Sort by...">
+									<option value="title">&ensp;Title</option>
+									<option value="post" selected>&ensp;Date uploaded</option>
+								</select>
+								<span class="input-group-addon input-group-append">
+									<button type="button" class="btn btn-sm btn-outline-primary" id="order"
+										data-state="desc" title="Descending order">
+										<span class="fas fa-long-arrow-alt-down"></span>
+									</button>
+								</span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</form>
 			<div class="row card-wrapper archives-container">
 				<!-- MAIN CONTENT HERE -->
-
-
-
-
-
-
-
 			</div>
 			<!-- Footer -->
 			<?php include './components/layout/Footer.php'; ?>

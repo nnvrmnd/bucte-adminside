@@ -49,7 +49,7 @@ if (isset($_POST['fetcharchives'])) {
 	}
 
 	if (ZipEmpty() === true) {
-		$stmnt = 'SELECT * FROM archive';
+		$stmnt = 'SELECT * FROM archive ORDER BY created_at ASC';
 		$query = $db->prepare($stmnt);
 		$query->execute();
 		$count = $query->rowCount();
@@ -62,7 +62,7 @@ if (isset($_POST['fetcharchives'])) {
 				$author = $data['u_id'];
 				$zipname = $data['zipname'];
 				$description = $data['description'];
-				$created_at = date('jS M Y \a\t h:i A', strtotime($data['created_at']));
+				$created_at = $data['created_at'];
 
 				$dbData[] = ['archive_id' => $archive_id, 'author' => $author, 'zipname' => $zipname, 'description' => $description, 'created_at' => $created_at];
 			}

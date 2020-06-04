@@ -1,5 +1,5 @@
 /* Fetch list */
-function RenderList() {
+function RenderList(sortBy = 'post', orderBy = 'desc', search = 0) {
 	// change thumbnail according to file format
 	function file_format(format) {
 		if (format.match(/\b(\w*image\w*)\b/gi)) {
@@ -24,75 +24,199 @@ function RenderList() {
 		url: './assets/hndlr/Documents.php',
 		data: { fetchdocuments: 'all' },
 		success: function (res) {
-			$('.documents-container').html('');
+			$('.documents-container').empty();
 
-			if (!res.match(/\b(\w*err:fetch\w*)\b/g)) {
-				$.each(JSON.parse(res), function (idx, el) {
+			try {
+				let documents = JSON.parse(res),
+					search_regex = new RegExp(search, 'gi');
+
+				documents.sort((a, b) => {
+					let A, B, arg;
+
+					switch (sortBy) {
+						case 'title':
+							A = a.title;
+							B = b.title;
+							break;
+						case 'type':
+							A = a.format;
+							B = b.format;
+							break;
+
+						default:
+							A = a.uploaded_at;
+							B = b.uploaded_at;
+							break;
+					}
+
+					arg = orderBy == 'desc' ? A < B : A > B;
+
+					if (arg) {
+						return 1;
+					} else {
+						return -1;
+					}
+				});
+
+				if (search != 0) {
+					documents = documents.filter(document => {
+						if (document.title.match(search_regex)) {
+							return true;
+						}
+					});
+
+					if (documents.length == 0) {
+						$('.documents-container').html(`
+						<div class="col notfound mb-5 pb-5">
+							<div class="d-none d-sm-block notfound-404">
+								<h1>Oops!</h1>
+							</div>
+							<h2 class="ml-2">No results found</h2>
+							<p class="ml-2">No items to display</p>
+						</div>
+						`);
+					}
+				}
+
+				$.each(documents, function (idx, el) {
 					let dir = el.doctype == 'document' ? 'documents' : el.doctype,
 						attachment_title = el.title,
 						attachment_format = el.attachment,
-						attachment_filename;
+						attachment_filename,
+						uploaded_date,
+						uploaded_time,
+						uploaded_at;
 
 					attachment_title = attachment_title.replace(/[^A-Za-z0-9_.-]/g, '_');
 					attachment_format = attachment_format.split('.');
 					attachment_filename = `${attachment_title}.${attachment_format[1]}`;
 
+					uploaded_date = moment(el.uploaded_at).format('Do MMM YYYY');
+					uploaded_time = moment(el.uploaded_at).format('h:mm A');
+					uploaded_at = `${uploaded_date} at ${uploaded_time}`;
+
 					$('.documents-container').append(`
-						<div class="col-sm-6 col-md-4 col-lg-3 document-card">
-							<div class="card card-shadow">
+					<div class="col-sm-6 col-md-4 col-lg-3 document-card">
+						<div class="card card-shadow">
 
-								<div class="custom-control custom-checkbox m-2">
-									<input type="checkbox" class="custom-control-input checkboxes" id="check_${
+							<div class="custom-control custom-checkbox m-2">
+								<input type="checkbox" class="custom-control-input checkboxes" id="check_${
+									el.doc_id
+								}"
+									data-id="${el.doc_id}">
+								<label class="custom-control-label" for="check_${
+									el.doc_id
+								}" title="Select to archive or delete file/s..."></label>
+							</div>
+
+							<div class="d-flex align-items-center justify-content-center pointer-here readmore"
+								data-target="${el.doc_id}" title="Click to read more...">
+								<img class="card-img-top mx-auto mt-4"
+									src="./assets/img/file_format/${file_format(
+										el.format
+									)}" alt="Filetype thumbnail">
+							</div>
+
+							<div class="card-body pb-1">
+								<p class="font-weight-bold card-title text-truncate mb-0 pointer-here readmore"
+									data-id="${
 										el.doc_id
-									}"
-										data-id="${el.doc_id}">
-									<label class="custom-control-label" for="check_${
-										el.doc_id
-									}" title="Select to archive or delete file/s..."></label>
-								</div>
-
-								<div class="d-flex align-items-center justify-content-center pointer-here readmore"
-									data-target="${el.doc_id}" title="Click to read more...">
-									<img class="card-img-top mx-auto mt-4"
-										src="./assets/img/file_format/${file_format(
-											el.format
-										)}" alt="Filetype thumbnail">
-								</div>
-
-								<div class="card-body pb-1">
-									<p class="font-weight-bold card-title text-truncate mb-0 pointer-here readmore"
-										data-id="${
-											el.doc_id
-										}" data-target="${el.doc_id}" title="${el.title}">${el.title}</p>
-									<small class="text-muted">by ${AuthorName(
-										el.author
-									)} on ${el.uploaded_at}</small> <br>
-									<a href="./files/${dir}/${el.attachment}" download="${attachment_filename}"
-										class="btn btn-link px-0 float-right download_file" title="Download file...">
-										<i class="fas fa-cloud-download-alt fa-lg"></i>
-									</a>
-								</div>
+									}" data-target="${el.doc_id}" title="${el.title}">${el.title}</p>
+								<small class="text-muted">by ${AuthorName(
+									el.author
+								)} on ${uploaded_at}</small> <br>
+								<a href="./files/${dir}/${el.attachment}" download="${attachment_filename}"
+									class="btn btn-link px-0 float-right download_file" title="Download file...">
+									<i class="fas fa-cloud-download-alt fa-lg"></i>
+								</a>
 							</div>
 						</div>
+					</div>
 					`);
 				});
-			} else {
+			} catch (e) {
+				console.error('ERR', e.message);
 				$('.documents-container').html(`
-					<div class="col notfound mb-5 pb-5">
-						<div class="d-none d-sm-block notfound-404">
-							<h1>Oops!</h1>
-						</div>
-						<h2 class="ml-2">Oops! List is empty</h2>
-						<p class="ml-2">No items to display</p>
+				<div class="col notfound mb-5 pb-5">
+					<div class="d-none d-sm-block notfound-404">
+						<h1>Oops!</h1>
 					</div>
+					<h2 class="ml-2">Oops! List is empty</h2>
+					<p class="ml-2">No items to display</p>
+				</div>
 				`);
 			}
 		}
 	});
 }
 
+/* Filter form */
+let form, sortby, orderby, search;
+function UpdateFilter() {
+	form = $('form.filter').serializeArray();
+	sortby = form[1].value;
+	orderby = $('.filter #order').attr('data-state');
+	search = form[0].value;
+	search = search.match(/^\s*$/) ? 0 : search;
+}
+
 $(function () {
 	RenderList();
+	$('form.filter').trigger('reset');
+
+	/* Sort */
+	$('.filter [name=sort]').change(function (e) {
+		e.preventDefault();
+
+		UpdateFilter();
+		RenderList(sortby, orderby, search);
+		not_checked();
+	});
+
+	/* Order */
+	$('.filter #order').click(function (e) {
+		e.preventDefault();
+
+		UpdateFilter();
+
+		switch (orderby) {
+			case 'desc':
+				RenderList(sortby, 'asc', search);
+				not_checked();
+				$(this)
+					.attr('data-state', 'asc')
+					.attr('title', 'Ascending order')
+					.html('<span class="fas fa-long-arrow-alt-up"></span>');
+				break;
+
+			default:
+				RenderList(sortby, 'desc', search);
+				not_checked();
+				$(this)
+					.attr('data-state', 'desc')
+					.attr('title', 'Descending order')
+					.html('<span class="fas fa-long-arrow-alt-down"></span>');
+				break;
+		}
+	});
+
+	/* Search */
+	let typingtimer;
+	function DoneTyping() {
+		RenderList(sortby, orderby, search);
+		not_checked();
+	}
+
+	$('.filter [name=search]')
+		.keyup(function (e) {
+			UpdateFilter();
+			clearTimeout(typingtimer);
+			typingtimer = setTimeout(DoneTyping, 1000);
+		})
+		.keydown(function () {
+			$('.documents-container').empty();
+			clearTimeout(typingtimer);
+		});
 
 	$('.documents-container').on('click', '.download_file', function (e) {
 		e.stopPropagation();
@@ -204,12 +328,13 @@ $(function () {
 						switch (res) {
 							case 'true':
 								SuccessModal('Uploaded new document.', 5000);
-								RenderList();
+								RenderList(sortby, orderby, search);
+								not_checked();
 								break;
 
 							default:
 								ErrorModal(5000);
-								console.log(res);
+								console.error(res);
 								break;
 						}
 					}
@@ -268,7 +393,8 @@ $(function () {
 					switch (res) {
 						case 'true':
 							SuccessModal('Updated document.', 5000);
-							RenderList();
+							RenderList(sortby, orderby, search);
+							not_checked();
 							break;
 
 						default:
@@ -379,7 +505,7 @@ $(function () {
 	/* Show arhive & delete button */
 	$('.documents-container').on('click', '.document-card', function (e) {
 		let checkbox = $(this).find('.checkboxes'),
-			archive = () => {
+			is_checked = () => {
 				$('.checkboxes:checked').length > 0
 					? $('#archive_btn, #delete_btn').removeClass('d-none')
 					: $('#archive_btn, #delete_btn').addClass('d-none');
@@ -389,9 +515,9 @@ $(function () {
 			checkbox.is(':checked')
 				? checkbox.prop('checked', false)
 				: checkbox.prop('checked', true);
-			archive();
+			is_checked();
 		} else {
-			archive();
+			is_checked();
 		}
 	});
 
@@ -405,7 +531,6 @@ $(function () {
 		PromptModal(5000, 'delete_selected', 1, 'Delete selected file/s?');
 
 		$('#prompt_form #yes_prompt').click(function (e) {
-
 			WaitModal(5000);
 
 			$.post(
@@ -414,11 +539,12 @@ $(function () {
 				function (res) {
 					if (res === 'true') {
 						SuccessModal('Archived files.', 5000);
-						RenderList();
+						RenderList(sortby, orderby, search);
+						not_checked();
 					} else {
 						console.error('ERR', res);
 						ErrorModal(5000);
-						RenderList();
+						RenderList(sortby, orderby, search);
 					}
 				}
 			);
@@ -472,11 +598,12 @@ $(function () {
 						if (res === 'true') {
 							SuccessModal('Archived files.', 5000);
 							$('#archive_btn, #delete_btn').addClass('d-none');
-							RenderList();
+							RenderList(sortby, orderby, search);
+							not_checked();
 							resolve(res);
 						} else {
 							ErrorModal(5000);
-							RenderList();
+							RenderList(sortby, orderby, search);
 							reject({
 								where: 'CreateZip',
 								message: res
@@ -512,6 +639,10 @@ $(function () {
 
 	DocumentReady();
 });
+
+function not_checked() {
+	$('#archive_btn, #delete_btn').addClass('d-none');
+}
 
 function ValidateZipname(form_id, name) {
 	let empty = /^\s*$/,
@@ -589,6 +720,9 @@ function ValidateAttachment(form_id, name, dummy_name) {
 			$('[name="file_format"]').val('presentation');
 			valid(dummy, name);
 		} else if (file_format.match(/\b(\w*spreadsheetml\w*)\b/gi)) {
+			$('[name="file_format"]').val('spreadsheet');
+			valid(dummy, name);
+		} else if (file_format.match(/\b(\w*ms-excel\w*)\b/gi)) {
 			$('[name="file_format"]').val('spreadsheet');
 			valid(dummy, name);
 		} else if (file_format.match(/\b(\w*zip\w*)\b/gi)) {
