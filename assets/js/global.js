@@ -50,7 +50,7 @@ $(function () {
 
 	/* Sidebar active tab */
 	let documenttitle = document.title;
-	if (documenttitle.match(/\b(\w*Dashboard\w*)\b/g)) {
+	if (documenttitle.match(/\b(\w*Welcome\w*)\b/g)) {
 		$('.Dashboard').addClass('font-weight-bold active');
 	} else if (documenttitle.match(/\b(\w*Records\w*)\b/g)) {
 		$('.Records').addClass('font-weight-bold active');

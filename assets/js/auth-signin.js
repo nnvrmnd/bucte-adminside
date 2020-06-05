@@ -17,7 +17,7 @@ $(function () {
 						$('span.auth-icon')
 							.removeClass('text-danger')
 							.addClass('text-success');
-						$(location).attr('href', 'events.php');
+						$(location).attr('href', 'welcome.php');
 						break;
 
 					default:

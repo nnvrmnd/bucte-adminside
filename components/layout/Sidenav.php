@@ -38,6 +38,12 @@
 						</a>
 					</li>
 					<li class="nav-item">
+						<a class="nav-link Dashboard" href="./welcome.php">
+							<i class="ni ni-shop text-primary"></i>
+							<span class="nav-link-text">Welcome</span>
+						</a>
+					</li>
+					<li class="nav-item">
 						<a class="nav-link Events" href="./events.php">
 							<i class="ni ni-calendar-grid-58 text-orange"></i>
 							<span class="nav-link-text">Events</span>
