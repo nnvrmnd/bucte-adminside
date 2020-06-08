@@ -33,7 +33,7 @@ function AuthWho($who, $token, $where) {
 			$db_token = $data['token'];
 			if (password_verify($db_token, $token)) {
 				if ($where != 'page') {
-					header('location: events.php');
+					header('location: welcome.php');
 				}
 			} else {
 				setcookie('who', '', time() - 28801, '/bucte/');
