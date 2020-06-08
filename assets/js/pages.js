@@ -1,5 +1,3 @@
-
-
 $(function () {
 	/* CKEditor */
 	CKEDITOR.disableAutoInline = true;

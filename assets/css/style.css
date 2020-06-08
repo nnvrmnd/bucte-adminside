@@ -123,3 +123,33 @@ img.card-img-top {
   cursor: pointer;
   font-size: 23px;
 }
+
+.delete-round {
+  position: absolute;
+  width: 134px;
+  top: 3px;
+}
+.delete-round i {
+  float: right;
+  background-color: #f1f3f5;
+  padding: 10px;
+  border-radius: 3px;
+  z-index: 1;
+}
+
+.delete-round:hover i {
+  background-color: #fafafa;
+  color: #f5365c;
+}
+
+.signature-option {
+  float: right;
+  width: 65%;
+}
+.signature-option div{
+  top: 8px;
+}
+
+.tooltip-inner {
+  background-color: white !important;
+ }
