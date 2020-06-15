@@ -44,8 +44,8 @@ if (isset($_POST['sudo_username']) && isset($_POST['sudo_password'])) {
 					session_start();
 					$_SESSION['who'] = [$usrnm, password_hash($token, PASSWORD_DEFAULT)];
 					if (isset($_POST['sudo_remember'])) {
-						setcookie("who", $usrnm, time() + 28800, "/bucte/");
-						setcookie("token", password_hash($token, PASSWORD_DEFAULT), time() + 28800, "/bucte/");
+						setcookie("who", $usrnm, time() + 28800, "/");
+						setcookie("token", password_hash($token, PASSWORD_DEFAULT), time() + 28800, "/");
 					}
 					echo "true";
 				}
@@ -60,8 +60,8 @@ if (isset($_POST['sudo_username']) && isset($_POST['sudo_password'])) {
 
 if (isset($_POST['sudo_exit'])) {
 	session_start();
-	setcookie("who", "", time() - 28801, "/bucte/");
-	setcookie("token", "", time() - 28801, "/bucte/");
+	setcookie("who", "", time() - 28801, "/");
+	setcookie("token", "", time() - 28801, "/");
 	unset($_SESSION['who']);
 	echo "true";
 }

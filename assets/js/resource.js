@@ -124,7 +124,7 @@ function RenderList(sortBy = 'post', orderBy = 'desc', search = 0) {
 								<small class="text-muted">by ${AuthorName(
 									el.author
 								)} on ${uploaded_at}</small> <br>
-								<a href="../files/${dir}/${el.attachment}" download="${attachment_filename}"
+								<a href="../files/library/${el.attachment}" download="${attachment_filename}"
 									class="btn btn-link px-0 float-right download_file" title="Download file...">
 									<i class="fas fa-cloud-download-alt fa-lg"></i>
 								</a>

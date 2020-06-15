@@ -36,8 +36,8 @@ function AuthWho($who, $token, $where) {
 					header('location: welcome.php');
 				}
 			} else {
-				setcookie('who', '', time() - 28801, '/bucte/');
-				setcookie('token', '', time() - 28801, '/bucte/');
+				setcookie('who', '', time() - 28801, '/');
+				setcookie('token', '', time() - 28801, '/');
 				unset($_SESSION['who']);
 				if ($where != 'auth') {
 					header('location: authenticate.php');
@@ -45,8 +45,8 @@ function AuthWho($who, $token, $where) {
 			}
 		}
 	} else {
-		setcookie('who', '', time() - 28801, '/bucte/');
-		setcookie('token', '', time() - 28801, '/bucte/');
+		setcookie('who', '', time() - 28801, '/');
+		setcookie('token', '', time() - 28801, '/');
 		unset($_SESSION['who']);
 		if ($where != 'auth') {
 			header('location: authenticate.php');

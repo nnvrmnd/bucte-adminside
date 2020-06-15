@@ -283,7 +283,7 @@ $(function () {
 	let ckwrites = $('body').find('.ckwrite');
 	ckwrites.each(function (i, e) {
 		CKEDITOR.replace(e.name, {
-			customConfig: '/bucte/admin/assets/js/ck_events.js'
+			customConfig: '/app/admin/assets/js/ck_events.js'
 		});
 	});
 

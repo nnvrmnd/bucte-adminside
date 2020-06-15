@@ -150,6 +150,8 @@ if (isset($_POST['save_changes'])) {
 		//IF ENDS!!!
 	} else {
 		//var_dump($image_data);
+		$numImage = count($image_data);
+		$countImagePass = 0;
 		foreach ($image_data as $image) {
 			try {
 				$extension = strtolower(pathinfo($_FILES[$image]['name'], PATHINFO_EXTENSION));
@@ -181,51 +183,56 @@ if (isset($_POST['save_changes'])) {
 						uploadImage($image);
 					} else {
 						$errorUpload++;
+						echo 'Err: Image Upload';
 					}
 				}
 				if ($errorUpload > 0) {
 					$db->rollBack();
 				} else {
-					echo 'true';
 					$db->commit();
+					$countImagePass++;
 				}
 			} catch (\Throwable $th) {
 				echo 'Err: Image Upload';
 				throw $th;
 			}
 		}
+		if ($numImage == $countImagePass) {
+			echo 'true';
+		}
 	}
 }
 
-if(isset($_POST['image'])){
+if (isset($_POST['image'])) {
 	require 'db.hndlr.php';
+	require 'DataValidator.php';
 	$db->beginTransaction();
-		$stmnt = 'DELETE FROM content_images WHERE image = ?';
-		$query = $db->prepare($stmnt);
-		$param = [$_POST['image']];
-		$query->execute($param);
-		$row = $query -> rowCount(); 
-		if ($row > 0) {
-			$db->commit();
-			echo "true";
-		} else {
-			$db->rollBack();
-			echo "Err: delete";
-		}	
+	$stmnt = 'DELETE FROM content_images WHERE image = ?';
+	$query = $db->prepare($stmnt);
+	$param = [$_POST['image']];
+	$query->execute($param);
+	if ($query) {
+		$db->commit();
+		checkFileExist(SAVE_PATH, $_POST['image'], 2);
+		echo 'true';
+	} else {
+		$db->rollBack();
+		echo 'Err: delete';
+	}
 }
 
-if(isset($_POST['signatureImage'])){
+if (isset($_POST['signatureImage'])) {
 	require 'db.hndlr.php';
 	$db->beginTransaction();
-		$stmnt = 'UPDATE content SET meta2=NULL where alias="homepage"';
-		$query = $db->prepare($stmnt);
-		$query->execute();
-		$row = $query -> rowCount(); 
-		if ($row > 0) {
-			$db->commit();
-			echo "true";
-		} else {
-			$db->rollBack();
-			echo "Err: delete";
-		}	
+	$stmnt = 'UPDATE content SET meta2=NULL where alias="homepage"';
+	$query = $db->prepare($stmnt);
+	$query->execute();
+	$row = $query->rowCount();
+	if ($row > 0) {
+		$db->commit();
+		echo 'true';
+	} else {
+		$db->rollBack();
+		echo 'Err: delete';
+	}
 }

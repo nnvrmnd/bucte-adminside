@@ -192,7 +192,7 @@ function SuccessModal(msg, timeout, redirect = 0) {
 	$('#success-modal-msg').html(msg);
 	setTimeout(() => {
 		$('#SuccessModal').modal('show');
-	}, 500);
+	}, 1000);
 
 	timer = setTimeout(() => {
 		$('#success-modal-msg').html('');
