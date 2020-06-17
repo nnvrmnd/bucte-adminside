@@ -1,6 +1,5 @@
 /* Fetch list */
 function RenderList() {
-
 	$.ajax({
 		type: 'POST',
 		url: './assets/hndlr/Assessment.php',
@@ -32,9 +31,7 @@ function RenderList() {
 							.attr('title', 'Reached maximum number of items...')
 							.attr('disabled', true);
 					} else {
-						$('#add_btn')
-							.attr('title', 'Add item...')
-							.removeAttr('disabled');
+						$('#add_btn').attr('title', 'Add item...').removeAttr('disabled');
 					}
 
 					$('.items-container').append(`
@@ -59,12 +56,6 @@ function RenderList() {
 											${optionC}
 											${optionD}
 									</p>
-									<p>
-										<small>
-											Correct Answer:&emsp;
-											<span class="text-uppercase font-weight-bold">${el.answer}</span>
-										</small>
-									</p>
 								</div>
 						</div>
 					</div>
@@ -84,36 +75,13 @@ function RenderList() {
 			}
 		}
 	});
-
 }
 
 // IDEA: Add CKEditor to questions
 
 /* Triggers */
 $(function () {
-	RenderList()
-	/* const urlParam = new URLSearchParams(window.location.search);
-	let event;
-	if (urlParam.has('e')) {
-		event = Decrypt(urlParam.get('e'));
-		RenderList();
-	} else {
-		$('.modal').on('hidden.bs.modal', function () {
-			window.location.replace('events.php');
-		});
-		$('.items-container').html(`
-		<div class="col notfound mb-5 pb-5">
-			<div class="d-none d-sm-block notfound-404">
-				<h1>Oops!</h1>
-			</div>
-			<h2 class="ml-2">Oops! List is empty</h2>
-			<p class="ml-2">No items to display</p>
-		</div>
-		`);
-		setTimeout(() => {
-			ErrorModal(5000, 'Event does not exist.');
-		}, 2500);
-	} */
+	RenderList();
 
 	/* On modal open/close */
 	$('#AddItem, #UpdateItem')
@@ -161,7 +129,7 @@ $(function () {
 		}
 	});
 
-	/* New item validation/submit */
+	/* Add item validation/submit */
 	$('#item_form').submit(function (e) {
 		e.preventDefault();
 
@@ -170,11 +138,13 @@ $(function () {
 		switch (false) {
 			case ValidateRequired('item_form', 'question'):
 			case ValidateChoices('item_form'):
-			case ValidateAnswer('item_form'):
+				// case ValidateAnswer('item_form'):
 				break;
 
 			default:
 				WaitModal(5000);
+
+				console.log(form);
 
 				$.ajax({
 					type: 'POST',
@@ -208,35 +178,32 @@ $(function () {
 			formid = 'form#update_form ';
 
 		$('#UpdateItem').modal('show');
-		$.post(
-			'./assets/hndlr/Assessment.php',
-			{ item },
-			function (res) {
-				if (res != 'err:fetch') {
-					$.each(JSON.parse(res), function (idx, el) {
-						$(formid + '[name="edt_item"]').val(el.assessment_id);
-						$(formid + '[name="edt_question"]').val(el.question);
-						$(formid + '[name="optionA"]').val(el.optionA);
-						$(formid + '[name="optionB"]').val(el.optionB);
-						$(formid + '[name="optionC"]').val(el.optionC);
-						$(formid + '[name="optionD"]').val(el.optionD);
-						$(formid + `.answer[value="${el.answer}"]`).prop('checked', true);
-					});
-				} else {
-					console.error('ERR', res);
-				}
+		$.post('./assets/hndlr/Assessment.php', { item }, function (res) {
+			if (res != 'err:fetch') {
+				$.each(JSON.parse(res), function (idx, el) {
+					$(formid + '[name="edt_item"]').val(el.assessment_id);
+					$(formid + '[name="edt_question"]').val(el.question);
+					$(formid + '[name="optionA"]').val(el.optionA);
+					$(formid + '[name="optionB"]').val(el.optionB);
+					$(formid + '[name="optionC"]').val(el.optionC);
+					$(formid + '[name="optionD"]').val(el.optionD);
+					$(formid + `.answer[value="${el.answer}"]`).prop('checked', true);
+				});
+			} else {
+				console.error('ERR', res);
+				ErrorModal(5000)
+			}
 
-				/* Enable radio if !empty */
-				$(formid + 'input.options').each(function (idx, el) {
-					let options = $(this).val(),
+			/* Enable radio if !empty */
+			/* $(formid + 'input.options').each(function (idx, el) {
+				let options = $(this).val(),
 					radio = $(this).attr('data-radio'),
 					regex = /^\s*$/;
-					if (!options.match(regex)) {
-						$(formid + `input.answer[value="${radio}"]`).removeAttr('disabled');
-					}
-				});
-			}
-		);
+				if (!options.match(regex)) {
+					$(formid + `input.answer[value="${radio}"]`).removeAttr('disabled');
+				}
+			}); */
+		});
 	});
 
 	/* Update item validation/submit */
@@ -248,7 +215,7 @@ $(function () {
 		switch (false) {
 			case ValidateRequired('update_form', 'edt_question'):
 			case ValidateChoices('update_form'):
-			case ValidateAnswer('update_form'):
+			// case ValidateAnswer('update_form'):
 				break;
 
 			default:

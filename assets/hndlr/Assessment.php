@@ -19,17 +19,16 @@ if (isset($_POST['fetchitems'])) {
 			$optionB = $data['optionB'];
 			$optionC = $data['optionC'];
 			$optionD = $data['optionD'];
-			$answer = $data['answer'];
 
-			$dbData[] = ['assessment_id' => $assessment_id, 'question' => $question, 'optionA' => $optionA, 'optionB' => $optionB, 'optionC' => $optionC, 'optionD' => $optionD, 'answer' => $answer, 'count' => $count];
+			$dbData[] = ['assessment_id' => $assessment_id, 'question' => $question, 'optionA' => $optionA, 'optionB' => $optionB, 'optionC' => $optionC, 'optionD' => $optionD, 'count' => $count];
 		}
 		$arrObject = json_encode($dbData);
 		echo $arrObject;
 	}
 }
 
-/* New item */
-if (isset($_POST['answer']) && isset($_POST['question'])) {
+/* Add item */
+if (isset($_POST['author']) && isset($_POST['question'])) {
 	require './db.hndlr.php';
 
 	$question = $_POST['question'];
@@ -37,12 +36,12 @@ if (isset($_POST['answer']) && isset($_POST['question'])) {
 	$optionB = $_POST['optionB'];
 	$optionC = $_POST['optionC'];
 	$optionD = $_POST['optionD'];
-	$answer = $_POST['answer'];
+	// $answer = $_POST['answer'];
 
 	$db->beginTransaction();
-	$stmnt = 'INSERT INTO assessment (question, optionA, optionB, optionC, optionD, answer) VALUES (?, ?, ?, ?, ?, ?) ;';
+	$stmnt = 'INSERT INTO assessment (question, optionA, optionB, optionC, optionD) VALUES (?, ?, ?, ?, ?) ;';
 	$query = $db->prepare($stmnt);
-	$param = [$question, $optionA, $optionB, $optionC, $optionD, $answer];
+	$param = [$question, $optionA, $optionB, $optionC, $optionD];
 	$query->execute($param);
 	$count = $query->rowCount();
 	if ($count > 0) {
@@ -76,9 +75,9 @@ if (isset($_POST['item'])) {
 			$optionB = $data['optionB'];
 			$optionC = $data['optionC'];
 			$optionD = $data['optionD'];
-			$answer = $data['answer'];
+			// $answer = $data['answer'];
 
-			$dbData[] = ['assessment_id' => $assessment_id, 'question' => $question, 'optionA' => $optionA, 'optionB' => $optionB, 'optionC' => $optionC, 'optionD' => $optionD, 'answer' => $answer];
+			$dbData[] = ['assessment_id' => $assessment_id, 'question' => $question, 'optionA' => $optionA, 'optionB' => $optionB, 'optionC' => $optionC, 'optionD' => $optionD];
 		}
 		$arrObject = json_encode($dbData);
 		echo $arrObject;
@@ -95,12 +94,12 @@ if (isset($_POST['edt_item']) && isset($_POST['edt_question']) ) {
 	$optionB = $_POST['optionB'];
 	$optionC = $_POST['optionC'];
 	$optionD = $_POST['optionD'];
-	$answer = $_POST['answer'];
+	// $answer = $_POST['answer'];
 
 	$db->beginTransaction();
-	$stmnt = 'UPDATE assessment SET question = ?, optionA = ?, optionB = ?, optionC = ?, optionD = ?, answer = ? WHERE assmnt_id = ? ;';
+	$stmnt = 'UPDATE assessment SET question = ?, optionA = ?, optionB = ?, optionC = ?, optionD = ? WHERE assmnt_id = ? ;';
 	$query = $db->prepare($stmnt);
-	$param = [$question, $optionA, $optionB, $optionC, $optionD, $answer, $item];
+	$param = [$question, $optionA, $optionB, $optionC, $optionD, $item];
 	$query->execute($param);
 	$count = $query->rowCount();
 	if ($count > 0) {
