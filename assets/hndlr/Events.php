@@ -2,7 +2,7 @@
 
 /* Fetch for render */
 if (isset($_POST['fetchevents'])) {
-	require 'db.hndlr.php';
+	require './db.hndlr.php';
 
 	$stmnt = 'SELECT * FROM events ORDER BY created_at ASC;';
 	$query = $db->prepare($stmnt);
@@ -46,7 +46,7 @@ if (isset($_POST['fetchevents'])) {
 
 /* Add event */
 if (isset($_POST['title']) && isset($_POST['author'])) {
-	require 'db.hndlr.php';
+	require './db.hndlr.php';
 
 	$author = $_POST['author'];
 	$title = $_POST['title'];
@@ -84,7 +84,7 @@ if (isset($_POST['title']) && isset($_POST['author'])) {
 
 /* Fetch 1 event to update */
 if (isset($_POST['event'])) {
-	require 'db.hndlr.php';
+	require './db.hndlr.php';
 
 	$event = $_POST['event'];
 
@@ -125,7 +125,7 @@ if (isset($_POST['event'])) {
 
 /* Update event */
 if (isset($_POST['event_id']) && isset($_POST['edt_title'])) {
-	require 'db.hndlr.php';
+	require './db.hndlr.php';
 
 	$id = $_POST['event_id'];
 	$title = $_POST['edt_title'];
@@ -176,40 +176,126 @@ if (isset($_POST['event_id']) && isset($_POST['edt_title'])) {
 	}
 }
 
-/* Delete event */
+/* Send survey / Delete event */
 if (isset($_POST['action']) && isset($_POST['id'])) {
-	require 'db.hndlr.php';
+	require './db.hndlr.php';
 
-	$event = $_POST['id'];
-	$rootDir = realpath('../../../files/events/') . '/';
+	if ($_POST['action'] == 'delete_event') {
+		$event = $_POST['id'];
+		$rootDir = realpath('../../../files/events/') . '/';
 
-	$stmnt = 'SELECT image FROM events WHERE evnt_id = ?';
-	$query = $db->prepare($stmnt);
-	$param = [$event];
-	$query->execute($param);
-	$count = $query->rowCount();
-	if ($count > 0) {
-		foreach ($query as $data) {
-			$image = $data['image'];
+		$stmnt = 'SELECT image FROM events WHERE evnt_id = ?';
+		$query = $db->prepare($stmnt);
+		$param = [$event];
+		$query->execute($param);
+		$count = $query->rowCount();
+		if ($count > 0) {
+			foreach ($query as $data) {
+				$image = $data['image'];
 
-			if (file_exists($rootDir . $image)) {
-				unlink($rootDir . $image);
+				if (file_exists($rootDir . $image)) {
+					unlink($rootDir . $image);
+				}
+
+				$db->beginTransaction();
+				$stmnt = 'DELETE FROM events WHERE evnt_id = ? ;';
+				$query = $db->prepare($stmnt);
+				$param = [$event];
+				$query->execute($param);
+				$count = $query->rowCount();
+				if ($count > 0) {
+					$db->commit();
+					exit('true');
+				} else {
+					$db->rollBack();
+					exit('err:delete');
+				}
+			}
+		}
+	} elseif ($_POST['action'] == 'sendsurvey') {
+		include_once './Mailer.php';
+
+		function tester($arr) {
+			$address = '';
+
+			foreach ($arr as $recipient) {
+				$address .= $recipient . ", ";
 			}
 
-			$db->beginTransaction();
-			$stmnt = 'DELETE FROM events WHERE evnt_id = ? ;';
+			return $address;
+		}
+
+		$event = $_POST['id'];
+		$recipients = [];
+
+		$stmnt = 'SELECT ep.*, u.email FROM event_participants AS ep, user AS u WHERE ep.evnt_id = ? AND ep.u_id = u.u_id ;';
+		$query = $db->prepare($stmnt);
+		$param = [$event];
+		$query->execute($param);
+		$count = $query->rowCount();
+		if ($count > 0) {
+			foreach ($query as $data) {
+				$recipients[] = $data['email'];
+			}
+			echo tester($recipients);
+		}
+
+		/*
+
+		echo tester($recipients); */
+
+		/* $db->beginTransaction();
+		$stmnt = 'UPDATE events SET survey = "1" WHERE evnt_id = ? ;';
+		$query = $db->prepare($stmnt);
+		$param = [$event];
+		$query->execute($param);
+		$count = $query->rowCount();
+		if ($count > 0) {
+			$db->commit();
+			exit('true');
+		} else {
+			$db->rollBack();
+			exit('err:survey');
+		} */
+	}
+}
+
+/* Fetch assessment */
+if (isset($_POST['assessment'])) {
+	require './db.hndlr.php';
+
+	$assessment = $_POST['assessment'];
+
+	$stmnt = 'SELECT * FROM event_participants WHERE evnt_id = ? ;';
+	$query = $db->prepare($stmnt);
+	$param = [$assessment];
+	$query->execute($param);
+	$count = $query->rowCount();
+	if ($count <= 0) {
+		exit('empty');
+	} else {
+		$dbData = [];
+		foreach ($query as $data) {
+			$participant_id = $data['u_id'];
+
+			$stmnt = 'SELECT * FROM user WHERE u_id = ? ;';
 			$query = $db->prepare($stmnt);
-			$param = [$event];
+			$param = [$participant_id];
 			$query->execute($param);
 			$count = $query->rowCount();
 			if ($count > 0) {
-				$db->commit();
-				exit('true');
-			} else {
-				$db->rollBack();
-				exit('err:delete');
+				foreach ($query as $data) {
+					$user_id = $data['u_id'];
+					$given = $data['given_name'];
+					$surname = $data['surname'];
+					$email = $data['email'];
+
+					$dbData[] = ['event_id' => $assessment, 'participant_id' => $user_id, 'given' => $given, 'surname' => $surname, 'email' => $email];
+				}
 			}
 		}
+		$arrObject = json_encode($dbData);
+		echo $arrObject;
 	}
 }
 

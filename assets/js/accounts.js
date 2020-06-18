@@ -30,7 +30,7 @@ function RenderList() {
 								<i class="fas fa-trash"></i>
 							</a>
 						</td>
-					</td>
+					</tr>
 					`);
 				});
 			} catch (e) {

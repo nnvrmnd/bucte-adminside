@@ -18,6 +18,18 @@ SeshStart('page');
 			padding-left: 3%;
 			padding-right: 3%;
 		}
+
+		.nav-tabs .nav-item.show .nav-link,
+		.nav-tabs .nav-link.active {
+			color: #525f7f;
+			border-color: #dee2e6 #dee2e6 #f8f9fe;
+			background-color: white !important;
+		}
+
+		.nav-tabs .nav-link {
+			border-top-left-radius: .100rem !important;
+			border-top-right-radius: .100rem !important;
+		}
 	</style>
 </head>
 
@@ -70,14 +82,16 @@ SeshStart('page');
 					<div class="col-lg-3 col-md-4 col-sm-5">
 						<div class="form-group">
 							<div class="input-group">
-								<select class="form-control form-control-sm pointer-here" name="sort" title="Sort by...">
+								<select class="form-control form-control-sm pointer-here" name="sort"
+									title="Sort by...">
 									<option value="title">&ensp;Title</option>
 									<option value="sched">&ensp;Schedule</option>
 									<option value="deadln">&ensp;Deadline</option>
 									<option value="post" selected>&ensp;Date posted</option>
 								</select>
 								<span class="input-group-addon input-group-append">
-									<button type="button" class="btn btn-sm btn-outline-primary" id="order" data-state="desc" title="Descending order">
+									<button type="button" class="btn btn-sm btn-outline-primary" id="order"
+										data-state="desc" title="Descending order">
 										<span class="fas fa-long-arrow-alt-down"></span>
 									</button>
 								</span>
@@ -293,13 +307,44 @@ SeshStart('page');
 				</div>
 
 				<div class="modal-body">
-					<div class="chart">
-						<!-- Chart wrapper -->
-						<canvas id="chart-bar-stacked7" class="chart-canvas"></canvas>
+					<nav>
+						<div class="nav nav-tabs" id="nav-tab" role="tablist">
+							<a class="nav-item nav-link active" id="nav-participants-tab" data-toggle="tab"
+								href="#nav-participants" role="tab" aria-controls="nav-participants"
+								aria-selected="true">Participants</a>
+							<a class="nav-item nav-link" id="nav-stat-tab" data-toggle="tab" href="#nav-stat" role="tab"
+								aria-controls="nav-stat" aria-selected="false">Survey Statistics</a>
+						</div>
+					</nav>
+					<div class="tab-content" id="nav-tabContent">
+						<div class="tab-pane fade show active" id="nav-participants" role="tabpanel"
+							aria-labelledby="nav-participants-tab">
+							<div class="table table-responsive">
+								<table class="table align-items-center table-flush">
+									<thead class="thead-light">
+										<tr>
+											<th>Name</th>
+											<th>Email</th>
+										</tr>
+									</thead>
+									<tbody class="text-truncate participants-container"></tbody>
+								</table>
+							</div>
+						</div>
+						<div class="tab-pane fade" id="nav-stat" role="tabpanel" aria-labelledby="nav-stat-tab">
+							<div class="chart">
+								<canvas id="chart-bar-stacked7" class="chart-canvas">...</canvas>
+							</div>
+							<div class="survey-status">
+								<i><small>No survey submitted...</small></i>
+							</div>
+						</div>
 					</div>
 				</div>
 
 				<div class="modal-footer">
+					<button type="button" class="btn bg-gradient-success text-white mr-auto sendemail-btn d-none">Send survey
+						email</button>
 					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
 				</div>
 			</div>

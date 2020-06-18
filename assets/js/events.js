@@ -66,7 +66,6 @@ function RenderList(sortBy = 'post', orderBy = 'desc', search = 0) {
 				$.each(events, function (idx, el) {
 					let regex = /^\s*$/,
 						event_id = el.event_id,
-						url_param = Encrypt(event_id),
 						desc_raw = el.description,
 						desc_replace = desc_raw.replace(
 							/<\/?[br|li|ol|ul|p|strong|blockquotes]+\/?>/gim,
@@ -116,7 +115,7 @@ function RenderList(sortBy = 'post', orderBy = 'desc', search = 0) {
 										title="Edit event..." data-target="${event_id}">
 										<i class="fa fa-edit" aria-hidden="true"></i>
 									</button>
-									<button class="btn btn-sm btn-neutral float-right event_assmnt" title="View event assessment...">
+									<button class="btn btn-sm btn-neutral float-right event_assmnt" title="View event assessment..." data-target="${event_id}">
 										Assessment
 									</button>
 									<p class="font-weight-bold text-primary">${el.title}</p>
@@ -152,8 +151,8 @@ function RenderList(sortBy = 'post', orderBy = 'desc', search = 0) {
 										title="Edit event..." data-target="${event_id}">
 										<i class="fa fa-edit" aria-hidden="true"></i>
 									</button>
-									<button type="button" class="btn btn-sm btn-neutral float-right"
-										title="Go to event assessment..." data-target="${event_id}">
+									<button type="button" class="btn btn-sm btn-neutral float-right event_assmnt"
+										title="View event assessment..." data-target="${event_id}">
 										Assessment
 									</button>
 									<p class="font-weight-bold text-primary">${el.title} </p>
@@ -855,12 +854,49 @@ $(function () {
 	$('.events-container').on('click', '.event_assmnt', function () {
 		let id = $(this).attr('data-target');
 
+		$.ajax({
+			type: 'POST',
+			url: './assets/hndlr/Events.php',
+			data: { assessment: id },
+			success: function (res) {
+				$('.participants-container').empty();
+
+				// console.log(res);
+
+				try {
+					$('.accts-container').find('.card').removeClass('d-none');
+
+					$.each(JSON.parse(res), function (idx, el) {
+						$('.participants-container').append(`
+						<tr class="table-row pointer-here">
+							<td class="text-truncate mx-5 px-5" title="${el.given} ${el.surname}">
+								<b>${el.given} ${el.surname}</b>
+							</td>
+							<td class="text-truncate" title="${el.email}"><b>${el.email}</b></td>
+						</tr>
+						`);
+
+						$('.sendemail-btn').attr('data-target', el.event_id)
+					});
+				} catch (e) {
+					console.error('ERR', res);
+
+					$('.sendemail-btn').attr('disabled', true);
+
+					$('.participants-container').append(`
+						<tr class="table-row pointer-here">
+							<td class="text-truncate mx-5 px-5">
+								<i>No participants...</i>
+							</td>
+							<td class="text-truncate"></td>
+						</tr>
+						`);
+				}
+			}
+		});
+
 		let BarStackedChart = function () {
-			var e,
-				a,
-				t,
-				n,
-				i = $('#chart-bar-stacked7');
+			var e, a, t, n, i = $('#chart-bar-stacked7');
 
 			i.length &&
 				((e = i),
@@ -884,12 +920,12 @@ $(function () {
 						{
 							label: 'Correct',
 							backgroundColor: Charts.colors.theme.primary,
-							data: [a(), a(), a(), a(), a(), a(), a()]
+							data: [1, 0, 0, 0, 0, 0, 0]
 						},
 						{
 							label: 'Wrong',
 							backgroundColor: Charts.colors.theme.danger,
-							data: [a(), a(), a(), a(), a(), a(), a()]
+							data: [0, 2, 0, 0, 0, 0, 0]
 						}
 					]
 				}),
@@ -919,9 +955,18 @@ $(function () {
 				e.data('chart', n));
 		};
 
-		BarStackedChart();
+		// BarStackedChart();
 
 		$('#EventAssessment').modal('show');
+	});
+
+	$('.sendemail-btn').click(function (e) {
+		e.preventDefault();
+
+		let id = $(this).attr('data-target');
+
+		PromptModal(10000, 'sendsurvey', id, 'Send survey email?');
+		PromptConfirm('Survey has been send to participants.', './assets/hndlr/Events.php')
 	});
 
 	DocumentReady();

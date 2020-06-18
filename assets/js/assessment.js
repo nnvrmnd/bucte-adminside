@@ -28,10 +28,12 @@ function RenderList() {
 
 					if (el.count >= 10) {
 						$('#add_btn')
-							.attr('title', 'Reached maximum number of items...')
-							.attr('disabled', true);
+							.removeAttr('data-target')
+							.click(function (e) {
+								ErrorModal(5000, 'Reached maximum number of items.')
+							});
 					} else {
-						$('#add_btn').attr('title', 'Add item...').removeAttr('disabled');
+						$('#add_btn').attr('data-target', '#AddItem').removeAttr('disabled');
 					}
 
 					$('.items-container').append(`
