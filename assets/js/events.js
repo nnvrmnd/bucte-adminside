@@ -100,7 +100,7 @@ function RenderList(sortBy = 'post', orderBy = 'desc', search = 0) {
 								<div class="col-md-4 col-lg-4 d-flex align-items-center justify-content-center">
 										<a href="../files/events/${
 											el.image
-										}" class="fancybox" data-fancybox="events_gallery" data-caption="${el.title}">
+										}" class="fancybox zoom-in" data-fancybox="events_gallery" data-caption="${el.title}">
 											<img alt="Image placeholder" src="../files/events/${
 												el.image
 											}" class="img-fluid rounded" title="Click to view image">
@@ -854,19 +854,74 @@ $(function () {
 	$('.events-container').on('click', '.event_assmnt', function () {
 		let id = $(this).attr('data-target');
 
+		let BarStackedChart = function (labels, ans_a, ans_b, ans_c, ans_d) {
+			var e,
+				a,
+				t,
+				n,
+				i = $('#chart-bar-stacked7');
+
+			i.length &&
+				((e = i),
+				(a = function () {
+					return Math.round(100 * Math.random());
+				}),
+				(t = {
+					labels: labels,
+					datasets: [
+						{
+							label: 'Answered A',
+							backgroundColor: Charts.colors.theme.primary,
+							data: ans_a
+						},
+						{
+							label: 'Answered B',
+							backgroundColor: Charts.colors.theme.danger,
+							data: ans_b
+						},
+						{
+							label: 'Answered C',
+							backgroundColor: Charts.colors.theme.success,
+							data: ans_c
+						},
+						{
+							label: 'Answered D',
+							backgroundColor: Charts.colors.theme.warning,
+							data: ans_d
+						}
+					]
+				}),
+				(n = new Chart(e, {
+					type: 'horizontalBar',
+					data: t,
+					options: {
+						tooltips: {
+							mode: 'index',
+							intersect: !1
+						},
+						responsive: !0,
+						scales: {
+							xAxes: [{ stacked: !0 }],
+							yAxes: [{ stacked: !0 }]
+						}
+					}
+				})),
+				e.data('chart', n));
+		};
+
 		$.ajax({
 			type: 'POST',
 			url: './assets/hndlr/Events.php',
 			data: { assessment: id },
 			success: function (res) {
 				$('.participants-container').empty();
-
-				// console.log(res);
-
 				try {
+					let participants = JSON.parse(res);
+					participants.sort((a, b) => (a.surname > b.surname ? 1 : -1));
+
 					$('.accts-container').find('.card').removeClass('d-none');
 
-					$.each(JSON.parse(res), function (idx, el) {
+					$.each(participants, function (idx, el) {
 						$('.participants-container').append(`
 						<tr class="table-row pointer-here">
 							<td class="text-truncate mx-5 px-5" title="${el.given} ${el.surname}">
@@ -876,13 +931,12 @@ $(function () {
 						</tr>
 						`);
 
-						$('.sendemail-btn').attr('data-target', el.event_id)
+						// $('.sendemail-btn').attr('data-target', el.event_id);
+						$('.print-btn').attr('data-target', el.event_id);
 					});
 				} catch (e) {
 					console.error('ERR', res);
-
 					$('.sendemail-btn').attr('disabled', true);
-
 					$('.participants-container').append(`
 						<tr class="table-row pointer-here">
 							<td class="text-truncate mx-5 px-5">
@@ -895,69 +949,49 @@ $(function () {
 			}
 		});
 
-		let BarStackedChart = function () {
-			var e, a, t, n, i = $('#chart-bar-stacked7');
+		$.ajax({
+			type: 'POST',
+			url: './assets/hndlr/Events.php',
+			data: { stats: id },
+			success: function (res) {
+				try {
+					let assessment = JSON.parse(res),
+						num_items = assessment.length,
+						labels = [],
+						a = [],
+						b = [],
+						c = [],
+						d = [];
 
-			i.length &&
-				((e = i),
-				(a = function () {
-					return Math.round(100 * Math.random());
-				}),
-				(t = {
-					labels: [
-						'Item 1',
-						'Item 2',
-						'Item 3',
-						'Item 4',
-						'Item 5',
-						'Item 6',
-						'Item 7',
-						'Item 8',
-						'Item 9',
-						'Item 10'
-					],
-					datasets: [
-						{
-							label: 'Correct',
-							backgroundColor: Charts.colors.theme.primary,
-							data: [1, 0, 0, 0, 0, 0, 0]
-						},
-						{
-							label: 'Wrong',
-							backgroundColor: Charts.colors.theme.danger,
-							data: [0, 2, 0, 0, 0, 0, 0]
-						}
-					]
-				}),
-				(n = new Chart(e, {
-					type: 'bar',
-					data: t,
-					options: {
-						tooltips: {
-							mode: 'index',
-							intersect: !1
-						},
-						responsive: !0,
-						scales: {
-							xAxes: [
-								{
-									stacked: !0
-								}
-							],
-							yAxes: [
-								{
-									stacked: !0
-								}
-							]
-						}
+					for (let i = 1; i <= num_items; i++) {
+						labels.push(`Item ${i}`);
 					}
-				})),
-				e.data('chart', n));
-		};
 
-		// BarStackedChart();
+					$.each(assessment, function (idx, el) {
+						a.push(el.answered_a);
+						b.push(el.answered_b);
+						c.push(el.answered_c);
+						d.push(el.answered_d);
+					});
+
+					BarStackedChart(labels, a, b, c, d);
+				} catch (e) {
+					console.error('ERR', e.message);
+					ErrorModal(5000);
+				}
+			}
+		});
 
 		$('#EventAssessment').modal('show');
+	});
+
+	$('#nav-participants-tab').click(function (e) {
+		e.preventDefault();
+		$('.print-btn').removeClass('d-none');
+	});
+	$('#nav-stat-tab').click(function (e) {
+		e.preventDefault();
+		$('.print-btn').addClass('d-none');
 	});
 
 	$('.sendemail-btn').click(function (e) {
@@ -966,11 +1000,66 @@ $(function () {
 		let id = $(this).attr('data-target');
 
 		PromptModal(10000, 'sendsurvey', id, 'Send survey email?');
-		PromptConfirm('Survey has been send to participants.', './assets/hndlr/Events.php')
+		PromptConfirm(
+			'Survey has been send to participants.',
+			'./assets/hndlr/Events.php'
+		);
 	});
 
+	$('.print-btn').click(function (e) {
+		e.preventDefault();
+
+		let event = $(this).attr('data-target');
+
+		$.post('./assets/hndlr/Events.php', { assessment: event }, function (res) {
+			$('#print-table tbody').empty();
+			try {
+				let participants = JSON.parse(res);
+				participants.sort((a, b) => (a.surname > b.surname ? 1 : -1));
+
+				$.each(participants, function (idx, el) {
+					$('#print-table tbody').append(`
+					<tr><td><center>${idx + 1}.</center></td>
+						<td>${el.surname}, ${el.given}</td>
+						<td>${el.email}</td>
+						<td></td>
+					</tr>
+					`);
+				});
+
+				setTimeout(() => {
+					Print('#print-area')
+				}, 1000);
+			} catch (e) {
+				console.log('ERR', e.message);
+				ErrorModal(5000);
+			}
+		});
+	});
 	DocumentReady();
 }); // ready fn
+
+function Print(element) {
+	let content = $(element).html(),
+		printWindow = window.open('', 'PRINT', `height=${screen.height}, width=${screen.width}`);
+
+	printWindow.document.write(`
+		<html>
+		<head>
+			<meta charset="UTF-8">
+			<title>List of Participants</title>
+			<link rel="stylesheet" href="./assets/css/printarea.css">
+		</head>
+		`);
+	printWindow.document.write('<body>');
+	printWindow.document.write(content);
+	printWindow.document.write('</body></html>');
+	printWindow.document.close();
+	printWindow.moveTo(0,0);
+	setTimeout(() => {
+		printWindow.print();
+	}, 1000);
+}
 
 function InstanceCKE() {
 	for (instance in CKEDITOR.instances) {

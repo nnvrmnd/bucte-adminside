@@ -219,7 +219,7 @@ if (isset($_POST['action']) && isset($_POST['id'])) {
 			$address = '';
 
 			foreach ($arr as $recipient) {
-				$address .= $recipient . ", ";
+				$address .= $recipient . ', ';
 			}
 
 			return $address;
@@ -297,6 +297,54 @@ if (isset($_POST['assessment'])) {
 		$arrObject = json_encode($dbData);
 		echo $arrObject;
 	}
+}
+
+/* Satistics */
+if (isset($_POST['stats'])) {
+	require './db.hndlr.php';
+
+	function numItems() {
+		require './db.hndlr.php';
+		$stmnt = 'SELECT * FROM assessment';
+		$query = $db->prepare($stmnt);
+		$query->execute();
+		$count = $query->rowCount();
+		return $count;
+	}
+
+	function answeredLetter($event, $assessment, $letter) {
+		require './db.hndlr.php';
+
+		$stmnt = 'SELECT * FROM assessment_result WHERE evnt_id = ? AND assmnt_id = ? AND answer = ? ;';
+		$query = $db->prepare($stmnt);
+		$param = [$event, $assessment, $letter];
+		$query->execute($param);
+		$count = $query->rowCount();
+		return $count;
+	}
+
+	$dbData = [];
+	$event = $_POST['stats'];
+	$items = numItems();
+
+	$stmnt = 'SELECT * FROM assessment ORDER BY assmnt_id ;';
+	$query = $db->prepare($stmnt);
+	$query->execute();
+	$count = $query->rowCount();
+	if ($count > 0) {
+		foreach ($query as $data) {
+			$assessment_id = $data['assmnt_id'];
+			$dbData[] = [
+				'item' => $assessment_id,
+				'answered_a' => answeredLetter($event, $assessment_id, 'a'),
+				'answered_b' => answeredLetter($event, $assessment_id, 'b'),
+				'answered_c' => answeredLetter($event, $assessment_id, 'c'),
+				'answered_d' => answeredLetter($event, $assessment_id, 'd')
+			];
+		}
+	}
+
+	echo json_encode($dbData);
 }
 
 function DeleteCurrentImage($event) {

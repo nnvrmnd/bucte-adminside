@@ -167,11 +167,11 @@ function WaitModal(timeout, msg = 0, redirect = 0) {
 
 	$('.modal').modal('hide');
 	window.clearTimeout(timer);
+	$('#wait-modal-msg').html(message);
+	$('#WaitModal').modal('show');
 	$('#SuccessModal, #ErrorModal').on('shown.bs.modal', function () {
 		$('#WaitModal').modal('hide');
 	});
-	$('#wait-modal-msg').html(message);
-	$('#WaitModal').modal('show');
 
 	timer = setTimeout(() => {
 		$('#wait-modal-msg').html('');
@@ -187,10 +187,10 @@ function SuccessModal(msg, timeout, redirect = 0) {
 		});
 	}
 
-	$('.modal').modal('hide');
 	window.clearTimeout(timer);
 	$('#success-modal-msg').html(msg);
 	setTimeout(() => {
+		$('.modal').modal('hide');
 		$('#SuccessModal').modal('show');
 	}, 1000);
 

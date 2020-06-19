@@ -1,0 +1,26 @@
+#print-area {
+	color: black !important;
+}
+
+#print-area h1 {
+	color: black !important;
+}
+
+#print-table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+#print-table table,
+#print-table th,
+#print-table td {
+	border: 1px solid black;
+}
+
+#print-table tbody td {
+	padding-left: 10px;
+}
+
+#print-table thead th {
+	text-align: center;
+}

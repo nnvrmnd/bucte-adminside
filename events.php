@@ -9,6 +9,7 @@ SeshStart('page');
 	<title>Events Management | BUCTE Administration</title>
 	<?php include './components/layout/Head.php'; ?>
 	<link rel="stylesheet" href="./dist/vendor/fancybox/jquery.fancybox.min.css">
+	<link rel="stylesheet" href="./assets/css/printarea.css">
 	<style>
 		img.rounded {
 			max-height: 200px;
@@ -313,7 +314,7 @@ SeshStart('page');
 								href="#nav-participants" role="tab" aria-controls="nav-participants"
 								aria-selected="true">Participants</a>
 							<a class="nav-item nav-link" id="nav-stat-tab" data-toggle="tab" href="#nav-stat" role="tab"
-								aria-controls="nav-stat" aria-selected="false">Survey Statistics</a>
+								aria-controls="nav-stat" aria-selected="false">Assessment Statistics</a>
 						</div>
 					</nav>
 					<div class="tab-content" id="nav-tabContent">
@@ -333,22 +334,42 @@ SeshStart('page');
 						</div>
 						<div class="tab-pane fade" id="nav-stat" role="tabpanel" aria-labelledby="nav-stat-tab">
 							<div class="chart">
-								<canvas id="chart-bar-stacked7" class="chart-canvas">...</canvas>
-							</div>
-							<div class="survey-status">
-								<i><small>No survey submitted...</small></i>
+								<canvas id="chart-bar-stacked7" class="chart-canvas"><canvas>
 							</div>
 						</div>
 					</div>
 				</div>
 
 				<div class="modal-footer">
-					<button type="button" class="btn bg-gradient-success text-white mr-auto sendemail-btn d-none">Send survey
-						email</button>
+					<button type="button" class="btn btn-sm btn-secondary text-primary mr-auto print-btn">
+						<i class="fa fa-print" aria-hidden="true"></i>
+						Print list
+					</button>
 					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
 				</div>
 			</div>
 		</div>
+	</div>
+
+	<!-- Print area -->
+	<div class="d-none" id="print-area">
+		<center>
+			<img class="img-header" src="./dist/img/brand/print-header.png" style="width: 50%;" alt="Document header">
+			<hr>
+			<h1>List of Participants</h1>
+		</center>
+
+		<table id="print-table">
+			<thead>
+				<tr>
+					<th>#</th>
+					<th><b>NAME</b></th>
+					<th><b>EMAIL</b></th>
+					<th><b>ATTENDANCE</b></th>
+				</tr>
+			</thead>
+			<tbody></tbody>
+		</table>
 	</div>
 
 	<!-- Scripts -->
