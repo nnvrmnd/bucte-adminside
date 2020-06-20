@@ -50,9 +50,9 @@ if (isset($_POST['title']) && isset($_POST['author'])) {
 
 	$author = $_POST['author'];
 	$title = $_POST['title'];
-	$start = $_POST['start_datetime'];
-	$end = $_POST['end_datetime'];
-	$deadline = $_POST['reg_deadline'];
+	$start = dbdate($_POST['start_datetime']);
+	$end = dbdate($_POST['end_datetime']);
+	$deadline = dbdate($_POST['reg_deadline']);
 	$venue = $_POST['venue'];
 	$description = $_POST['description'];
 
@@ -129,9 +129,9 @@ if (isset($_POST['event_id']) && isset($_POST['edt_title'])) {
 
 	$id = $_POST['event_id'];
 	$title = $_POST['edt_title'];
-	$start = $_POST['edt_start_datetime'];
-	$end = $_POST['edt_end_datetime'];
-	$deadline = $_POST['edt_reg_deadline'];
+	$start = dbdate($_POST['edt_start_datetime']);
+	$end = dbdate($_POST['edt_end_datetime']);
+	$deadline = dbdate($_POST['edt_reg_deadline']);
 	$venue = $_POST['edt_venue'];
 	$description = $_POST['edt_description'];
 
@@ -345,6 +345,11 @@ if (isset($_POST['stats'])) {
 	}
 
 	echo json_encode($dbData);
+}
+
+function dbdate($date) {
+	$dbdate = new DateTime($date);
+	return $dbdate->format('Y-m-d H:i:s');
 }
 
 function DeleteCurrentImage($event) {

@@ -82,13 +82,11 @@ function RenderList(sortBy = 'post', orderBy = 'desc', search = 0) {
 						created_time,
 						created_at;
 
-					start_date = moment(start, 'MM/DD/YYYY h:mm A').format('MMM DD');
-					start_time = moment(start, 'MM/DD/YYYY h:mm A').format('h:mm A');
-					end_date = moment(end, 'MM/DD/YYYY h:mm A').format('MMM DD');
-					end_time = moment(end, 'MM/DD/YYYY h:mm A').format('h:mm A');
-					deadline = moment(deadline, 'MM/DD/YYYY h:mm A').format(
-						'MMM DD h:mm A'
-					);
+					start_date = moment(start, 'YYYY/MM/DD h:mm A').format('MMM DD');
+					start_time = moment(start, 'YYYY/MM/DD h:mm A').format('h:mm A');
+					end_date = moment(end, 'YYYY/MM/DD h:mm A').format('MMM DD, YYYY');
+					end_time = moment(end, 'YYYY/MM/DD h:mm A').format('h:mm A');
+					deadline = moment(deadline, 'YYYY/MM/DD h:mm A').format('MMM DD, YYYY h:mm A');
 					created_date = moment(el.created_at).format('Do MMM YYYY');
 					created_time = moment(el.created_at).format('h:mm A');
 					created_at = `${created_date} at ${created_time}`;
@@ -679,8 +677,8 @@ $(function () {
 								break;
 
 							default:
+								console.error('ERR', res)
 								ErrorModal(5000);
-								'show';
 								break;
 						}
 					}
@@ -724,16 +722,15 @@ $(function () {
 							$(`#${formid} [name="edt_title"]`).val(el.title);
 							$(`#${formid} [name="edt_start_datetime"]`)
 								.data('DateTimePicker')
-								.date(moment(start, 'MM/DD/YYYY H:mm A'));
+								.date(moment(start, 'YYYY/MM/DD h:mm A'));
 							$(`#${formid} [name="edt_end_datetime"]`)
 								.data('DateTimePicker')
-								.minDate(moment(start, 'MM/DD/YYYY H:mm A'))
-								.date(moment(end, 'MM/DD/YYYY H:mm A'));
+								.minDate(moment(start, 'YYYY/MM/DD h:mm A'))
+								.date(moment(end, 'YYYY/MM/DD h:mm A'));
 							$(`#${formid} [name="edt_reg_deadline"]`)
 								.data('DateTimePicker')
-								.maxDate(moment(start, 'MM/DD/YYYY H:mm A').subtract(1, 'd'))
-								.date(moment(deadline, 'MM/DD/YYYY H:mm A'));
-							$(`#${formid} [name="edt_reg_deadline"]`).val(el.deadline);
+								.maxDate(moment(start, 'YYYY/MM/DD h:mm A').subtract(1, 'd'))
+								.date(moment(deadline, 'YYYY/MM/DD h:mm A'));
 							$(`#${formid} [name="edt_venue"]`).val(el.venue);
 							InstanceCKE();
 							CKEDITOR.instances[instance].setData(el.description);
@@ -1028,7 +1025,7 @@ $(function () {
 				});
 
 				setTimeout(() => {
-					Print('#print-area')
+					Print('#print-area');
 				}, 1000);
 			} catch (e) {
 				console.log('ERR', e.message);
@@ -1041,7 +1038,11 @@ $(function () {
 
 function Print(element) {
 	let content = $(element).html(),
-		printWindow = window.open('', 'PRINT', `height=${screen.height}, width=${screen.width}`);
+		printWindow = window.open(
+			'',
+			'PRINT',
+			`height=${screen.height}, width=${screen.width}`
+		);
 
 	printWindow.document.write(`
 		<html>
@@ -1055,7 +1056,7 @@ function Print(element) {
 	printWindow.document.write(content);
 	printWindow.document.write('</body></html>');
 	printWindow.document.close();
-	printWindow.moveTo(0,0);
+	printWindow.moveTo(0, 0);
 	setTimeout(() => {
 		printWindow.print();
 	}, 1000);
