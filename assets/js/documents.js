@@ -538,7 +538,7 @@ $(function () {
 				{ delete: JSON.stringify(checked_data) },
 				function (res) {
 					if (res === 'true') {
-						SuccessModal('Archived files.', 5000);
+						SuccessModal('Files deleted.', 5000);
 						RenderList(sortby, orderby, search);
 						not_checked();
 					} else {
