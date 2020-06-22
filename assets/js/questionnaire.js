@@ -317,6 +317,9 @@ $(function () {
 		let del = $(this).attr('data-target');
 		PromptModal(10000, 'delete_item', del, 'Are you deleting this item?');
 		PromptConfirm('Item deleted.', './assets/hndlr/Questionnaire.php');
+		$('#SuccessModal, #ErrorModal').on('hidden.bs.modal', function () {
+			RenderList(search);
+		});
 	});
 
 	DocumentReady();

@@ -570,12 +570,13 @@ $(function () {
 			}
 		})
 		.on('hidden.bs.modal', function () {
-			let formid = 'form#' + $(this).find('form').attr('id');
+			let formid = 'form#' + $(this).find('form').attr('id'),
+				editor = $(formid).find('.ckwrite').attr('name');
 			$(formid + ' .form-control').removeClass('is-invalid is-valid');
 			$(formid).find('.cke_1').removeAttr('style');
 			$(formid + ' .validation-msg').html('');
 
-			ClearCKE();
+			CKEDITOR.instances[editor].setData('');
 		});
 
 	/* Open file manager */
@@ -810,6 +811,9 @@ $(function () {
 		let del = $(this).attr('data-target');
 		PromptModal(10000, 'delete_event', del, 'Are you deleting this event?');
 		PromptConfirm('Event deleted.', './assets/hndlr/Events.php');
+		$('#SuccessModal, #ErrorModal').on('hidden.bs.modal', function () {
+			RenderList(sortby, orderby, search);
+		});
 	});
 
 	/* Read more */

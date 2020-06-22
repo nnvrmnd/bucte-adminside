@@ -418,6 +418,9 @@ $(function () {
 			'Are you deleting this document?'
 		);
 		PromptConfirm('Document deleted.', './assets/hndlr/Documents.php');
+		$('#SuccessModal, #ErrorModal').on('hidden.bs.modal', function () {
+			RenderList(sortby, orderby, search);
+		});
 	});
 
 	/* Read more */
@@ -528,27 +531,43 @@ $(function () {
 				return $(el).data('id');
 			});
 
-		PromptModal(5000, 'delete_selected', 1, 'Delete selected file/s?');
-
-		$('#prompt_form #yes_prompt').click(function (e) {
-			WaitModal(5000);
-
-			$.post(
-				'./assets/hndlr/Documents.php',
-				{ delete: JSON.stringify(checked_data) },
-				function (res) {
-					if (res === 'true') {
-						SuccessModal('Files deleted.', 5000);
-						RenderList(sortby, orderby, search);
-						not_checked();
-					} else {
-						console.error('ERR', res);
-						ErrorModal(5000);
-						RenderList(sortby, orderby, search);
+		function Confirmed(data) {
+			return new Promise((resolve, reject) => {
+				$.post(
+					'./assets/hndlr/Documents.php',
+					{ delete: JSON.stringify(data) },
+					function (res) {
+						if (res === 'true') {
+							SuccessModal('Files deleted.', 5000);
+							not_checked();
+							resolve('true');
+						} else {
+							reject('err:confirm');
+						}
 					}
-				}
-			);
-		});
+				);
+			});
+		}
+
+		async function ConfirmPrompt(data) {
+			try {
+				const confirmRes = await Confirmed(data);
+			} catch (e) {
+				console.error('ERR', e.message);
+				ErrorModal(5000);
+			}
+		}
+
+		PromptModal(5000, 'delete_selected', 0, 'Delete selected file/s?');
+		$('#prompt_form #yes_prompt')
+			.off()
+			.click(function (e) {
+				WaitModal(5000);
+				ConfirmPrompt(checked_data);
+				$('#SuccessModal, #ErrorModal').on('hidden.bs.modal', function () {
+					RenderList(sortby, orderby, search);
+				});
+			});
 	});
 
 	/* Open archive name modal */

@@ -415,6 +415,9 @@ $(function () {
 			'Are you deleting this resource?'
 		);
 		PromptConfirm('Resource deleted.', './assets/hndlr/Resource.php');
+		$('#SuccessModal, #ErrorModal').on('hidden.bs.modal', function () {
+			RenderList(sortby, orderby, search);
+		});
 	});
 
 	/* Read more */
@@ -525,111 +528,44 @@ $(function () {
 				return $(el).data('id');
 			});
 
-		PromptModal(5000, 'delete_selected', 1, 'Delete selected file/s?');
-
-		$('#prompt_form #yes_prompt').click(function (e) {
-			WaitModal(5000);
-
-			$.post(
-				'./assets/hndlr/Resource.php',
-				{ delete: JSON.stringify(checked_data) },
-				function (res) {
-					if (res === 'true') {
-						SuccessModal('Files deleted.', 5000);
-						RenderList(sortby, orderby, search);
-						not_checked();
-					} else {
-						console.error('ERR', res);
-						ErrorModal(5000);
-						RenderList(sortby, orderby, search);
-					}
-				}
-			);
-		});
-	});
-
-	/* Open archive name modal */
-	/* $('#archive_btn').click(function (e) {
-		$('#ArchiveFile').modal('show');
-	}); */
-
-	/* Create archive */
-	/* $('#archival_form').submit(function (e) {
-		e.preventDefault();
-
-		let form = $(this).serialize(),
-			checked = $('.resources-container').find('.checkboxes:checked'),
-			checked_data = $.map(checked, function (el) {
-				return $(el).data('id');
-			}),
-			archive_json = {};
-
-		archive_json['files'] = checked_data;
-
-		function Zipname(form, archiveJson) {
-			return new Promise((resolve, reject) => {
-				$.post('./assets/hndlr/Resource.php', form, function (lid) {
-					try {
-						$.each(JSON.parse(lid), function (idx, el) {
-							archiveJson['archive_id'] = parseInt(el.lid);
-						});
-
-						resolve(archiveJson);
-					} catch (e) {
-						ErrorModal(5000);
-						reject({
-							where: 'Zipname',
-							message: lid
-						});
-					}
-				});
-			});
-		}
-
-		function CreateZip(archiveJson) {
+		function Confirmed(data) {
 			return new Promise((resolve, reject) => {
 				$.post(
 					'./assets/hndlr/Resource.php',
-					{ archive: JSON.stringify(archiveJson) },
+					{ delete: JSON.stringify(data) },
 					function (res) {
 						if (res === 'true') {
-							SuccessModal('Archived files.', 5000);
-							$('#archive_btn, #delete_btn').addClass('d-none');
-							RenderList(sortby, orderby, search);
-							resolve(res);
+							SuccessModal('Files deleted.', 5000);
+							not_checked();
+							resolve('true');
 						} else {
-							ErrorModal(5000);
-							RenderList(sortby, orderby, search);
-							reject({
-								where: 'CreateZip',
-								message: res
-							});
+							reject('err:confirm');
 						}
 					}
 				);
 			});
 		}
 
-		async function Process() {
+		async function ConfirmPrompt(data) {
 			try {
-				const validationRes = await ValidateZipname(
-					'archival_form',
-					'archive_name'
-				);
-				if (validationRes === false) {
-					return;
-				}
-
-				const zipnameRes = await Zipname(form, archive_json);
-
-				const createzipRes = await CreateZip(zipnameRes);
+				const confirmRes = await Confirmed(data);
 			} catch (e) {
-				console.error(`${e.where}\n${e.message}`);
+				console.error('ERR', e.message);
+				ErrorModal(5000);
 			}
 		}
 
-		Process();
-	}); */
+		PromptModal(5000, 'delete_selected', 0, 'Delete selected file/s?');
+		$('#prompt_form #yes_prompt')
+			.off()
+			.click(function (e) {
+				WaitModal(5000);
+				ConfirmPrompt(checked_data);
+				$('#SuccessModal, #ErrorModal').on('hidden.bs.modal', function () {
+					RenderList(sortby, orderby, search);
+				});
+			});
+	});
 
 	DocumentReady();
 });

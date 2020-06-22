@@ -433,6 +433,9 @@ $(function () {
 			'Are you deleting this reviewer?'
 		);
 		PromptConfirm('Reviewer deleted.', './assets/hndlr/Reviewer.php');
+		$('#SuccessModal, #ErrorModal').on('hidden.bs.modal', function () {
+			RenderList(sortby, orderby, search);
+		});
 	});
 
 	/* Read more */

@@ -6,12 +6,10 @@ if (isset($_POST['fetchdocuments'])) {
 
 	$stmnt = 'SELECT * FROM document WHERE status = "present" ORDER BY uploaded_at ASC ;';
 	$query = $db->prepare($stmnt);
-	//  $param = [$who];
 	$query->execute();
 	$count = $query->rowCount();
 	if ($count <= 0) {
-		echo 'err:fetch';
-		exit();
+		exit('err:fetch');
 	} elseif ($count > 0) {
 		$dbData = [];
 		foreach ($query as $data) {
@@ -56,14 +54,14 @@ if (isset($_POST['title']) && isset($_POST['author'])) {
 	if ($count > 0) {
 		if (move_uploaded_file($_FILES['select_file']['tmp_name'], $destination)) {
 			$db->commit();
-			echo 'true';
+			exit('true');
 		} else {
 			$db->rollBack();
-			echo 'err:upload';
+			exit('err:upload');
 		}
 	} else {
 		$db->rollBack();
-		echo 'err:save';
+		exit('err:save');
 	}
 }
 
@@ -79,8 +77,7 @@ if (isset($_POST['document'])) {
 	$query->execute($param);
 	$count = $query->rowCount();
 	if ($count <= 0) {
-		echo 'err:fetch';
-		exit();
+		exit('err:fetch');
 	} elseif ($count > 0) {
 		$dbData = [];
 		foreach ($query as $data) {
@@ -114,10 +111,10 @@ if (isset($_POST['document_id']) && isset($_POST['edt_title'])) {
 	$count = $query->rowCount();
 	if ($count > 0) {
 		$db->commit();
-		echo 'true';
+		exit('true');
 	} else {
 		$db->rollBack();
-		echo 'err:save';
+		exit('err:save');
 	}
 }
 
@@ -149,10 +146,10 @@ if (isset($_POST['action']) && isset($_POST['id'])) {
 				if (file_exists($file)) {
 					unlink($file);
 				}
-				echo 'true';
+				exit('true');
 			} else {
 				$db->rollBack();
-				echo 'err:delete';
+				exit('err:delete');
 			}
 		}
 	}
@@ -203,10 +200,10 @@ if (isset($_POST['delete'])) {
 				unlink($attachment);
 			}
 		}
-		echo 'true';
+		exit('true');
 	} else {
 		$db->rollBack();
-		echo 'false';
+		exit('false');
 	}
 }
 
@@ -222,9 +219,9 @@ if (isset($_POST['new_archivename'])) {
 	$query->execute($param);
 	$count = $query->rowCount();
 	if ($count > 0) {
-		echo 'true';
+		exit('true');
 	} else {
-		echo 'false';
+		exit('false');
 	}
 }
 
@@ -251,7 +248,7 @@ if (isset($_POST['archive_author']) && isset($_POST['archive_name'])) {
 		echo json_encode($dbData);
 	} else {
 		$db->rollBack();
-		echo 'err:newarchive';
+		exit('err:newarchive');
 	}
 }
 
@@ -380,7 +377,7 @@ if (isset($_POST['archive'])) {
 		if ($count > 0) {
 			if (Zipper($files, $archive_name) === true) {
 				$db->commit();
-				echo 'true';
+				exit('true');
 			} else {
 				$db->rollBack();
 				echo RollbackZipname($archive_id, 'err:zipper');

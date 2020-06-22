@@ -243,7 +243,33 @@ function PromptModal(timeout, action, id, msg, redirect = 0) {
 	}, timeout - 1000);
 }
 
-function PromptConfirm(msg, url, renderId = 0) {
+function PromptConfirm(msg, url) {
+	function Confirmed(msg, url, action, id) {
+		return new Promise((resolve, reject) => {
+			$.post(url, { action, id }, function (res) {
+				switch (res) {
+					case 'true':
+						SuccessModal(msg, 5000);
+						resolve('true');
+						break;
+
+					default:
+						reject('err:confirm');
+						break;
+				}
+			});
+		});
+	}
+
+	async function ConfirmPrompt(msg, url, action, id) {
+		try {
+			const confirmRes = await Confirmed(msg, url, action, id);
+		} catch (e) {
+			console.error('ERR', e.message);
+			ErrorModal(5000);
+		}
+	}
+
 	$('#prompt_form #yes_prompt').click(function (e) {
 		e.preventDefault();
 
@@ -252,19 +278,7 @@ function PromptConfirm(msg, url, renderId = 0) {
 		let action = $(this).attr('data-action'),
 			id = $(this).attr('data-target');
 
-		$.post(url, { action, id }, function (res) {
-			switch (res) {
-				case 'true':
-					SuccessModal(msg, 5000);
-					RenderList(renderId);
-					break;
-
-				default:
-					console.error('ERR', res);
-					ErrorModal(5000);
-					break;
-			}
-		});
+		ConfirmPrompt(msg, url, action, id);
 	});
 }
 

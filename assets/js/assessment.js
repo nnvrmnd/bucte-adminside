@@ -252,7 +252,7 @@ $(function () {
 
 		let del = $(this).attr('data-target');
 		PromptModal(10000, 'delete_item', del, 'Are you deleting this item?');
-		PromptConfirm('Item deleted.', './assets/hndlr/Assessment.php', event);
+		PromptConfirm('Item deleted.', './assets/hndlr/Assessment.php');
 	});
 
 	DocumentReady();
