@@ -2,14 +2,13 @@
 <div class="row col-md-12 col-sm-12">
 <?php
 require 'db.hndlr.php';
-$stmnt = 'SELECT * FROM content, content_images where  content_images.c_id = content.c_id and content.alias = ? ';
+$stmnt = 'SELECT * FROM content, content_images WHERE content_images.c_id = content.c_id AND content.alias = "homepage" ';
 $query = $db->prepare($stmnt);
-$param = ['homepage'];
-$query->execute($param);
+$query->execute();
 $result = $query->fetchAll();
 $count = $query->rowCount();
-$imageAlias = ['image-1', 'image-2', 'image-3'];
-//print_r($result);
+// $imageAlias = ['image-1', 'image-2', 'image-3'];
+$imageAlias = ['image-1'];
 $imageArray = [];
 if ($count > 0) {
 	foreach ($result as $data) {
@@ -62,5 +61,4 @@ foreach ($imageNotExist as $image) {
 	';
 }
 ?>
-
 </div>
