@@ -154,7 +154,7 @@ function AuthorName(id) {
 
 /* *************************************************** */
 
-var timer = null; // for timeouts
+let timer = null; // for timeouts
 
 function WaitModal(timeout, msg = 0, redirect = 0) {
 	let message = msg === 0 ? 'Processing...' : msg;
@@ -210,10 +210,12 @@ function ErrorModal(timeout, msg = 0, redirect = 0) {
 		});
 	}
 
-	$('.modal').modal('hide');
 	window.clearTimeout(timer);
 	$('#error-modal-msg').html(message);
-	$('#ErrorModal').modal('show');
+	setTimeout(() => {
+		$('.modal').modal('hide');
+		$('#ErrorModal').modal('show');
+	}, 1000);
 
 	timer = setTimeout(() => {
 		$('#error-modal-msg').html('');

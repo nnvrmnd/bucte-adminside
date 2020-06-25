@@ -1,222 +1,148 @@
+function RenderList() {
+	$.post('./assets/hndlr/Homepage.php', { welcome: '1' }, function (res) {
+		try {
+			let data = JSON.parse(res);
+			AuthorId('form#homepage_form');
+
+			$.each(data, function (idx, el) {
+				$('[name=title]').val(el.title);
+				$('[name=welcome-img]').attr('src', el.image);
+				CKEDITOR.instances['body'].setData(el.content);
+			});
+		} catch (e) {
+			console.error('ERR', e.message);
+		}
+	});
+}
+
 $(function () {
-	let whoiam = $('#whoiam').val();
-	
-	//tooltip
-	$('a[data-toggle="tooltip"]').tooltip();
+	RenderList();
 
-	//getId
-	$.get(
-		'./assets/hndlr/Homepage.php',
-		{
-			user: whoiam
-		},
-		function (data) {
-			let id = JSON.parse(data);
-			$("input[name='u_id']").val(id.u_id);
-		}
-	);
+	$('#image').change(function (e) {
+		e.preventDefault();
 
-	$('.show-edit').on('click', function () {
-		$(this).parent().css({
-			display: 'none'
-		});
-		$('.content').css({
-			display: ''
-		});
-	});
+		function readURL(input) {
+			if (input.files && input.files[0]) {
+				let reader = new FileReader();
+				reader.onload = function (e) {
+					$('#welcome-img').attr('src', e.target.result);
+				};
 
-	//Delete Image
-	$(document).on('click', 'i[class*="fa-trash"]', function(event){
-		event.preventDefault();
-
-		let getImage = $(this).parent().prev(), //.find("img").attr("id");
-		    currentDiv = $(this).parent(),
-			imageName = getImage.find("label").attr('for'),
-			image =  getImage.find("img");
-	    swal({
-			title: `Proceed deleting ${imageName}?`,
-			text: "Note: the image will be directly deleted without saving.",
-			type: 'warning',
-			buttons: true,
-			showCloseButton: true,
-			confirmButtonText: "Confirm"
-		}).then(result => {
-			if(result.value == true){
-				$.post('./assets/hndlr/Homepage.php',
-						{ image: imageName },
-						function(res){
-							console.log(res)
-							switch (res) {
-								case 'true':
-									Swal.fire({
-										type: 'success',
-										title: 'Deleted successfully!',
-										showConfirmButton: false,
-										timer: 2500
-									});
-									image.attr("src", "assets/img/no-image.png")
-									image.attr("class", "no-image-size")
-									currentDiv.css({"display": "none"}) 
-									currentDiv.prev().css({"padding": "40px"})
-									break;
-								default:
-									Swal.fire({
-										type: 'error',
-										title: 'Error Occured!',
-										text: 'Please try again.',
-										showConfirmButton: false,
-										timer: 2500
-									});
-									break;
-							}
-						}
-				)		
+				reader.readAsDataURL(input.files[0]);
+			} else {
+				$('#welcome-img').attr('src', './assets/img/noimg.png');
 			}
-		})		
-	})
-
-	//textfields
-	$.get('./assets/hndlr/textfield.php', function (data) {
-		data = JSON.parse(data);
-		let condition = data.meta2 != null;
-		if (data != 'false') {
-			$("input[name='title']").val(data.title);
-			$("input[name='meta1']").val(data.meta1);
-			$("textarea[name='content']").text(data.content);
-			$("div[id='content-view']").html(data.content);
-			condition  ? $("a[data-toggle=tooltip]").attr("data-original-title", `<img width='140px' src='${data.meta2}' />`) 
-				: $("a[data-toggle=tooltip]").attr("data-original-title", `<img width='140px' src='assets/img/no-image.png' />`);
-			condition ? $("#remove-signature").css({'display': ""}) : $("#remove-signature").css({'display': "none"});	
 		}
+
+		readURL(this);
 	});
 
-	//Show Image when Upload
-	function readURL(input) {
-		if (input.files && input.files[0]) {
-			let reader = new FileReader();
-			reader.onload = function (e) {
-				let id = $(input).attr('id');
-				$(`img[id="${id}1"]`).attr('src', e.target.result);
-				$(`img[id="${id}1"]`).css({
-					width: '100%',
-					'max-width': '100%',
-					height: '100%',
-					display: 'block'
-				});
-				$(`img[id="${id}1"]`).parent().css({
-					padding: '0px'
-				});
-			};
-			reader.readAsDataURL(input.files[0]);
-		}
-	}
-
-	//Images
-	$.get('./assets/hndlr/images.php', function (data) {
-		let content = data;
-		$('.images').prepend(content);
-		$('input[id*=image]').on('change', function () {
-			readURL(this);
-		});
+	/* Cancel changes */
+	$('.cancel').click(function (e) {
+		e.preventDefault();
+		RenderList();
 	});
 
-	//Delete meta2 (signature)
-	$(document).on('click', 'button[id="remove-signature"]', function(){
-		swal({
-			title: `Proceed deleting signature image?`,
-			text: "Note: the image will be directly deleted without saving.",
-			type: 'warning',
-			buttons: true,
-			dangerMode: true,
-			showCloseButton: true
-		}).then(result=>{
-			if(result.value==true){
-			   		$.post('./assets/hndlr/Homepage.php',
-					{ signatureImage: "meta2" },
-					function(res){
-						switch (res) {
-							case 'true':
-								Swal.fire({
-									type: 'success',
-									title: 'Deleted successfully!',
-									showConfirmButton: false,
-									timer: 2500
-								});
-								break;
-							default:
-								Swal.fire({
-									type: 'error',
-									title: 'Error Occured!',
-									text: 'Please try again.',
-									showConfirmButton: false,
-									timer: 2500
-								});
-								break;
-						}
-					}
-				)		
-			}
-		})		
-	})
-
-	//Save Changes in Form
+	/* Save changes */
 	$('#homepage_form').submit(function (e) {
 		e.preventDefault();
-		swal({
-			title: 'Are you sure?',
-			text: "Proceed on saving by clicking 'OK'.",
-			type: 'info',
-			buttons: true,
-			dangerMode: true,
-			showCloseButton: true
-		}).then(result => {
-			if (result.value) {
-				let form = $(this).serializeArray(),
-					form_data = new FormData(),
-					file = $('input[name*=image]');
+
+		InstanceCKE();
+
+		let form = $(this).serializeArray(),
+			form_data = new FormData(),
+			file = $('#image')[0].files[0];
+
+		switch (false) {
+			case ValidateRequired('homepage_form', 'title'):
+			case ValidateAttachment('homepage_form', 'image', 'welcome-img'):
+			case ValidateCKE('homepage_form', 'body'):
+				console.log('mig');
+				break;
+
+			default:
+				form_data.append('image', file);
 				$.each(form, function (key, input) {
-					input.value != '' && form_data.append(input.name, input.value);
+					form_data.append(input.name, input.value);
 				});
-				$.each(file, function (key, input) {
-					input.value != '' &&
-						form_data.append(
-							input.name,
-							$(`input[name=${input.name}]`)[0].files[0]
-						);
-				});
-				$(`input[name=meta2]`).get(0).files.length != 0 && form_data.append('meta2', $(`input[name=meta2]`)[0].files[0]);
-				form_data.append('save_changes', '');
-				$.ajax({
-					type: 'POST',
-					url: './assets/hndlr/Homepage.php',
-					data: form_data,
-					contentType: false,
-					processData: false,
-					success: function (res) {
-						switch (res) {
-							case 'true':
-								Swal.fire({
-									type: 'success',
-									title: 'Saved successfully!',
-									showConfirmButton: false,
-									timer: 2500
-								});
-								break;
-							default:
-								Swal.fire({
-									type: 'error',
-									title: 'Error Occured!',
-									text: 'Please try again.',
-									showConfirmButton: false,
-									timer: 2500
-								});
-								break;
-						}
-						console.log(res);
-					}
-				});
-			} //else swal.close();
-		});
+
+				PromptModal(10000, 'save_changes', 0, 'Save changes?');
+
+				$('#prompt_form #yes_prompt')
+					.off()
+					.click(function (e) {
+						WaitModal(5000);
+
+						$.ajax({
+							type: 'POST',
+							url: './assets/hndlr/Homepage.php',
+							data: form_data,
+							contentType: false,
+							processData: false,
+							success: function (res) {
+								switch (res) {
+									case 'true':
+										SuccessModal('Changes saved.', 5000);
+										break;
+									case 'err:save':
+										ErrorModal(5000, 'No changes applied.');
+										break;
+
+									default:
+										ErrorModal(5000);
+										console.error('ERR', res);
+										break;
+								}
+							}
+						});
+
+						$('#SuccessModal, #ErrorModal').on('hidden.bs.modal', function () {
+							RenderList();
+						});
+					});
+
+				break;
+		}
 	});
+
 	DocumentReady();
 });
+
+function InstanceCKE() {
+	for (instance in CKEDITOR.instances) {
+		CKEDITOR.instances[instance].updateElement();
+	}
+}
+
+function ValidateAttachment(form_id, name, dummy_name) {
+	let ctrl = true,
+		formid = `form#${form_id} `,
+		name_attr = formid + `[name="${name}"]`,
+		dummy = formid + `[name="${dummy_name}"]`;
+
+	if ($(name_attr).val().length >= 1) {
+		let file_format = $(name_attr)[0].files[0].type;
+
+		if (!file_format.match(/\b(\w*image\w*)\b/gi)) {
+			ctrl = false;
+			$(dummy).attr('src', './assets/img/noimg.png');
+			$(`label.${name}`).addClass('text-danger');
+			$('small.' + name)
+				.removeClass('text-success')
+				.addClass('text-danger')
+				.html('File not image.');
+		} else {
+			$(`label.${name}`).removeClass('text-danger');
+			$('small.' + name)
+				.removeClass('text-danger')
+				.empty();
+		}
+	} else {
+		$(`label.${name}`).removeClass('text-danger');
+		$('small.' + name)
+			.removeClass('text-danger')
+			.empty();
+	}
+
+	return ctrl;
+}

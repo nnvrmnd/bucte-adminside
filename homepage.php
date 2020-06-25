@@ -19,6 +19,32 @@ SeshStart('page');
 			padding-left: 3%;
 			padding-right: 3%;
 		}
+
+		.welcome-container {
+
+			max-height: 170px;
+			max-width: 300px;
+			display: flex;
+			justify-content: center;
+		}
+
+		.welcome-img {
+			border: solid 1px #dee2e6;
+			max-height: 170px;
+		}
+
+		.upload-btn {
+			position: absolute;
+			top: 35%;
+		}
+
+		.ubtn {
+			opacity: 0;
+		}
+
+		.welcome-container:hover .ubtn {
+			opacity: 1;
+		}
 	</style>
 </head>
 
@@ -59,80 +85,51 @@ SeshStart('page');
 					<div class="card-wrapper">
 						<div class="card card-shadow">
 							<form role="form" id="homepage_form" enctype="multipart/form-data">
-								<input type="password" class="d-none" name="u_id" id="author" hidden>
-								<input type="password" class="d-none" value="homepage" name="alias" id="alias" hidden>
+								<input type="text" class="d-none" name="author" id="author">
 								<div class="card-body">
 									<div class="form-group mb-2">
-										<label class="form-control-label" for="title">Event title</label>
+										<label class="form-control-label" for="title">Title</label>
 										<input type="text" class="form-control text-dark" name="title" id="title"
 											maxlength="190" placeholder="Write title...">
-										<small class="title"></small>
-									</div>
-									<div class="form-group mb-2 images">
-										<!---View and Edit of image here {assets/hndlr/images.php} --->
+										<small class="msg title"></small>
 									</div>
 
-									<div class="form-group mb-2 content" style="display:none">
-										<label class="form-control-label" for="content">Body</label>
-										<textarea class="form-control ckwrite" name="content" id="content_body" rows="5"
-											placeholder="Write content body..."></textarea>
-										<small class="content_body"></small>
-									</div>
+									<div class="form-group mb-2">
+										<label class="form-control-label image" for="welcome-img">Image</label>
+										<div class="row">
+											<div class="col">
+												<div class="welcome-container">
+													<img class="welcome-img" id="welcome-img" name="welcome-img"
+														src="./assets/img/noimg.png">
 
-									<div class="form-group mb-2 edit-holder">
-										<label class="form-control-label" for="content">Body</label>
-										<div class="col-md-12 col-sm-12 content-style"
-											style="padding:10px; height: 370px; overflow: auto; border: solid 1px #d1d1d1;">
-											<div class="scrollbar-inner">
-												<div id="content-view" style="padding"></div>
-											</div>
-										</div>
-										<div class="show-edit"> CLICK HERE TO EDIT. </div>
-									</div>
-
-									<div class="row d-none">
-										<div class="col-md-12"><label class="form-control-label"
-												for="content">Optional:</label></div>
-										<div class="col-md-12 row">
-											<div class="col-md-6">
-												<div class="form-group mb-2">
-													<label class="form-control-label" for="meta1">Author</label>
-													<input type="text" class="form-control text-dark" name="meta1"
-														id="meta1" maxlength="190" placeholder="Author...">
-													<small class="title"></small>
-												</div>
-											</div>
-											<div class="col-md-6">
-												<div class="row signature-option">
-													<div class="col-6">
-														<a data-toggle="tooltip" data-html="true" title="">
-															<button type="button" class="btn btn-outline-info"
-																style="padding: 0px 4px;"><i class="fas fa-eye"></i>
-																View</button>
-														</a>
-													</div>
-
-													<div class="col-6"><button type="button" id="remove-signature"
-															class="btn btn-outline-warning"
-															style="padding: 0px 4px; right: 50%"><i
-																class="fas fa-trash"></i> remove</button></div>
-												</div>
-												<div class="form-group mb-2">
-													<label class="form-control-label">Signature
-														(Image)</label>
-													<div class="custom-file">
-														<input type="file" name="meta2" accept="image/*"
-															class="custom-file-input" id="customFileLang">
-														<label class="custom-file-label" for="customFileLang"></label>
+													<div class="upload-btn">
+														<label class="btn btn-lg btn-default ubtn" for="image"
+															title="Change image...">
+															<i class="fa fa-camera fa-lg" aria-hidden="true"></i>
+														</label>
+														<input type="file" class="d-none" id="image" name="image"
+															accept="image/*">
 													</div>
 												</div>
+
 											</div>
 										</div>
+										<small class="msg image"></small>
 									</div>
-									<div class="form-group mb-2 flex-center">
-										<div class="btn-xlg-container"><button type="submit" name="save_changes"
-												class="btn btn-lg btn-block bg-gradient-primary text-white ">Save
-												Changes</button></div>
+
+									<div class="form-group mb-2">
+										<label class="form-control-label" for="description">Body</label>
+										<textarea class="form-control ckwrite" name="body" id="body" rows="7"
+											placeholder="Write body..."></textarea>
+										<small class="msg body"></small>
+									</div>
+								</div>
+								<div class="card-footer">
+									<div class="row">
+										<div class="col">
+											<button type="submit" class="btn btn-lg bg-gradient-primary text-white float-right">Save changes</button>
+											<button type="button" class="btn btn-lg btn-secondary float-right mr-2 cancel">Cancel</button>
+										</div>
 									</div>
 								</div>
 							</form>

@@ -19,7 +19,8 @@ CKEDITOR.editorConfig = function( config ) {
 	config.removeButtons = 'Cut,SelectAll,Scayt,Form,Checkbox,Radio,TextField,Textarea,Select,Button,ImageButton,HiddenField,Strike,Subscript,Superscript,CopyFormatting,RemoveFormat,BidiLtr,BidiRtl,Language,Link,Unlink,Anchor,Image,Flash,Table,HorizontalRule,Smiley,SpecialChar,PageBreak,Iframe,BGColor,TextColor,Redo,Undo,Copy,Paste,PasteText,PasteFromWord,Preview,Print,NewPage,Save,Templates,Font,Styles,CreateDiv';
 
 
-	config.height = 280;
+	config.height = 300;
+	config.extraPlugins = 'autogrow, confighelper';
 };
 
 /* CKEDITOR.editorConfig = function( config ) {
