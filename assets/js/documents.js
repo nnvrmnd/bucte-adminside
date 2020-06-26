@@ -297,7 +297,7 @@ $(function () {
 		}
 	});
 
-	/* Add new event */
+	/* Add new archive */
 	$('#upload_form').submit(function (e) {
 		e.preventDefault();
 
@@ -575,8 +575,27 @@ $(function () {
 		$('#ArchiveFile').modal('show');
 	});
 
+	/* New / existing archival */
+	$('.archtab').click(function (e) {
+		e.preventDefault();
+		let formid = $(this).attr('href');
+
+		if (formid == '#nav-newarch') {
+			$('#process_btn').removeClass('d-none');
+		} else {
+			$('#process_btn').addClass('d-none');
+		}
+	});
+
+	/* Submit archival */
+	$('#process_btn').click(function (e) {
+		e.preventDefault();
+		let formid = $(this).attr('data-target');
+		$(formid).submit();
+	});
+
 	/* Create archive */
-	$('#archival_form').submit(function (e) {
+	$('#newarchive_form').submit(function (e) {
 		e.preventDefault();
 
 		let form = $(this).serialize(),
@@ -635,18 +654,16 @@ $(function () {
 
 		async function Process() {
 			try {
-				WaitModal(5000);
-
 				const validationRes = await ValidateZipname(
-					'archival_form',
+					'newarchive_form',
 					'archive_name'
 				);
 				if (validationRes === false) {
 					return;
 				}
 
+				WaitModal(5000);
 				const zipnameRes = await Zipname(form, archive_json);
-
 				const createzipRes = await CreateZip(zipnameRes);
 			} catch (e) {
 				console.error(`${e.where}\n${e.message}`);
@@ -654,6 +671,70 @@ $(function () {
 		}
 
 		Process();
+	});
+
+	/* Open archival */
+	$('#ArchiveFile').on('shown.bs.modal', function () {
+		$.post('./assets/hndlr/Documents.php', { fetcharchives: 'all' }, function (
+			res
+		) {
+			$('#archives-container').empty();
+			try {
+				let archives = JSON.parse(res);
+
+				$.each(archives, function (idx, el) {
+					$('#archives-container').append(`
+						<tr class="table-row pointer-here" data-target="check_${el.archive_id}">
+							<td class="text-truncate mx-5 px-5" colspan="3" title="${el.zipname}">
+								<img class="avatar mr-3" src="./assets/img/file_format/zip.png" alt="Filetype thumbnail">
+								<b>${el.zipname}</b>
+							</td>
+							<td class="table-actions">
+								<a href="#" class="btn btn-sm btn-secondary text-primary archive_file" data-target="${el.archive_id}" title="Archive here...">
+									<i class="fas fa-reply"></i>
+								</a>
+							</td>
+						</td>
+						`);
+				});
+			} catch (e) {
+				console.error('ERR', e.message);
+			}
+		});
+	});
+
+	/* Archive to existing */
+	$('#ArchiveFile').on('click', '.archive_file', function (e) {
+		WaitModal(5000);
+
+		let archive = $(this).attr('data-target'),
+			form = $(this).serialize(),
+			checked = $('.documents-container').find('.checkboxes:checked'),
+			checked_data = $.map(checked, function (el) {
+				return $(el).data('id');
+			}),
+			archive_json = {};
+
+		archive_json['archive_id'] = archive;
+		archive_json['files'] = checked_data;
+
+		$.post(
+			'./assets/hndlr/Documents.php',
+			{ existing: archive, toexisting: JSON.stringify(archive_json) },
+			function (res) {
+				if (res === 'true') {
+					SuccessModal('Archived files.', 5000);
+					$('#archive_btn, #delete_btn').addClass('d-none');
+					RenderList(sortby, orderby, search);
+					not_checked();
+				} else {
+					console.error('ERR', res);
+					ErrorModal(5000);
+					RenderList(sortby, orderby, search);
+					not_checked();
+				}
+			}
+		);
 	});
 
 	DocumentReady();
@@ -690,7 +771,6 @@ function ValidateZipname(form_id, name) {
 						resolve(false);
 					} else {
 						ErrorModal(5000);
-						// console.error('ERR', res);
 						reject({
 							where: 'ValidateZipname',
 							message: res

@@ -274,22 +274,6 @@ if (isset($_POST['archive'])) {
 		}
 	}
 
-	/* Return new archive name */
-	function ArchiveName($id) {
-		require './db.hndlr.php';
-
-		$stmnt = 'SELECT zipname FROM archive WHERE archv_id = ? ;';
-		$query = $db->prepare($stmnt);
-		$param = [$id];
-		$query->execute($param);
-		$count = $query->rowCount();
-		if ($count > 0) {
-			foreach ($query as $data) {
-				return $data['zipname'];
-			}
-		}
-	}
-
 	/* Compress files passed */
 	function Zipper($files, $archiveName) {
 		$ctrl = false;
@@ -389,5 +373,146 @@ if (isset($_POST['archive'])) {
 	} else {
 		$db->rollBack();
 		echo RollbackZipname($archive_id, 'err:archivedoc');
+	}
+}
+
+/* Fetch archive list */
+if (isset($_POST['fetcharchives'])) {
+	require './db.hndlr.php';
+
+	$stmnt = 'SELECT * FROM archive ORDER BY zipname';
+	$query = $db->prepare($stmnt);
+	$query->execute();
+	$count = $query->rowCount();
+	if ($count <= 0) {
+		exit('err:fetcharchives');
+	} else {
+		$dbData = [];
+		foreach ($query as $data) {
+			$dbData[] = ['archive_id' => $data['archv_id'], 'zipname' => $data['zipname']];
+		}
+		$arrObject = json_encode($dbData);
+		echo $arrObject;
+	}
+}
+
+if (isset($_POST['toexisting'])) {
+	require './db.hndlr.php';
+
+	/* Compress files passed */
+	function ZipperTo($files, $archiveName) {
+		$ctrl = false;
+		$rootDir = realpath('../../files/documents/') . '/';
+		$archiveName = $rootDir . $archiveName . '.zip';
+
+		$zip = new ZipArchive;
+		if ($zip->open($archiveName, ZipArchive::CREATE) === true) {
+			foreach ($files as $file) {
+				$docid = $file['doc_id'];
+				$fileName = $file['attachment'];
+				$filePath = $file['path'];
+
+				if (file_exists($filePath)) {
+					$zip->addFile($filePath, $fileName);
+					$ctrl = true;
+				} else {
+					$zip->unchangeAll();
+					break;
+				}
+			}
+			$zip->close();
+
+			if ($ctrl === true) {
+				foreach ($files as $file) {
+					$filePath = $file['path'];
+					if (file_exists($filePath)) {
+						unlink($filePath);
+					}
+				}
+			}
+		}
+
+		return $ctrl;
+	}
+
+	$archiveJson = json_decode($_POST['toexisting']);
+	$archive_id = $archiveJson->{'archive_id'};
+	$archive_name = ArchiveName($archive_id);
+	$files_id = $archiveJson->{'files'};
+	$rootDir = realpath('../../files/documents/') . '/';
+	$files = [];
+
+	/* Put data in an array '$files" */
+	foreach ($files_id as $file) {
+		$stmnt = 'SELECT * FROM document WHERE doc_id = ?;';
+		$query = $db->prepare($stmnt);
+		$param = [$file];
+		$query->execute($param);
+		$count = $query->rowCount();
+		if ($count > 0) {
+			foreach ($query as $data) {
+				$id = $data['doc_id'];
+				$attachment = $data['attachment'];
+				$path = str_replace('/', DIRECTORY_SEPARATOR, $rootDir . $attachment);
+				$files[] = [
+					'archive_id' => $archive_id,
+					'doc_id' => $id,
+					'attachment' => $attachment,
+					'path' => $path
+				];
+			}
+		}
+	}
+
+	$db->beginTransaction();
+	$stmnt = 'INSERT INTO archived_documents (archv_id, doc_id) VALUES (?, ?) ;';
+	$query = $db->prepare($stmnt);
+	foreach ($files as $file) {
+		$archiveid = $file['archive_id'];
+		$docid = $file['doc_id'];
+		$param = [$archiveid, $docid];
+		$query->execute($param);
+	}
+	$count = $query->rowCount();
+	if ($count > 0) {
+		$stmnt = 'UPDATE document SET status = "archived" WHERE doc_id = ? ;';
+		$query = $db->prepare($stmnt);
+		foreach ($files as $file) {
+			$docid = $file['doc_id'];
+			$param = [$docid];
+			$query->execute($param);
+		}
+		$count = $query->rowCount();
+		if ($count > 0) {
+			if (ZipperTo($files, $archive_name) === true) {
+				$db->commit();
+				exit('true');
+			} else {
+				$db->rollBack();
+				exit('err:zipper');
+			}
+		} else {
+			$db->rollBack();
+			exit('err:docstate');
+		}
+	} else {
+		$db->rollBack();
+		exit('err:archivedoc');
+	}
+}
+
+/* Return new archive name */
+function ArchiveName($id) {
+	require './db.hndlr.php';
+
+	$stmnt = 'SELECT zipname FROM archive WHERE archv_id = ? ;';
+	$query = $db->prepare($stmnt);
+	$param = [$id];
+	$query->execute($param);
+	$count = $query->rowCount();
+	if ($count > 0) {
+		foreach ($query as $data) {
+			return $data['zipname'];
+		}
 	}
 }

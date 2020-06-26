@@ -13,6 +13,26 @@ SeshStart('page');
 		img.card-img-top {
 			width: 40% !important;
 		}
+
+		.nav-tabs .nav-item.show .nav-link,
+		.nav-tabs .nav-link.active {
+			color: #525f7f;
+			border-color: #dee2e6 #dee2e6 #f8f9fe;
+			background-color: white !important;
+		}
+
+		.nav-tabs .nav-link {
+			border-top-left-radius: .100rem !important;
+			border-top-right-radius: .100rem !important;
+		}
+
+		.avatar {
+			background-color: #fff !important;
+		}
+
+		.table {
+			table-layout: fixed;
+		}
 	</style>
 </head>
 
@@ -190,25 +210,55 @@ SeshStart('page');
 						<span aria-hidden="true">&times;</span>
 					</button>
 				</div>
-				<form role="form" id="archival_form">
-					<input type="password" class="d-none author" name="archive_author" id="archival_author">
-					<div class="modal-body">
-						<div class="row">
-							<div class="col-md-12">
-								<div class="form-group mb-2">
+
+				<div class="modal-body">
+					<nav>
+						<div class="nav nav-tabs" id="nav-tab" role="tablist">
+							<a class="nav-item nav-link archtab active" id="nav-newarch-tab" data-toggle="tab"
+								href="#nav-newarch" role="tab" aria-controls="nav-newarch" aria-selected="true">To new
+								archive</a>
+							<a class="nav-item nav-link archtab" id="nav-existingarch-tab" data-toggle="tab"
+								href="#nav-existingarch" role="tab" aria-controls="nav-existingarch"
+								aria-selected="false">To existing archive</a>
+						</div>
+					</nav>
+					<div class="tab-content" id="nav-tabContent">
+						<div class="tab-pane fade show active" id="nav-newarch" role="tabpanel"
+							aria-labelledby="nav-newarch-tab">
+							<div class="form-group mt-3 mb-2">
+								<form role="form" id="newarchive_form">
+									<input type="password" class="d-none author" name="archive_author"
+										id="archival_author">
 									<label class="form-control-label" for="archive_name">Archive name</label>
 									<input type="text" class="form-control text-dark" name="archive_name"
-										id="archive_name" maxlength="190" placeholder="Write name...">
+										id="archive_name" maxlength="190" placeholder="Write new archive name...">
 									<small class="archive_name"></small>
-								</div>
+								</form>
+							</div>
+						</div>
+						<div class="tab-pane fade" id="nav-existingarch" role="tabpanel"
+							aria-labelledby="nav-existingarch-tab">
+							<div class="table table-responsive">
+								<table class="table align-items-center table-flush">
+									<thead class="thead-light">
+										<tr>
+											<th>Archive name</th>
+											<th></th>
+											<th></th>
+											<th>Action</th>
+										</tr>
+									</thead>
+									<tbody class="text-truncate" id="archives-container"></tbody>
+								</table>
 							</div>
 						</div>
 					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-						<button type="submit" class="btn bg-gradient-primary text-white">Process</button>
-					</div>
-				</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					<button type="button" class="btn bg-gradient-primary text-white" id="process_btn"
+						data-target="#newarchive_form">Process</button>
+				</div>
 			</div>
 		</div>
 	</div>
