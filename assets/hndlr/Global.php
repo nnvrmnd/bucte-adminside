@@ -1,7 +1,7 @@
 <?php
 
 if (isset($_POST['who'])) {
-	require 'db.hndlr.php';
+	require './db.hndlr.php';
 
 	$whoami = $_POST['who'];
 
@@ -23,13 +23,13 @@ if (isset($_POST['who'])) {
 		$arrObject = json_encode($dbData);
 		echo $arrObject;
 	} else {
-		echo 'INTRUDER!';
+		echo 'UNKNOWN';
 	}
 }
 
 /* Fetch id of username */
 if (isset($_POST['username'])) {
-	require 'db.hndlr.php';
+	require './db.hndlr.php';
 
 	$username = $_POST['username'];
 
@@ -49,7 +49,7 @@ if (isset($_POST['username'])) {
 
 /* Fetch name of id */
 if (isset($_POST['userid'])) {
-	require 'db.hndlr.php';
+	require './db.hndlr.php';
 
 	$id = $_POST['userid'];
 

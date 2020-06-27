@@ -62,32 +62,42 @@ function RenderList(sortBy = 'post', orderBy = 'desc', search = 0) {
 					created_time = moment(el.created_at).format('h:mm A');
 					created_at = `${created_date} at ${created_time}`;
 
-					$('.archives-container').append(`
-					<div class="col-sm-6 col-md-4 col-lg-3 document-card">
-						<div class="card card-shadow">
+					async function Render() {
+						try {
+							let Author = await AuthorName(el.author);
 
-							<div class="d-flex align-items-center justify-content-center mt-4 pointer-here readarchive"
-								data-target="${el.archive_id}" title="Click to read more...">
-								<img class="card-img-top mx-auto mt-4" src="./assets/img/file_format/zip.png" alt="Filetype thumbnail">
-							</div>
+							$('.archives-container').append(`
+								<div class="col-sm-6 col-md-4 col-lg-3 document-card">
+									<div class="card card-shadow">
 
-							<div class="card-body pb-1">
-								<p class="font-weight-bold card-title text-truncate mb-0 pointer-here readarchive"
-									data-id="${
-										el.archive_id
-									}" data-target="${el.archive_id}" title="${el.zipname}">${el.zipname}</p>
-								<small class="text-muted">by ${AuthorName(
-									el.author
-								)} on ${created_at}</small> <br>
-								<a href="./files/documents/${el.zipname}.zip" download="${el.zipname}.zip"
-									class="btn btn-link px-0 float-right download_file" title="Download file...">
-									<i class="fas fa-cloud-download-alt fa-lg"></i>
-								</a>
-							</div>
-						</div>
-					</div>
-					`);
+										<div class="d-flex align-items-center justify-content-center mt-4 pointer-here readarchive"
+											data-target="${el.archive_id}" title="Click to read more...">
+											<img class="card-img-top mx-auto mt-4" src="./assets/img/file_format/zip.png" alt="Filetype thumbnail">
+										</div>
+
+										<div class="card-body pb-1">
+											<p class="font-weight-bold card-title text-truncate mb-0 pointer-here readarchive"
+												data-id="${
+													el.archive_id
+												}" data-target="${el.archive_id}" title="${el.zipname}">${el.zipname}</p>
+											<small class="text-muted">by ${Author} on ${created_at}</small> <br>
+											<a href="./files/documents/${el.zipname}.zip" download="${el.zipname}.zip"
+												class="btn btn-link px-0 float-right download_file" title="Download file...">
+												<i class="fas fa-cloud-download-alt fa-lg"></i>
+											</a>
+										</div>
+									</div>
+								</div>
+								`);
+						} catch (e) {
+							console.error('ERR', e.message);
+						}
+					}
+
+					Render()
 				});
+
+
 			} catch (e) {
 				console.error('ERR', e.message);
 				$('.archives-container').html(`

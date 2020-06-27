@@ -139,50 +139,60 @@ function RenderList(sortBy = 'post', orderBy = 'desc', search = 0) {
 							break;
 					}
 
-					$('.reviewers-container').append(`
-					<div class="col-lg-6">
-						<div class="card card-shadow pointer-here" title="Click for questionnaire..." data-id="${
-							el.rvwr_id
-						}">
-							<div class="card-body pb-1">
-								<button type="button" class="btn btn-sm btn-secondary text-danger float-right delete_reviewer" data-target="${
-									el.rvwr_id
-								}" title="Delete reviewer...">
-										<i class="fa fa-trash" aria-hidden="true"></i>
-								</button>
-								<button type="button" class="btn btn-sm btn-secondary text-purple float-right edit_reviewer" data-target="${
-									el.rvwr_id
-								}" title="Edit reviewer...">
-										<i class="fa fa-edit" aria-hidden="true"></i>
-								</button>
-								<p class="font-weight-bold mb-0 text-primary text-truncate" title="${
-									el.title
-								}">${el.title}</p>
-								<div class="text-truncate desc" data-target="desc_${
-									el.rvwr_id
-								}"><small>${description}</small></div>
-								<p id="desc_${
-									el.rvwr_id
-								}"><small title="Click to read description...">${readmore}</small></p>
-								<small>
-									<dl class="row">
-										<dt class="col-sm-3">Level:</dt>
-										<dd class="col-sm-9">${level} Education</dd>
-										<dt class="col-sm-3">Source:</dt>
-										<dd class="col-sm-9">${el.source}</dd>
-										<dt class="col-sm-3">No. of items:</dt>
-										<dd class="col-sm-9">${el.items}</dd>
-										<dt class="col-sm-3">Duration:</dt>
-										<dd class="col-sm-9">${duration}</dd>
-									</dl>
-								</small>
-								<p>
-									<small class="text-muted">by ${AuthorName(el.author)} on ${created_at}</small>
-								</p>
-							</div>
-						</div>
-					</div>
-					`);
+					async function Render() {
+						try {
+							let Author = await AuthorName(el.author);
+
+							$('.reviewers-container').append(`
+								<div class="col-lg-6">
+									<div class="card card-shadow pointer-here" title="Click for questionnaire..." data-id="${
+										el.rvwr_id
+									}">
+										<div class="card-body pb-1">
+											<button type="button" class="btn btn-sm btn-secondary text-danger float-right delete_reviewer" data-target="${
+												el.rvwr_id
+											}" title="Delete reviewer...">
+													<i class="fa fa-trash" aria-hidden="true"></i>
+											</button>
+											<button type="button" class="btn btn-sm btn-secondary text-purple float-right edit_reviewer" data-target="${
+												el.rvwr_id
+											}" title="Edit reviewer...">
+													<i class="fa fa-edit" aria-hidden="true"></i>
+											</button>
+											<p class="font-weight-bold mb-0 text-primary text-truncate" title="${
+												el.title
+											}">${el.title}</p>
+											<div class="text-truncate desc" data-target="desc_${
+												el.rvwr_id
+											}"><small>${description}</small></div>
+											<p id="desc_${
+												el.rvwr_id
+											}"><small title="Click to read description...">${readmore}</small></p>
+											<small>
+												<dl class="row">
+													<dt class="col-sm-3">Level:</dt>
+													<dd class="col-sm-9">${level} Education</dd>
+													<dt class="col-sm-3">Source:</dt>
+													<dd class="col-sm-9">${el.source}</dd>
+													<dt class="col-sm-3">No. of items:</dt>
+													<dd class="col-sm-9">${el.items}</dd>
+													<dt class="col-sm-3">Duration:</dt>
+													<dd class="col-sm-9">${duration}</dd>
+												</dl>
+											</small>
+											<p>
+												<small class="text-muted">by ${Author} on ${created_at}</small>
+											</p>
+										</div>
+									</div>
+								</div>
+								`);
+						} catch (e) {
+							console.error('ERR', e.message);
+						}
+					}
+
+					Render()
 				});
 			} catch (e) {
 				console.error('ERR', e.message);

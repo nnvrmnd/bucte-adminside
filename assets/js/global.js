@@ -135,21 +135,16 @@ function AuthorId(form_id) {
 
 /* Fetch name of id */
 function AuthorName(id) {
-	let name;
-
-	$.ajax({
-		type: 'POST',
-		url: './assets/hndlr/Global.php',
-		data: {
-			userid: id
-		},
-		async: false,
-		success: function (res) {
-			name = res;
-		}
+	return new Promise((resolve, reject) => {
+		$.ajax({
+			type: 'POST',
+			url: './assets/hndlr/Global.php',
+			data: { userid: id },
+			success: function (res) {
+				resolve(res);
+			}
+		});
 	});
-
-	return name;
 }
 
 /* *************************************************** */

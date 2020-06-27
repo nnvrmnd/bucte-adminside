@@ -94,44 +94,52 @@ function RenderList(sortBy = 'post', orderBy = 'desc', search = 0) {
 					uploaded_time = moment(el.uploaded_at).format('h:mm A');
 					uploaded_at = `${uploaded_date} at ${uploaded_time}`;
 
-					$('.resources-container').append(`
-					<div class="col-sm-6 col-md-4 col-lg-3 resource-card">
-						<div class="card card-shadow">
+					async function Render() {
+						try {
+							let Author = await AuthorName(el.author);
 
-							<div class="custom-control custom-checkbox m-2">
-								<input type="checkbox" class="custom-control-input checkboxes" id="check_${
-									el.res_id
-								}"
-									data-id="${el.res_id}">
-								<label class="custom-control-label" for="check_${
-									el.res_id
-								}" title="Select to archive or delete file/s..."></label>
-							</div>
+							$('.resources-container').append(`
+								<div class="col-sm-6 col-md-4 col-lg-3 resource-card">
+									<div class="card card-shadow">
 
-							<div class="d-flex align-items-center justify-content-center pointer-here readmore"
-								data-target="${el.res_id}" title="Click to read more...">
-								<img class="card-img-top mx-auto mt-4"
-									src="./assets/img/file_format/${file_format(
-										el.format
-									)}" alt="Filetype thumbnail">
-							</div>
+										<div class="custom-control custom-checkbox m-2">
+											<input type="checkbox" class="custom-control-input checkboxes" id="check_${
+												el.res_id
+											}"
+												data-id="${el.res_id}">
+											<label class="custom-control-label" for="check_${
+												el.res_id
+											}" title="Select to archive or delete file/s..."></label>
+										</div>
 
-							<div class="card-body pb-1">
-								<p class="font-weight-bold card-title text-truncate mb-0 pointer-here readmore"
-									data-id="${
-										el.res_id
-									}" data-target="${el.res_id}" title="${el.title}">${el.title}</p>
-								<small class="text-muted">by ${AuthorName(
-									el.author
-								)} on ${uploaded_at}</small> <br>
-								<a href="../files/library/${el.attachment}" download="${attachment_filename}"
-									class="btn btn-link px-0 float-right download_file" title="Download file...">
-									<i class="fas fa-cloud-download-alt fa-lg"></i>
-								</a>
-							</div>
-						</div>
-					</div>
-					`);
+										<div class="d-flex align-items-center justify-content-center pointer-here readmore"
+											data-target="${el.res_id}" title="Click to read more...">
+											<img class="card-img-top mx-auto mt-4"
+												src="./assets/img/file_format/${file_format(
+													el.format
+												)}" alt="Filetype thumbnail">
+										</div>
+
+										<div class="card-body pb-1">
+											<p class="font-weight-bold card-title text-truncate mb-0 pointer-here readmore"
+												data-id="${
+													el.res_id
+												}" data-target="${el.res_id}" title="${el.title}">${el.title}</p>
+											<small class="text-muted">by ${Author} on ${uploaded_at}</small> <br>
+											<a href="../files/library/${el.attachment}" download="${attachment_filename}"
+												class="btn btn-link px-0 float-right download_file" title="Download file...">
+												<i class="fas fa-cloud-download-alt fa-lg"></i>
+											</a>
+										</div>
+									</div>
+								</div>
+								`);
+						} catch (e) {
+							console.error('ERR', e.message);
+						}
+					}
+
+					Render();
 				});
 			} catch (e) {
 				console.error('ERR', e.message);

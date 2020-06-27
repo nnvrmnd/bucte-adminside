@@ -91,91 +91,101 @@ function RenderList(sortBy = 'post', orderBy = 'desc', search = 0) {
 					created_time = moment(el.created_at).format('h:mm A');
 					created_at = `${created_date} at ${created_time}`;
 
-					$('.events-container').append(`
-					<div class="card card-shadow" data-id="${event_id}">
-						<div class="card-body">
-							<div class="row">
-								<div class="col-md-4 col-lg-4 d-flex align-items-center justify-content-center">
-										<a href="../files/events/${
-											el.image
-										}" class="fancybox zoom-in" data-fancybox="events_gallery" data-caption="${el.title}">
-											<img alt="Image placeholder" src="../files/events/${
-												el.image
-											}" class="img-fluid rounded" title="Click to view image">
-										</a>
+					async function Render() {
+						try {
+							let Author = await AuthorName(el.author);
+
+							$('.events-container').append(`
+								<div class="card card-shadow" data-id="${event_id}">
+									<div class="card-body">
+										<div class="row">
+											<div class="col-md-4 col-lg-4 d-flex align-items-center justify-content-center">
+													<a href="../files/events/${
+														el.image
+													}" class="fancybox zoom-in" data-fancybox="events_gallery" data-caption="${el.title}">
+														<img alt="Image placeholder" src="../files/events/${
+															el.image
+														}" class="img-fluid rounded" title="Click to view image">
+													</a>
+											</div>
+											<div class="col-md-8 col-lg-8 d-none d-sm-none d-md-block">
+												<button type="button" class="btn btn-sm btn-secondary text-danger float-right delete_event"
+													title="Delete event..." data-target="${event_id}">
+													<i class="fa fa-trash" aria-hidden="true"></i>
+												</button>
+												<button type="button" class="btn btn-sm btn-secondary text-purple float-right edit_event"
+													title="Edit event..." data-target="${event_id}">
+													<i class="fa fa-edit" aria-hidden="true"></i>
+												</button>
+												<button class="btn btn-sm btn-neutral float-right event_assmnt" title="View event assessment..." data-target="${event_id}">
+													Assessment
+												</button>
+												<p class="font-weight-bold text-primary">${el.title}</p>
+												<small>
+													<dl class="row">
+														<dt class="col-sm-3">Schedule:</dt>
+														<dd class="col-sm-9">${start_date} - ${end_date}</dd>
+														<dt class="col-sm-3">Time:</dt>
+														<dd class="col-sm-9">${start_time} - ${end_time}</dd>
+														<dt class="col-sm-3">Registration deadline:</dt>
+														<dd class="col-sm-9">${deadline}</dd>
+														<dt class="col-sm-3">Venue:</dt>
+														<dd class="col-sm-9">${el.venue}</dd>
+														<dt class="col-sm-3">Description:</dt>
+														<dd class="col-sm-9 text-truncate desc" data-target="desc_${event_id}">${desc_replace}</dd>
+														<dt class="col-sm-3"></dt>
+														<dd class="col-sm-9">
+															<a href="javascript:void(0)" class="readmore" id="desc_${event_id}" data-target="${event_id}">
+																Read more
+															</a>
+														</dd>
+													</dl>
+												</small>
+												<small class="text-muted">by ${Author} on ${created_at}</small>
+											</div>
+											<!-- xs block -->
+											<div class="col-md-9 mt-3 d-block d-sm-none d-none d-sm-block d-md-none">
+												<button type="button" class="btn btn-sm btn-secondary text-danger float-right delete_event"
+													title="Delete event..." data-target="${event_id}">
+													<i class="fa fa-trash" aria-hidden="true"></i>
+												</button>
+												<button type="button" class="btn btn-sm btn-secondary text-purple float-right edit_event"
+													title="Edit event..." data-target="${event_id}">
+													<i class="fa fa-edit" aria-hidden="true"></i>
+												</button>
+												<button type="button" class="btn btn-sm btn-neutral float-right event_assmnt"
+													title="View event assessment..." data-target="${event_id}">
+													Assessment
+												</button>
+												<p class="font-weight-bold text-primary">${el.title} </p>
+												<small>
+													<dl class="row">
+														<dt class="col-sm-2">Schedule:</dt>
+														<dd class="col-sm-10">${start_date} - ${end_date}</dd>
+														<dt class="col-sm-2">Time:</dt>
+														<dd class="col-sm-10">${start_time} - ${end_time}</dd>
+														<dt class="col-sm-2">Registration deadline:</dt>
+														<dd class="col-sm-10">${deadline}</dd>
+														<dt class="col-sm-2">Venue:</dt>
+														<dd class="col-sm-10">${el.venue}</dd>
+														<dt class="col-sm-2">Description:</dt>
+														<dd class="col-sm-10 text-truncate">${desc_replace}</dd>
+														<dt class="col-sm-2"></dt>
+														<dd class="col-sm-10"><a href="javascript:void(0)" class="readmore" data-target="${event_id}">Read more</a></dd>
+													</dl>
+												</small>
+												<small class="text-muted">by ${Author} on ${created_at}</small>
+											</div>
+										</div>
+									</div>
 								</div>
-								<div class="col-md-8 col-lg-8 d-none d-sm-none d-md-block">
-									<button type="button" class="btn btn-sm btn-secondary text-danger float-right delete_event"
-										title="Delete event..." data-target="${event_id}">
-										<i class="fa fa-trash" aria-hidden="true"></i>
-									</button>
-									<button type="button" class="btn btn-sm btn-secondary text-purple float-right edit_event"
-										title="Edit event..." data-target="${event_id}">
-										<i class="fa fa-edit" aria-hidden="true"></i>
-									</button>
-									<button class="btn btn-sm btn-neutral float-right event_assmnt" title="View event assessment..." data-target="${event_id}">
-										Assessment
-									</button>
-									<p class="font-weight-bold text-primary">${el.title}</p>
-									<small>
-										<dl class="row">
-											<dt class="col-sm-3">Schedule:</dt>
-											<dd class="col-sm-9">${start_date} - ${end_date}</dd>
-											<dt class="col-sm-3">Time:</dt>
-											<dd class="col-sm-9">${start_time} - ${end_time}</dd>
-											<dt class="col-sm-3">Registration deadline:</dt>
-											<dd class="col-sm-9">${deadline}</dd>
-											<dt class="col-sm-3">Venue:</dt>
-											<dd class="col-sm-9">${el.venue}</dd>
-											<dt class="col-sm-3">Description:</dt>
-											<dd class="col-sm-9 text-truncate desc" data-target="desc_${event_id}">${desc_replace}</dd>
-											<dt class="col-sm-3"></dt>
-											<dd class="col-sm-9">
-												<a href="javascript:void(0)" class="readmore" id="desc_${event_id}" data-target="${event_id}">
-													Read more
-												</a>
-											</dd>
-										</dl>
-									</small>
-									<small class="text-muted">by ${AuthorName(el.author)} on ${created_at}</small>
-								</div>
-								<!-- xs block -->
-								<div class="col-md-9 mt-3 d-block d-sm-none d-none d-sm-block d-md-none">
-									<button type="button" class="btn btn-sm btn-secondary text-danger float-right delete_event"
-										title="Delete event..." data-target="${event_id}">
-										<i class="fa fa-trash" aria-hidden="true"></i>
-									</button>
-									<button type="button" class="btn btn-sm btn-secondary text-purple float-right edit_event"
-										title="Edit event..." data-target="${event_id}">
-										<i class="fa fa-edit" aria-hidden="true"></i>
-									</button>
-									<button type="button" class="btn btn-sm btn-neutral float-right event_assmnt"
-										title="View event assessment..." data-target="${event_id}">
-										Assessment
-									</button>
-									<p class="font-weight-bold text-primary">${el.title} </p>
-									<small>
-										<dl class="row">
-											<dt class="col-sm-2">Schedule:</dt>
-											<dd class="col-sm-10">${start_date} - ${end_date}</dd>
-											<dt class="col-sm-2">Time:</dt>
-											<dd class="col-sm-10">${start_time} - ${end_time}</dd>
-											<dt class="col-sm-2">Registration deadline:</dt>
-											<dd class="col-sm-10">${deadline}</dd>
-											<dt class="col-sm-2">Venue:</dt>
-											<dd class="col-sm-10">${el.venue}</dd>
-											<dt class="col-sm-2">Description:</dt>
-											<dd class="col-sm-10 text-truncate">${desc_replace}</dd>
-											<dt class="col-sm-2"></dt>
-											<dd class="col-sm-10"><a href="javascript:void(0)" class="readmore" data-target="${event_id}">Read more</a></dd>
-										</dl>
-									</small>
-									<small class="text-muted">by ${AuthorName(el.author)} on ${created_at}</small>
-								</div>
-							</div>
-						</div>
-					</div>
-					`);
+								`);
+						} catch (e) {
+							console.error('ERR', e.message);
+						}
+					}
+
+					Render()
 				});
 			} catch (e) {
 				console.error('ERR', e.message);
