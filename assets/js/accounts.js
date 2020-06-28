@@ -4,9 +4,10 @@ function RenderList() {
 		url: './assets/hndlr/Accounts.php',
 		data: { fetchaccounts: 'all' },
 		success: function (res) {
-			$('.accounts-container').html('');
+			$('.accounts-container').empty();
 
 			try {
+				$('.accts-empty').empty();
 				$('.accts-container').find('.card').removeClass('d-none');
 
 				$.each(JSON.parse(res), function (idx, el) {
@@ -35,7 +36,7 @@ function RenderList() {
 				});
 			} catch (e) {
 				console.error('ERR', res);
-				$('.accts-container').find('.card').addClass('d-none').html(`
+				$('.accts-empty').html(`
 					<div class="col notfound mb-5 pb-5">
 						<div class="d-none d-sm-block notfound-404">
 							<h1>Oops!</h1>
@@ -44,6 +45,7 @@ function RenderList() {
 						<p class="ml-2">No items to display</p>
 					</div>
 					`);
+				$('.accts-container').find('.card').addClass('d-none');
 			}
 		}
 	});
@@ -117,8 +119,6 @@ $(function () {
 					url: './assets/hndlr/Accounts.php',
 					data: createForm,
 					success: function (res) {
-						console.log(createForm);
-
 						if (res === 'true') {
 							resolve('created');
 							SuccessModal('Account created.', 5000);

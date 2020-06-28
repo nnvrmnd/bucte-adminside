@@ -70,6 +70,11 @@ $(function () {
 			.addClass('font-weight-bold active')
 			.attr('aria-expanded', 'true');
 		$('#Pages').addClass('show').find('#pages_about').addClass('active');
+	} else if (documenttitle.match(/\b(\w*Contact\w*)\b/g)) {
+		$('.Pages')
+			.addClass('font-weight-bold active')
+			.attr('aria-expanded', 'true');
+		$('#Pages').addClass('show').find('#pages_contact').addClass('active');
 	} else if (documenttitle.match(/\b(\w*Documents\w*)\b/g)) {
 		$('.Records')
 			.addClass('font-weight-bold active')
@@ -267,7 +272,7 @@ function PromptConfirm(msg, url) {
 		}
 	}
 
-	$('#prompt_form #yes_prompt').click(function (e) {
+	$('#prompt_form #yes_prompt').off().click(function (e) {
 		e.preventDefault();
 
 		WaitModal(5000);

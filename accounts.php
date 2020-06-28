@@ -53,7 +53,7 @@ SeshStart('page');
 						</div>
 						<div class="col-lg-6 text-right">
 							<button class="btn btn-sm btn-neutral" data-toggle="modal" data-target="#NewAcct">
-								New event
+								Create account
 							</button>
 						</div>
 					</div>
@@ -82,31 +82,14 @@ SeshStart('page');
 											<th>Action</th>
 										</tr>
 									</thead>
-									<tbody class="text-truncate accounts-container">
-										<!-- <tr>
-											<td class="table-user">
-												<img src="./assets/img/m.png"
-													class="avatar rounded-circle mr-3">
-												<b>John Michael</b>
-											</td>
-											<td class="table-actions">
-												<a href="#!" class="table-action" data-toggle="tooltip"
-													data-original-title="Edit product">
-													<i class="fas fa-user-edit"></i>
-												</a>
-												<a href="#!" class="table-action table-action-delete"
-													data-toggle="tooltip" data-original-title="Delete product">
-													<i class="fas fa-trash"></i>
-												</a>
-											</td>
-										</tr> -->
-									</tbody>
+									<tbody class="text-truncate accounts-container"></tbody>
 								</table>
 							</div>
 
 						</div>
 					</div>
 
+					<div class="accts-empty"></div>
 
 				</div>
 			</div>

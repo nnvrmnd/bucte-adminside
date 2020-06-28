@@ -102,6 +102,12 @@
 										<span class="sidenav-normal"> About Page </span>
 									</a>
 								</li>
+								<li class="nav-item">
+									<a href="./contactpage.php" class="nav-link" id="pages_contact">
+										<span class="sidenav-mini-icon"> CP </span>
+										<span class="sidenav-normal"> Contact Page </span>
+									</a>
+								</li>
 							</ul>
 						</div>
 					</li>
